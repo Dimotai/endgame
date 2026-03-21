@@ -1,8 +1,8 @@
 ---
 title: Warden Trials
 description: 4-tier wave survival combat encounters with configurable timers.
-authors:
-    - name: "Lewai"
+order: 6
+published: true
 ---
 
 # Warden Trials

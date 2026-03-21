@@ -1,8 +1,8 @@
 ---
 title: Combo Meter
 description: Chain kills to climb damage tiers with speed, heal, crit, and lifesteal bonuses.
-authors:
-    - name: "Lewai"
+order: 14
+published: true
 ---
 
 # Combo Meter

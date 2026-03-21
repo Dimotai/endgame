@@ -1,8 +1,8 @@
 ---
 title: Frozen Dungeon
 description: Complete guide to the Frozen Dungeon — enemies, Flocon currency, Korvyn trader, Dragon Frost boss, chest loot zones, and post-dungeon progression.
-authors:
-    - name: "Lewai"
+order: 4
+published: true
 ---
 
 # Frozen Dungeon

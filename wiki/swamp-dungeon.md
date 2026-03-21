@@ -1,8 +1,8 @@
 ---
 title: Swamp Dungeon
 description: Poison swamp dungeon with locked doors, tiered chest loot, and the Hedera boss.
-authors:
-    - name: "Lewai"
+order: 5
+published: true
 ---
 
 # Swamp Dungeon

@@ -1,8 +1,8 @@
 ---
 title: Achievements
 description: 24 achievements across 5 categories with XP and item rewards.
-authors:
-    - name: "Lewai"
+order: 11
+published: true
 ---
 
 # Achievements
@@ -53,7 +53,7 @@ authors:
 | Curious Explorer  | Discover 5 NPC types    |   5    |    50     |
 | Explorer          | Discover 10 NPC types   |  10    |   100     |
 | Seasoned Explorer | Discover 20 NPC types   |  20    |   200     |
-| Naturalist        | Discover all 30 NPC types |  30  |   500     |
+| Naturalist        | Discover all 32 NPC types |  32  |   500     |
 
 ## Crafting — 4 achievements
 

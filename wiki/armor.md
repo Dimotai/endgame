@@ -1,8 +1,8 @@
 ---
 title: Armor & Accessories
 description: 5 armor sets with passive bonuses and 6 trinket accessories.
-authors:
-    - name: "Lewai"
+order: 8
+published: true
 ---
 
 # Armor & Accessories
@@ -28,11 +28,11 @@ Each armor set consists of **4 pieces**: Head, Chest, Hands, and Legs.
 
 ## Trinket Pouch
 
-The **Trinket Pouch** is a portable container with **3 accessory slots**. Place accessories inside to gain their passive bonuses.
+The **Trinket Pouch** is a portable container with **5 accessory slots**. Place accessories inside to gain their passive bonuses.
 
 | Property      | Value                                                            |
 |---------------|------------------------------------------------------------------|
-| Slots         | 3 accessory slots                                                |
+| Slots         | 5 accessory slots                                                |
 | Requirement   | Must be in hotbar for accessories to work                        |
 | Config Toggle | `AccessoriesEnabled` (true)                                      |
 | Recipe        | 6 Storm Leather + 2 Voidheart + 4 Mithril Bars (Endgame Bench Tier 2) |

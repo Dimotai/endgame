@@ -1,8 +1,8 @@
 ---
 title: Configuration
 description: Full configuration reference with every config key, default value, and range organized by section.
-authors:
-    - name: "Lewai"
+order: 16
+published: true
 ---
 
 # Configuration

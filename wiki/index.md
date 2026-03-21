@@ -1,13 +1,13 @@
 ---
 title: EndgameQoL Wiki
 description: Main hub page for the EndgameQoL plugin wiki — bosses, weapons, dungeons, NPCs, crafting, and QoL systems.
-authors:
-    - name: "Lewai"
+order: 0
+published: true
 ---
 
 # Endgame & QoL
 
-**v4.1.1**
+**v4.1.3**
 
 Bosses, weapons, dungeons, NPCs, crafting, and quality-of-life systems for Hytale servers.
 
@@ -52,5 +52,5 @@ Bosses, weapons, dungeons, NPCs, crafting, and quality-of-life systems for Hytal
 - [**Combo Meter**](combo) — Kill streaks, damage tiers & tier effects
 - [**Bounty Board**](bounty) — Daily & weekly quests, reputation ranks
 - [**Achievements**](achievements) — 24 achievements across 5 categories
-- [**Bestiary**](bestiary) — 30 NPC entries, kill milestones & discovery
+- [**Bestiary**](bestiary) — 32 NPC entries, kill milestones & discovery
 - [**Warden Trials**](warden-trials) — 4-tier wave survival with configurable timers

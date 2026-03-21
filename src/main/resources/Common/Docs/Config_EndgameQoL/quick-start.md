@@ -111,7 +111,7 @@ Don't forget to explore these systems along the way:
 
 **<#ff5555>Warden's Trial</#ff5555>** — 4-tier wave survival challenge with boss fights and rare loot.
 
-**<#d16eff>Trinket Pouch</#d16eff>** — Equip up to 3 accessories for passive bonuses (Frostwalkers, Void Amulet, Blazefist, etc.)
+**<#d16eff>Trinket Pouch</#d16eff>** — Equip up to 5 accessories for passive bonuses (Frostwalkers, Void Amulet, Blazefist, etc.)
 
 ---
 

@@ -1,8 +1,8 @@
 ---
 title: Commands & Permissions
 description: All commands, permission nodes, and the config UI reference.
-authors:
-    - name: "Lewai"
+order: 15
+published: true
 ---
 
 # Commands & Permissions
@@ -20,8 +20,6 @@ All commands, permission nodes, and the config UI.
 | `/eg lang <locale|auto>` | Set display language | None |
 | `/eg bounty` | View daily bounties | endgameqol.bounty |
 | `/eg gauntlet` | Gauntlet leaderboard | endgameqol.gauntlet |
-
-Standalone shortcuts: `/bounty` and `/gauntlet` also work as aliases.
 
 ## /egconfig
 

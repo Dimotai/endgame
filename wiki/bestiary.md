@@ -1,13 +1,13 @@
 ---
 title: Bestiary
-description: NPC Bestiary encyclopedia with 30 entries across 6 categories, kill milestones, and discovery rewards.
-authors:
-    - name: "Lewai"
+description: NPC Bestiary encyclopedia with 32 entries across 6 categories, kill milestones, and discovery rewards.
+order: 12
+published: true
 ---
 
 # Bestiary
 
-30 NPC entries across 6 categories with kill milestones and discovery rewards.
+32 NPC entries across 6 categories with kill milestones and discovery rewards.
 
 Access via `/eg bestiary` — Permission: `endgameqol.bestiary`
 

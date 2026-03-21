@@ -1,8 +1,8 @@
 ---
 title: NPCs & Mobs
 description: All endgame NPCs with stats, attacks, and locations
-authors:
-    - name: "Lewai"
+order: 10
+published: true
 ---
 
 # <gradient data="#55ff55:#ff6600:#d16eff">NPCs & Mobs</gradient>

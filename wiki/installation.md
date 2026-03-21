@@ -1,8 +1,8 @@
 ---
 title: Installation Guide
 description: How to install, configure, and update EndgameQoL on your Hytale server — requirements, steps, dependencies, and troubleshooting.
-authors:
-    - name: "Lewai"
+order: 2
+published: true
 ---
 
 # Installation Guide
@@ -14,8 +14,7 @@ How to install, configure, and update EndgameQoL on your Hytale server.
 | Requirement | Version | Notes |
 | :--- | :--- | :--- |
 | **Java** | 25 | Bundled with Hytale Server |
-| **Hytale Server** | 2026.02.19+ | Required minimum version |
-| **Maven** | 3.9+ | Development only — not needed for server operators |
+| **Hytale Server** | 2026.03.20+ | Required minimum version |
 
 ## Installation Steps
 
@@ -72,7 +71,7 @@ This displays the plugin version, loaded content counts, active integrations, an
 
 | Problem | Cause | Solution |
 | :--- | :--- | :--- |
-| **Plugin not loading** | Wrong folder or outdated server | Confirm JAR is in `Mods/` (not a subfolder). Verify server version is 2026.02.19 or later. |
+| **Plugin not loading** | Wrong folder or outdated server | Confirm JAR is in `Mods/` (not a subfolder). Verify server version is 2026.03.20 or later. |
 | **Config not generating** | File permission issue | Ensure the server process has write permissions to its own directory. Check console for errors during startup. |
 | **Commands not found** | Plugin failed to initialize | Check server console for stack traces during startup. The most common cause is a version mismatch — update to the latest server build. |
 | **NPCs not spawning** | Spawns disabled in config | Run `/egconfig` and check that the relevant spawn toggles are enabled. |

@@ -67,7 +67,7 @@ Admin commands (<#55ffff>/egconfig</#55ffff>, <#55ffff>/egadmin</#55ffff>) are *
 | /eg status, /egadmin | endgameqol.admin |
 | /eg bestiary | endgameqol.bestiary |
 | /eg achievements | endgameqol.achievements |
-| /eg bounty, /bounty | endgameqol.bounty |
+| /eg bounty | endgameqol.bounty |
 | /eg lang, /voile | None (all players) |
 
 ---

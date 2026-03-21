@@ -36,8 +36,6 @@ Parent command with several subcommands:
 
 **<#55ffff>/eg gauntlet</#55ffff>** — Starts a Gauntlet run (wave survival mode). <#ff5555>Currently disabled</#ff5555> — the feature is still in development. Permission: <#aaaaaa>endgameqol.gauntlet</#aaaaaa>
 
-! Standalone <#55ffff>/bounty</#55ffff> and <#55ffff>/gauntlet</#55ffff> commands also exist as aliases and use the same permissions.
-
 ---
 
 ## <#ff5555>/egadmin</#ff5555>
@@ -70,8 +68,8 @@ Opens the Voile documentation browser (requires the Voile mod). Browse this wiki
 | /eg status, /egadmin | endgameqol.admin |
 | /eg bestiary | endgameqol.bestiary |
 | /eg achievements | endgameqol.achievements |
-| /eg bounty, /bounty | endgameqol.bounty |
-| /eg gauntlet, /gauntlet | endgameqol.gauntlet |
+| /eg bounty | endgameqol.bounty |
+| /eg gauntlet | endgameqol.gauntlet |
 | /eg lang, /voile | None (all players) |
 
 ! All commands have a 1-second per-player rate limit.

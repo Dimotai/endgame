@@ -1,8 +1,8 @@
 ---
 title: Items & Weapons
 description: All weapons, tools, consumables, boss materials, and crafting benches.
-authors:
-    - name: "Lewai"
+order: 7
+published: true
 ---
 
 # Items & Weapons

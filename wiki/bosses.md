@@ -1,8 +1,8 @@
 ---
 title: Bosses & Elites
 description: All boss encounters and elite mobs in EndgameQoL — phases, attacks, drops, difficulty presets, player scaling, and enrage mechanics.
-authors:
-    - name: "Lewai"
+order: 3
+published: true
 ---
 
 # Bosses & Elites

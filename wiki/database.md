@@ -1,8 +1,8 @@
 ---
 title: Database Setup
 description: Optional SQL database for cross-server player data sync
-authors:
-    - name: "Lewai"
+order: 17
+published: true
 ---
 
 # <gradient data="cyan:purple">Database Setup</gradient>

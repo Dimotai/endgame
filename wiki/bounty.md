@@ -1,8 +1,8 @@
 ---
 title: Bounty Board
 description: Daily and weekly quest system with reputation rewards, streak bonuses, and difficulty tiers.
-authors:
-    - name: "Lewai"
+order: 13
+published: true
 ---
 
 # Bounty Board

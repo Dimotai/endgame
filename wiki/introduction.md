@@ -1,8 +1,8 @@
 ---
 title: Introduction
 description: Overview of everything EndgameQoL adds to your Hytale server — content summary, material progression, and getting started steps.
-authors:
-    - name: "Lewai"
+order: 1
+published: true
 ---
 
 # Introduction
