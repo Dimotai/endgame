@@ -2,6 +2,7 @@
 name: NPCs & Mobs
 description: All endgame NPCs with stats, attacks, and locations
 author: Lewai
+sort-index: 4
 ---
 
 # <gradient data="#55ff55:#ff6600:#d16eff">NPCs & Mobs</gradient>

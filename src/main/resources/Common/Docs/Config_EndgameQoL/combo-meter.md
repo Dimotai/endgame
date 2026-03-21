@@ -2,6 +2,7 @@
 name: Combo Meter
 description: Kill streak tracker with damage tiers and effects
 author: Lewai
+sort-index: 3
 ---
 
 # <gradient data="#ff5555:#ff6600:#FFD700">Combo Meter</gradient>

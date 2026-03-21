@@ -2,6 +2,7 @@
 name: Crafting & Shops
 description: Workbench tiers, recipes, Vorthak trades, and shops
 author: Lewai
+sort-index: 4
 ---
 
 # <gradient data="#55ffff:#ff6600:#55ff55">Crafting & Shops</gradient>

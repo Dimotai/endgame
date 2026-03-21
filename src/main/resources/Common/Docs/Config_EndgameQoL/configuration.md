@@ -2,6 +2,7 @@
 name: Configuration
 description: All config settings and difficulty presets
 author: Lewai
+sort-index: 2
 ---
 
 # <gradient data="#55ffff:#aaaaaa:#55ffff">Configuration</gradient>

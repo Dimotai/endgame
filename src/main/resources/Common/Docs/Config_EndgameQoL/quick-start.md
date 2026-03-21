@@ -2,6 +2,7 @@
 name: Quick Start
 description: Your first steps into endgame content
 author: Lewai
+sort-index: 1
 ---
 
 # <gradient data="#55ffff:#d16eff">Quick Start — Player Guide</gradient>

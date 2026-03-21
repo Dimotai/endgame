@@ -2,6 +2,7 @@
 name: Armor & Tools
 description: Armor sets, tools, consumables, and other items
 author: Lewai
+sort-index: 2
 ---
 
 # <gradient data="#55ffff:#ff6600:#d16eff">Armor & Tools</gradient>

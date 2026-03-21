@@ -2,6 +2,7 @@
 name: Materials
 description: How to obtain endgame crafting materials
 author: Lewai
+sort-index: 5
 ---
 
 # <gradient data="#ff6600:#55ffff:#d16eff">Materials Guide</gradient>

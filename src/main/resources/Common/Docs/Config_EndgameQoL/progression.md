@@ -2,6 +2,7 @@
 name: Progression
 description: Material tiers and the path to endgame
 author: Lewai
+sort-index: 2
 ---
 
 # <gradient data="#aaaaaa:#55ffff:#ff6600:#d16eff">Progression</gradient>

@@ -2,6 +2,7 @@
 name: Warden's Trial
 description: Wave-survival challenge with 4 difficulty tiers
 author: Lewai
+sort-index: 1
 ---
 
 # <gradient data="#ff5555:#ff6600:#d16eff">Warden's Trial</gradient>

@@ -2,6 +2,7 @@
 name: Weapons
 description: All 62+ weapons by type
 author: Lewai
+sort-index: 1
 ---
 
 # <gradient data="#ff6600:#d16eff:#55ffff">Weapons</gradient>

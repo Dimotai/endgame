@@ -2,6 +2,7 @@
 name: Trinket Pouch & Accessories
 description: Trinket Pouch container and 6 passive accessories
 author: Lewai
+sort-index: 3
 ---
 
 # <gradient data="#d16eff:#55ffff">Trinket Pouch & Accessories</gradient>

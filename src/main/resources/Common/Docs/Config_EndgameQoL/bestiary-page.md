@@ -2,6 +2,7 @@
 name: Bestiary
 description: NPC encyclopedia with stats, lore, drops, and kill tracking
 author: Lewai
+sort-index: 5
 ---
 
 # <gradient data="#55ff55:#55aaff:#d16eff">Bestiary</gradient>

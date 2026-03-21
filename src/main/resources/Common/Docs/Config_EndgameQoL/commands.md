@@ -2,6 +2,7 @@
 name: Commands
 description: Commands and permissions
 author: Lewai
+sort-index: 1
 ---
 
 # <gradient data="#55ffff:#d16eff">Commands</gradient>

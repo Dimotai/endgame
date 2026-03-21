@@ -11,52 +11,50 @@
           "file": "index.md",
           "subTopics": [
             { "file": "quick-start.md" },
-            { "file": "progression.md" }
+            { "file": "progression.md" },
+            { "file": "getting-started.md" }
           ]
         },
         {
-          "file": "bosses.md",
+          "file": "dungeons-category.md",
           "subTopics": [
             { "file": "frozen-dungeon.md" },
             { "file": "swamp-dungeon.md" },
-            { "file": "warden-trial.md" }
+            {
+              "file": "bosses.md",
+              "subTopics": [
+                { "file": "warden-trial.md" }
+              ]
+            }
           ]
         },
         {
-          "file": "weapons.md",
+          "file": "gear-category.md",
           "subTopics": [
+            { "file": "weapons.md" },
             { "file": "armor-tools.md" },
-            { "file": "accessories.md" }
-          ]
-        },
-        {
-          "file": "crafting.md",
-          "subTopics": [
+            { "file": "accessories.md" },
+            { "file": "crafting.md" },
             { "file": "materials.md" }
           ]
         },
         {
-          "file": "npcs.md",
+          "file": "systems-category.md",
           "subTopics": [
+            { "file": "bounty-system.md" },
+            { "file": "achievements.md" },
+            { "file": "combo-meter.md" },
+            { "file": "npcs.md" },
             { "file": "bestiary-page.md" }
           ]
         },
         {
-          "file": "bounty-system.md",
+          "file": "admin-category.md",
           "subTopics": [
-            { "file": "achievements.md" },
-            { "file": "combo-meter.md" }
-          ]
-        },
-        {
-          "file": "commands.md",
-          "subTopics": [
+            { "file": "commands.md" },
             { "file": "configuration.md" },
             { "file": "database.md" }
           ]
-        },
-        {
-          "file": "getting-started.md"
         }
       ]
     }

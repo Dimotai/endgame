@@ -2,6 +2,7 @@
 name: Frozen Dungeon
 description: Guide to the ice cavern dungeon
 author: Lewai
+sort-index: 1
 ---
 
 # <gradient data="#55ffff:#aaaaaa:#55ffff">Frozen Dungeon</gradient>

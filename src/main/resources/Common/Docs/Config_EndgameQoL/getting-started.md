@@ -2,6 +2,7 @@
 name: Server Setup
 description: Installation, configuration, and setup for server owners
 author: Lewai
+sort-index: 3
 ---
 
 # <gradient data="#ff6600:#FFD700">Server Setup</gradient>

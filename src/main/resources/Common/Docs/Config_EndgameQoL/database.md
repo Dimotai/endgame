@@ -2,6 +2,7 @@
 name: Database Setup
 description: Optional SQL database for cross-server player data sync
 author: Lewai
+sort-index: 3
 ---
 
 # <gradient data="cyan:purple">Database Setup</gradient>

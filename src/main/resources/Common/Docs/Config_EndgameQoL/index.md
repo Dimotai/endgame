@@ -2,6 +2,7 @@
 name: Welcome
 description: Overview of Endgame & QoL
 author: Lewai
+sort-index: 0
 ---
 
 # <gradient data="purple:cyan:purple">Endgame & QoL</gradient>

@@ -2,6 +2,7 @@
 name: Swamp Dungeon
 description: Swamp Dungeon expansion with Hedera Autel, Morghul trader, and new content
 author: Lewai
+sort-index: 2
 ---
 
 # <gradient data="#55ff55:#2a6e2a:#55ff55">Swamp Dungeon</gradient>

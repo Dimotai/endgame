@@ -2,6 +2,7 @@
 name: Bounty System
 description: Daily bounty quests, reputation ranks, and rewards
 author: Lewai
+sort-index: 1
 ---
 
 # <gradient data="#ff6600:#FFD700:#ff6600">Bounty System</gradient>

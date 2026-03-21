@@ -2,6 +2,7 @@
 name: Bosses & Elites
 description: All boss encounters, elite mobs, and enrage system
 author: Lewai
+sort-index: 3
 ---
 
 # <gradient data="#ff5555:#ff6600:#d16eff">Bosses & Elites</gradient>

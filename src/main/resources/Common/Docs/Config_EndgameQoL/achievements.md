@@ -2,6 +2,7 @@
 name: Achievements
 description: Achievement system with rewards and progress tracking
 author: Lewai
+sort-index: 2
 ---
 
 # <gradient data="#FFD700:#ff6600:#FFD700">Achievements</gradient>
