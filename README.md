@@ -40,22 +40,44 @@ Optional dependency JARs go in `libs/` (local Maven repo layout, compileOnly).
 ```
 src/main/java/endgame/plugin/
   EndgameQoL.java          # Main plugin class
-  commands/                 # Slash commands
+  commands/                 # Slash commands (/eg, /egconfig, /egadmin)
   components/               # ECS components
-  config/                   # Config system
+  config/                   # BuilderCodec config system
+  database/                 # Optional SQL persistence (SQLite, MySQL, PostgreSQL, MariaDB)
   events/                   # Event handlers
-  managers/                 # Game managers
-  systems/                  # ECS systems (boss, weapon, effect)
+  integration/              # Optional mod bridges (RPGLeveling, EndlessLeveling, OrbisGuard)
+  managers/                 # Game managers (boss, combo, gauntlet, bounty, achievement)
+  migration/                # Legacy data migration
+  spawns/                   # NPC spawn systems
+  systems/                  # ECS systems (boss, weapon, effect, trial, accessory)
   ui/                       # HyUI pages and HUD
   utils/                    # Utilities
+  watchers/                 # World watchers
 
 src/main/resources/
   manifest.json             # Plugin manifest
   Server/                   # Server-side JSON assets
-    Item/                   # Items, interactions, recipes
-    NPC/                    # NPC definitions and AI
+    BarterShops/            # Vorthak/Korvyn/Morghul shop data
     Drops/                  # Drop tables
+    Entity/                 # Entity effects (slow, burn, etc.)
+    GameplayConfigs/        # Custom gameplay settings
+    HytaleGenerator/        # Biome and world gen configs
+    Instances/              # Dungeon instance configs
+    Item/                   # Items, interactions, recipes, animations
+    Languages/              # Localization (en-US, pt-BR, ru-RU)
+    Models/                 # NPC model definitions
+    NPC/                    # NPC roles, spawn, AI, balancing
+    Particles/              # Custom particle systems
+    PortalTypes/            # Portal definitions
     Prefabs/                # Dungeon prefabs
+    ProjectileConfigs/      # Projectile physics
+    Projectiles/            # Projectile definitions
+  Common/                   # Client-side shared assets
+    Icons/                  # Item icons
+    Items/                  # Item models and textures
+    NPC/                    # NPC animations
+    Particles/              # Particle textures
+    UI/                     # Custom UI pages
 ```
 
 ## License
