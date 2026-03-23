@@ -20,13 +20,13 @@ repositories {
 }
 
 dependencies {
-    compileOnly("com.hypixel.hytale:Server:2026.03.20-db226053c")
+    compileOnly("com.hypixel.hytale:Server:2026.03.23-338988e70")
 
     implementation("me.elliesaur:HyUI:0.9.4")
     implementation("com.zaxxer:HikariCP:5.1.0")
 
     compileOnly("org.zuxaw:RPGLeveling:0.3.0")
-    compileOnly("com.airijko:EndlessLeveling:6.4")
+    compileOnly("com.airijko:EndlessLeveling:6.6.1")
     compileOnly("com.orbisguard:OrbisGuard:0.8.7")
 
     compileOnly("org.xerial:sqlite-jdbc:3.45.1.0")

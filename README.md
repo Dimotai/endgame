@@ -7,7 +7,7 @@ Hytale server plugin adding endgame content: bosses, weapons, dungeons, NPCs, cr
 ## Requirements
 
 - Java 25
-- Hytale Server (`2026.03.20-db226053c` or compatible)
+- Hytale Server (`2026.03.23-338988e70` or compatible)
 
 ## Build
 

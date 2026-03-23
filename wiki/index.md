@@ -7,7 +7,7 @@ published: true
 
 # Endgame & QoL
 
-**v4.1.3**
+**v4.1.4**
 
 Bosses, weapons, dungeons, NPCs, crafting, and quality-of-life systems for Hytale servers.
 
