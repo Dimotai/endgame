@@ -31,26 +31,26 @@ Bosses, weapons, dungeons, NPCs, crafting, and quality-of-life systems for Hytal
 
 ### Getting Started
 
-- [**Introduction**](introduction) — What EndgameQoL adds to your server
-- [**Installation**](installation) — Setup, requirements & dependencies
-- [**Commands**](commands) — All commands, permissions & config UI
-- [**Configuration**](configuration) — Every config key, default & range
+- [**Introduction**](endgame-qol/introduction) — What EndgameQoL adds to your server
+- [**Installation**](endgame-qol/installation) — Setup, requirements & dependencies
+- [**Commands**](endgame-qol/commands) — All commands, permissions & config UI
+- [**Configuration**](endgame-qol/configuration) — Every config key, default & range
 
 ### Gear & Crafting
 
-- [**Items & Weapons**](items-weapons) — 40+ weapons, tools, consumables & materials
-- [**Armor & Accessories**](armor-accessories) — 5 armor sets, Trinket Pouch & 6 accessories
+- [**Items & Weapons**](endgame-qol/items-weapons) — 40+ weapons, tools, consumables & materials
+- [**Armor & Accessories**](endgame-qol/armor-accessories) — 5 armor sets, Trinket Pouch & 6 accessories
 
 ### Dungeons & Bosses
 
-- [**Frozen Dungeon**](frozen-dungeon) — Ice cavern — Dragon Frost boss
-- [**Swamp Dungeon**](swamp-dungeon) — Poison swamp — Hedera boss
-- [**Bosses & Elites**](bosses-elites) — 3 bosses, 6 elites, scaling & enrage
+- [**Frozen Dungeon**](endgame-qol/frozen-dungeon) — Ice cavern — Dragon Frost boss
+- [**Swamp Dungeon**](endgame-qol/swamp-dungeon) — Poison swamp — Hedera boss
+- [**Bosses & Elites**](endgame-qol/bosses-elites) — 3 bosses, 6 elites, scaling & enrage
 
 ### Systems
 
-- [**Combo Meter**](combo-meter) — Kill streaks, damage tiers & tier effects
-- [**Bounty Board**](bounty-board) — Daily & weekly quests, reputation ranks
-- [**Achievements**](achievements) — 24 achievements across 5 categories
-- [**Bestiary**](bestiary) — 32 NPC entries, kill milestones & discovery
-- [**Warden Trials**](warden-trials) — 4-tier wave survival with configurable timers
+- [**Combo Meter**](endgame-qol/combo-meter) — Kill streaks, damage tiers & tier effects
+- [**Bounty Board**](endgame-qol/bounty-board) — Daily & weekly quests, reputation ranks
+- [**Achievements**](endgame-qol/achievements) — 24 achievements across 5 categories
+- [**Bestiary**](endgame-qol/bestiary) — 32 NPC entries, kill milestones & discovery
+- [**Warden Trials**](endgame-qol/warden-trials) — 4-tier wave survival with configurable timers

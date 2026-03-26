@@ -65,7 +65,7 @@ Collect them efficiently by clearing rooms systematically before visiting the tr
 
 Instance-locked encounter. The boss arena is sealed once combat begins.
 
-[View full boss guide](bosses-elites)
+[View full boss guide](endgame-qol/bosses-elites)
 
 ## Chest Loot Zones
 
@@ -83,7 +83,7 @@ Instance-locked encounter. The boss arena is sealed once combat begins.
 1. **Collect Dragon Heart** — Guaranteed drop from Dragon Frost. Required to upgrade your Endgame Bench.
 2. **Spend Flocons** — Trade with Korvyn for Mithril armor, the Frostbite Blade, or potions.
 3. **Craft Mithril Gear** — Use Mithril Bars from Dragon Frost and dungeon chests to forge Mithril-tier equipment.
-4. **Enter Swamp Dungeon** — With upgraded bench, craft the Hedera Key and advance to the [Swamp Dungeon](swamp-dungeon).
+4. **Enter Swamp Dungeon** — With upgraded bench, craft the Hedera Key and advance to the [Swamp Dungeon](endgame-qol/swamp-dungeon).
 
 > [!WARNING]
 > **Block Protection:** Building is restricted inside the dungeon instance. Players cannot break or place blocks. Toggle: `EnableDungeonBlockProtection`

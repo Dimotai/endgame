@@ -37,16 +37,16 @@ EndgameQoL introduces four tiers of endgame materials, each stronger than the la
 
 Follow these four steps to begin your endgame journey.
 
-1. **Install the Plugin** — Download from CurseForge and drop the JAR into your server's `Mods/` folder. See the [Installation Guide](installation) for full details.
+1. **Install the Plugin** — Download from CurseForge and drop the JAR into your server's `Mods/` folder. See the [Installation Guide](endgame-qol/installation) for full details.
 2. **Gear Up** — Gather Adamantite ore and craft your first endgame armor and weapons at a crafting bench. Check traders like Vorthak for rare materials.
 3. **Explore Dungeons** — Venture into the Frozen Dungeon or the Swamp Dungeon. Each contains unique enemies, loot chests, and a final boss encounter.
 4. **Master the Endgame** — Complete bounties, unlock achievements, fill the bestiary, push through Warden Trials, and work your way up to Prisma-tier gear. Chain combos for maximum damage output.
 
 ## Quick Links
 
-- [**Installation Guide**](installation) — Setup, requirements, and configuration
-- [**Weapons & Items**](items-weapons) — All 40 weapons, tools, and accessories
-- [**Bosses & Elites**](bosses-elites) — Boss mechanics, phases, and loot
-- [**Bounty Board**](bounty-board) — Daily and weekly quests
-- [**Achievements**](achievements) — 24 achievements across 5 categories
-- [**Commands**](commands) — All slash commands and permissions
+- [**Installation Guide**](endgame-qol/installation) — Setup, requirements, and configuration
+- [**Weapons & Items**](endgame-qol/items-weapons) — All 40 weapons, tools, and accessories
+- [**Bosses & Elites**](endgame-qol/bosses-elites) — Boss mechanics, phases, and loot
+- [**Bounty Board**](endgame-qol/bounty-board) — Daily and weekly quests
+- [**Achievements**](endgame-qol/achievements) — 24 achievements across 5 categories
+- [**Commands**](endgame-qol/commands) — All slash commands and permissions
