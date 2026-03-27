@@ -75,9 +75,8 @@ public class ScalingTab extends ConfigTabBuilder {
         BossType[] bossTypes = getBossTypesForSubTab(combatSubTab);
         if (bossTypes.length == 0) return "";
 
-        String bgColor = combatSubTab.equals("zone4") ? " style=\"background-color: #2a1a1a;\"" : "";
         StringBuilder sb = new StringBuilder();
-        sb.append("<div class=\"subtab-content\"").append(bgColor).append(">");
+        sb.append("<div class=\"subtab-content\">");
         sb.append("<p class=\"section-hint\">").append(HtmlUtil.escape(I18n.getFor(locale, "ui.scaling.health_hint"))).append("</p>");
 
         // ── Health section ──
@@ -106,7 +105,7 @@ public class ScalingTab extends ConfigTabBuilder {
                     <div class="combat-row">
                         <label class="combat-label" data-hyui-tooltiptext="Damage bonus for %s. +50 means 1.5x, -50 means 0.5x. Set 0 for preset.">%s DMG:</label>
                         <input type="number" id="%s_DmgMult" class="combat-input" step="1" value="%d"/>
-                        <p class="combat-hint">%%%%</p>
+                        <p class="combat-hint">%%</p>
                         <p class="combat-value">= x%.2f</p>
                     </div>
                     """, boss.getDisplayName(), boss.getDisplayName(), boss.name(),
@@ -132,7 +131,7 @@ public class ScalingTab extends ConfigTabBuilder {
                             <div class="combat-row">
                                 <label class="combat-label" data-hyui-tooltiptext="HP bonus per extra player. Ex: 50%% with 3 players = x2.0 HP.">%s:</label>
                                 <input type="number" id="%s_PlayerScaling" class="combat-input" value="%d"/>
-                                <p class="combat-hint">%%%% per player</p>
+                                <p class="combat-hint">%% per player</p>
                             </div>
                             """, boss.getDisplayName(), boss.name(), bc.getPlayerScaling()));
                 }

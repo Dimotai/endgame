@@ -76,7 +76,7 @@ public class WeaponsTab extends ConfigTabBuilder {
                     <div class="combat-row">
                         <label class="combat-label" data-hyui-tooltiptext="Percentage of your damage that heals you on each hit.">%s</label>
                         <input type="number" id="HederaLifestealPct" class="combat-input" step="1" value="%d"/>
-                        <p class="combat-hint">(1 - 50%%%%) of damage healed</p>
+                        <p class="combat-hint">(1 - 50%%) of damage healed</p>
                     </div>
                 </div>
                 """,
@@ -103,7 +103,7 @@ public class WeaponsTab extends ConfigTabBuilder {
                 <div class="info-grid">
                     <p class="subgroup-header">%s</p>
                     <div class="info-row"><p class="info-name">%s</p><p class="info-stats">%.0f dmg x %d ticks = %.0f HP total</p></div>
-                    <div class="info-row"><p class="info-name">%s</p><p class="info-stats">%d%%%% of damage heals you</p></div>
+                    <div class="info-row"><p class="info-name">%s</p><p class="info-stats">%d%% of damage heals you</p></div>
                 </div>
                 """,
                 HtmlUtil.escape(I18n.getFor(locale, "ui.weapons.effect_summary")),
@@ -222,7 +222,7 @@ public class WeaponsTab extends ConfigTabBuilder {
                     <div class="combat-row">
                         <label class="combat-label" data-hyui-tooltiptext="HP threshold below which execution triggers. 25 = 25%% HP.">%s</label>
                         <input type="number" id="VoidMarkThreshold" class="combat-input" step="1" value="%d"/>
-                        <p class="combat-hint">(5 - 75%%%%) of max HP</p>
+                        <p class="combat-hint">(5 - 75%%) of max HP</p>
                     </div>
                     <div class="combat-row">
                         <label class="combat-label" data-hyui-tooltiptext="Damage multiplier for execution strike. 3.0 = triple damage.">%s</label>

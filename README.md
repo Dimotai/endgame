@@ -16,7 +16,7 @@ Hytale server plugin adding endgame content: bosses, weapons, dungeons, NPCs, cr
 - **Combo Meter** — Kill streak tracker with tier effects
 - **Warden Trials** — 4-tier wave survival challenge
 - **Bestiary** — 32 NPC entries with kill milestones
-- **Multi-language** — EN, FR, ES, PT-BR, RU
+- **Multi-language** — EN, PT-BR, RU (FR, ES when officially added to the game)
 - **Database support** — Optional SQL persistence (SQLite, MySQL, MariaDB, PostgreSQL)
 
 ## Requirements

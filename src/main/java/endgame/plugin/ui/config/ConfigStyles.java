@@ -10,7 +10,7 @@ public final class ConfigStyles {
 
     public static final String CSS = """
             <style>
-                .config-container { anchor-width: 900; }
+                .config-container { anchor-width: 1000; }
                 .tab-content { layout-mode: top; padding: 12; }
 
                 /* Typography */
