@@ -50,63 +50,49 @@ public class EventRegistry {
         plugin.getEntityStoreRegistry().registerSystem(new endgame.plugin.ui.snake.ArcadeMachineUseSystem());
     }
 
-    /** Shutdown subsystems. Called from plugin shutdown. */
-    public void shutdown() {
-    }
-
     private void onPlayerDisconnect(PlayerDisconnectEvent event) {
         try {
             if (event.getPlayerRef() == null) return;
-            // Thread-safe: PlayerRef.getUuid() reads a final field, no ECS store access needed
             UUID playerUuid = event.getPlayerRef().getUuid();
             if (playerUuid == null) return;
-            // All downstream methods only touch ConcurrentHashMaps — thread-safe from event thread
-            if (systemRegistry.getGolemVoidBossManager() != null) {
-                systemRegistry.getGolemVoidBossManager().hideBossBarForPlayerUuid(playerUuid);
-            }
-            if (systemRegistry.getGenericBossManager() != null) {
-                systemRegistry.getGenericBossManager().hideBossBarForPlayerUuid(playerUuid);
-            }
-            if (systemRegistry.getDangerZoneTickSystem() != null) {
-                systemRegistry.getDangerZoneTickSystem().clearPlayerState(playerUuid);
-            }
-            if (systemRegistry.getDaggerVanishSystem() != null) {
-                systemRegistry.getDaggerVanishSystem().onPlayerDisconnect(playerUuid);
-            }
-            if (systemRegistry.getPrismaManaCostSystem() != null) {
-                systemRegistry.getPrismaManaCostSystem().onPlayerDisconnect(playerUuid);
-            }
-            if (systemRegistry.getPrismaMirageSystem() != null) {
-                systemRegistry.getPrismaMirageSystem().onPlayerDisconnect(playerUuid);
-            }
-            if (systemRegistry.getWardenTrialManager() != null) {
-                systemRegistry.getWardenTrialManager().failTrial(playerUuid);
-            }
-            if (systemRegistry.getComboMeterManager() != null) {
-                systemRegistry.getComboMeterManager().onPlayerDisconnect(playerUuid);
-            }
-            if (systemRegistry.getGauntletManager() != null) {
-                systemRegistry.getGauntletManager().failGauntlet(playerUuid);
-            }
-            if (systemRegistry.getBountyManager() != null) {
-                systemRegistry.getBountyManager().onPlayerDisconnect(playerUuid);
-            }
-            if (systemRegistry.getBlinkTrailDamageSystem() != null) {
-                systemRegistry.getBlinkTrailDamageSystem().onPlayerDisconnect(playerUuid);
-            }
-            if (systemRegistry.getAccessoryPassiveSystem() != null) {
-                systemRegistry.getAccessoryPassiveSystem().onPlayerDisconnect(playerUuid);
-            }
 
-            // Achievement + Bestiary: evict from manager cache on disconnect
-            if (plugin.getAchievementManager() != null) {
-                plugin.getAchievementManager().onPlayerDisconnect(playerUuid);
-            }
+            // Boss bars
+            var golemMgr = systemRegistry.getGolemVoidBossManager();
+            if (golemMgr != null) golemMgr.hideBossBarForPlayerUuid(playerUuid);
+            var genericMgr = systemRegistry.getGenericBossManager();
+            if (genericMgr != null) genericMgr.hideBossBarForPlayerUuid(playerUuid);
 
-            // Clean area break mode tracking
+            // Systems cleanup
+            var dangerZone = systemRegistry.getDangerZoneTickSystem();
+            if (dangerZone != null) dangerZone.clearPlayerState(playerUuid);
+            var daggerVanish = systemRegistry.getDaggerVanishSystem();
+            if (daggerVanish != null) daggerVanish.onPlayerDisconnect(playerUuid);
+            var manaCost = systemRegistry.getPrismaManaCostSystem();
+            if (manaCost != null) manaCost.onPlayerDisconnect(playerUuid);
+            var mirage = systemRegistry.getPrismaMirageSystem();
+            if (mirage != null) mirage.onPlayerDisconnect(playerUuid);
+            var blink = systemRegistry.getBlinkTrailDamageSystem();
+            if (blink != null) blink.onPlayerDisconnect(playerUuid);
+            var accessory = systemRegistry.getAccessoryPassiveSystem();
+            if (accessory != null) accessory.onPlayerDisconnect(playerUuid);
+
+            // Game modes
+            var warden = systemRegistry.getWardenTrialManager();
+            if (warden != null) warden.failTrial(playerUuid);
+            var combo = systemRegistry.getComboMeterManager();
+            if (combo != null) combo.onPlayerDisconnect(playerUuid);
+            var gauntlet = systemRegistry.getGauntletManager();
+            if (gauntlet != null) gauntlet.failGauntlet(playerUuid);
+            var bounty = systemRegistry.getBountyManager();
+            if (bounty != null) bounty.onPlayerDisconnect(playerUuid);
+
+            // Achievement + Bestiary
+            var achievementMgr = plugin.getAchievementManager();
+            if (achievementMgr != null) achievementMgr.onPlayerDisconnect(playerUuid);
+
+            // Static state cleanup
             endgame.plugin.systems.block.PrismaPickaxeAreaBreakSystem.clearPlayer(playerUuid);
-
-            // Clean i18n locale cache
+            endgame.plugin.utils.CommandRateLimit.clearPlayer(playerUuid);
             I18n.onPlayerDisconnect(playerUuid);
 
             // Database sync: save player data on disconnect (before uncaching component)

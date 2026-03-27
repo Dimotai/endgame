@@ -447,10 +447,6 @@ public class EndgameQoL extends JavaPlugin {
             this.databaseInitializer.shutdown();
         }
 
-        if (this.eventRegistry != null) {
-            this.eventRegistry.shutdown();
-        }
-
         // Reset static state so reload picks up config changes
         endgame.plugin.events.PlayerEventHandler.reset();
         endgame.plugin.managers.RecipeManager.reset();

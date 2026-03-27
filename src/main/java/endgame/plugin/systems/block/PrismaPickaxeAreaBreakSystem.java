@@ -23,6 +23,7 @@ import com.hypixel.hytale.math.vector.Vector3i;
 import com.hypixel.hytale.logger.HytaleLogger;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -32,6 +33,10 @@ import java.util.Set;
  * surrounding blocks in a 3x3 area are also broken if they match
  * the pickaxe's gather types (rocks, ores, soils, soft blocks).
  * The 3x3 plane orients to the face being mined based on player look direction.
+ *
+ * Uses a two-pass algorithm: scan all valid blocks first (read-only),
+ * then break them all and give drops. This prevents world.setBlock() side effects
+ * (block physics, neighbor updates) from aborting the loop mid-way.
  */
 public class PrismaPickaxeAreaBreakSystem extends EntityEventSystem<EntityStore, com.hypixel.hytale.server.core.event.events.ecs.BreakBlockEvent> {
 
@@ -59,6 +64,9 @@ public class PrismaPickaxeAreaBreakSystem extends EntityEventSystem<EntityStore,
         super(com.hypixel.hytale.server.core.event.events.ecs.BreakBlockEvent.class);
     }
 
+    /** Block position + cached drop info, collected in the scan pass. */
+    private record PendingBreak(int x, int y, int z, String dropItemId, int dropQuantity, String dropListId) {}
+
     @Override
     public void handle(int index,
             @Nonnull ArchetypeChunk<EntityStore> archetypeChunk,
@@ -69,17 +77,16 @@ public class PrismaPickaxeAreaBreakSystem extends EntityEventSystem<EntityStore,
         if (event.isCancelled()) return;
         if (PROCESSING.get()) return;
 
+        // Check AreaBreak mode via player UUID set first (most reliable check).
+        Ref<EntityStore> playerRef = archetypeChunk.getReferenceTo(index);
+        java.util.UUID playerUUID = endgame.plugin.utils.EntityUtils.getUuid(store, playerRef);
+        if (playerUUID == null || !AREA_BREAK_PLAYERS.contains(playerUUID)) return;
+
         // Check held item is Prisma Pickaxe
         ItemStack heldItem = event.getItemInHand();
         if (heldItem == null) return;
         String itemId = heldItem.getItemId();
         if (itemId == null || !itemId.contains("Pickaxe_Prisma")) return;
-
-        // Check AreaBreak mode via player UUID set (set by EndgameStanceChangeInteraction).
-        // Don't use isVariant()/itemId — the engine can return stale item state in events.
-        Ref<EntityStore> playerRef = archetypeChunk.getReferenceTo(index);
-        java.util.UUID playerUUID = endgame.plugin.utils.EntityUtils.getUuid(store, playerRef);
-        if (playerUUID == null || !AREA_BREAK_PLAYERS.contains(playerUUID)) return;
 
         LOGGER.atFine().log("[PrismaPickaxe] 3x3 triggered, variant=%s", itemId);
 
@@ -100,7 +107,6 @@ public class PrismaPickaxeAreaBreakSystem extends EntityEventSystem<EntityStore,
         // Determine which face was mined using player eye position relative to block center.
         // The dominant axis (largest delta) is the "depth" axis — the 3x3 plane spans the other two.
         TransformComponent transform = store.getComponent(playerRef, TransformComponent.getComponentType());
-        // depth axis: 0=X, 1=Y, 2=Z
         int depthAxis = 1; // default: Y (horizontal plane)
         if (transform != null) {
             var pos = transform.getPosition();
@@ -112,30 +118,22 @@ public class PrismaPickaxeAreaBreakSystem extends EntityEventSystem<EntityStore,
             } else if (pdz >= pdy) {
                 depthAxis = 2; // player is offset on Z → face is XY plane
             }
-            // else depthAxis stays 1 → player is above/below → face is XZ plane
         }
 
         PROCESSING.set(Boolean.TRUE);
         try {
-            int extraBroken = 0;
+            // === PASS 1: Scan all valid blocks (read-only, no world mutation) ===
+            List<PendingBreak> toBreak = new ArrayList<>(8);
 
             for (int d1 = -1; d1 <= 1; d1++) {
                 for (int d2 = -1; d2 <= 1; d2++) {
-                    if (d1 == 0 && d2 == 0) continue; // center already broken by engine
+                    if (d1 == 0 && d2 == 0) continue;
 
-                    // Re-validate player after each break
-                    if (store.getComponent(playerRef, Player.getComponentType()) == null) {
-                        LOGGER.atFine().log("Player removed during 3x3 break, aborting");
-                        return;
-                    }
-                    if (!world.isAlive()) return;
-
-                    // Spread on the 2 axes perpendicular to the depth axis
                     int bx = cx, by = cy, bz = cz;
                     switch (depthAxis) {
-                        case 0 -> { by = cy + d1; bz = cz + d2; } // face is YZ
-                        case 1 -> { bx = cx + d1; bz = cz + d2; } // face is XZ
-                        case 2 -> { bx = cx + d1; by = cy + d2; } // face is XY
+                        case 0 -> { by = cy + d1; bz = cz + d2; }
+                        case 1 -> { bx = cx + d1; bz = cz + d2; }
+                        case 2 -> { bx = cx + d1; by = cy + d2; }
                     }
 
                     BlockType bt;
@@ -159,63 +157,36 @@ public class PrismaPickaxeAreaBreakSystem extends EntityEventSystem<EntityStore,
                         continue;
                     }
 
-                    // Check claim protection (SimpleClaims soft-dep) before breaking
                     if (!claimBridge.isBreakAllowed(playerUUID, worldName, bx, bz)) {
                         LOGGER.atFine().log("[PrismaPickaxe] Skipped %d,%d,%d (claim protected)", bx, by, bz);
                         continue;
                     }
 
-                    // Cache drop info BEFORE breaking the block
-                    String dropItemId = breaking.getItemId();
-                    int dropQuantity = Math.max(breaking.getQuantity(), 1);
-                    String dropListId = breaking.getDropListId();
-
-                    // Break the block
-                    try {
-                        world.setBlock(bx, by, bz, "Empty");
-                    } catch (Exception e) {
-                        LOGGER.atFine().log("Failed to break block at %d,%d,%d: %s", bx, by, bz, e.getMessage());
-                        continue;
-                    }
-                    extraBroken++;
-
-                    // Re-validate player after setBlock
-                    player = store.getComponent(playerRef, Player.getComponentType());
-                    if (player == null) {
-                        LOGGER.atFine().log("Player removed after block break at %d,%d,%d, aborting", bx, by, bz);
-                        return;
-                    }
-
-                    // Give drops to player
-                    if (dropItemId != null && !dropItemId.isEmpty()) {
-                        // Direct item drop (stone, cobble, etc.)
-                        try {
-                            ItemStack dropStack = new ItemStack(dropItemId, dropQuantity);
-                            ItemStackTransaction transaction = player.giveItem(dropStack, playerRef, store);
-                            ItemStack remainder = transaction.getRemainder();
-                            if (remainder != null && !remainder.isEmpty()) {
-                                ItemUtils.dropItem(playerRef, remainder, store);
-                            }
-                        } catch (Exception e) {
-                            LOGGER.atFine().log("Failed to give drop %s: %s", dropItemId, e.getMessage());
-                        }
-                    } else if (dropListId != null && !dropListId.isEmpty()) {
-                        // DropList-based drops (ores drop ore + cobble via drop list)
-                        try {
-                            List<ItemStack> dropStacks = ItemModule.get().getRandomItemDrops(dropListId);
-                            for (ItemStack dropStack : dropStacks) {
-                                ItemStackTransaction transaction = player.giveItem(
-                                        dropStack, playerRef, store);
-                                ItemStack remainder = transaction.getRemainder();
-                                if (remainder != null && !remainder.isEmpty()) {
-                                    ItemUtils.dropItem(playerRef, remainder, store);
-                                }
-                            }
-                        } catch (Exception e) {
-                            LOGGER.atFine().log("Failed to resolve drop list %s: %s", dropListId, e.getMessage());
-                        }
-                    }
+                    toBreak.add(new PendingBreak(bx, by, bz,
+                            breaking.getItemId(), Math.max(breaking.getQuantity(), 1), breaking.getDropListId()));
                 }
+            }
+
+            if (toBreak.isEmpty()) return;
+
+            // === PASS 2: Break blocks and give drops ===
+            int extraBroken = 0;
+            for (PendingBreak block : toBreak) {
+                if (!world.isAlive()) break;
+
+                try {
+                    world.setBlock(block.x, block.y, block.z, "Empty");
+                } catch (Exception e) {
+                    LOGGER.atFine().log("Failed to break block at %d,%d,%d: %s", block.x, block.y, block.z, e.getMessage());
+                    continue;
+                }
+                extraBroken++;
+
+                // Re-fetch player after each setBlock (side effects can invalidate the reference)
+                player = store.getComponent(playerRef, Player.getComponentType());
+                if (player == null) continue;
+
+                giveDrops(player, playerRef, store, block);
             }
 
             LOGGER.atFine().log("[PrismaPickaxe] 3x3 complete: %d extra blocks broken at %d,%d,%d", extraBroken, cx, cy, cz);
@@ -223,36 +194,68 @@ public class PrismaPickaxeAreaBreakSystem extends EntityEventSystem<EntityStore,
             // Reduce durability for extra blocks broken
             if (extraBroken > 0) {
                 player = store.getComponent(playerRef, Player.getComponentType());
-                if (player == null) return;
-
-                double durabilityLoss = extraBroken * DURABILITY_LOSS_PER_BLOCK;
-                double newDurability = heldItem.getDurability() - durabilityLoss;
-                if (newDurability < 0) newDurability = 0;
-
-                try {
-                    var inv = player.getInventory();
-                    ItemContainer container;
-                    byte activeSlot;
-                    if (inv.usingToolsItem()) {
-                        container = inv.getTools();
-                        activeSlot = inv.getActiveSlot(-8);
-                    } else {
-                        container = inv.getHotbar();
-                        activeSlot = inv.getActiveSlot(-1);
-                    }
-                    if (activeSlot >= 0) {
-                        ItemStack currentSlotItem = container.getItemStack((short) activeSlot);
-                        if (currentSlotItem != null && currentSlotItem.getItemId() != null
-                                && currentSlotItem.getItemId().contains("Pickaxe_Prisma")) {
-                            container.setItemStackForSlot((short) activeSlot, currentSlotItem.withDurability(newDurability));
-                        }
-                    }
-                } catch (Exception e) {
-                    LOGGER.atFine().log("Failed to update durability: %s", e.getMessage());
+                if (player != null) {
+                    updateDurability(player, heldItem, extraBroken);
                 }
             }
         } finally {
             PROCESSING.set(Boolean.FALSE);
+        }
+    }
+
+    private void giveDrops(Player player, Ref<EntityStore> playerRef, Store<EntityStore> store, PendingBreak block) {
+        if (block.dropItemId != null && !block.dropItemId.isEmpty()) {
+            try {
+                ItemStack dropStack = new ItemStack(block.dropItemId, block.dropQuantity);
+                ItemStackTransaction transaction = player.giveItem(dropStack, playerRef, store);
+                ItemStack remainder = transaction.getRemainder();
+                if (remainder != null && !remainder.isEmpty()) {
+                    ItemUtils.dropItem(playerRef, remainder, store);
+                }
+            } catch (Exception e) {
+                LOGGER.atFine().log("Failed to give drop %s: %s", block.dropItemId, e.getMessage());
+            }
+        } else if (block.dropListId != null && !block.dropListId.isEmpty()) {
+            try {
+                List<ItemStack> dropStacks = ItemModule.get().getRandomItemDrops(block.dropListId);
+                for (ItemStack dropStack : dropStacks) {
+                    ItemStackTransaction transaction = player.giveItem(dropStack, playerRef, store);
+                    ItemStack remainder = transaction.getRemainder();
+                    if (remainder != null && !remainder.isEmpty()) {
+                        ItemUtils.dropItem(playerRef, remainder, store);
+                    }
+                }
+            } catch (Exception e) {
+                LOGGER.atFine().log("Failed to resolve drop list %s: %s", block.dropListId, e.getMessage());
+            }
+        }
+    }
+
+    private void updateDurability(Player player, ItemStack heldItem, int extraBroken) {
+        double durabilityLoss = extraBroken * DURABILITY_LOSS_PER_BLOCK;
+        double newDurability = heldItem.getDurability() - durabilityLoss;
+        if (newDurability < 0) newDurability = 0;
+
+        try {
+            var inv = player.getInventory();
+            ItemContainer container;
+            byte activeSlot;
+            if (inv.usingToolsItem()) {
+                container = inv.getTools();
+                activeSlot = inv.getActiveSlot(-8);
+            } else {
+                container = inv.getHotbar();
+                activeSlot = inv.getActiveSlot(-1);
+            }
+            if (activeSlot >= 0) {
+                ItemStack currentSlotItem = container.getItemStack((short) activeSlot);
+                if (currentSlotItem != null && currentSlotItem.getItemId() != null
+                        && currentSlotItem.getItemId().contains("Pickaxe_Prisma")) {
+                    container.setItemStackForSlot((short) activeSlot, currentSlotItem.withDurability(newDurability));
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.atFine().log("Failed to update durability: %s", e.getMessage());
         }
     }
 

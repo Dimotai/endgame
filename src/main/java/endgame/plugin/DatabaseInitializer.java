@@ -44,7 +44,7 @@ public class DatabaseInitializer {
                 this.databaseSyncService = new DatabaseSyncService(repo);
                 this.databaseSyncService.initialize();
             } catch (Exception e) {
-                plugin.getLogger().atWarning().log("[EndgameQoL] Database init failed (non-critical): %s", e.getMessage());
+                plugin.getLogger().atWarning().withCause(e).log("[EndgameQoL] Database init failed (non-critical)");
                 this.databaseSyncService = new DatabaseSyncService(null);
             }
         } else {

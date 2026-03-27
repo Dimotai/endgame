@@ -5,6 +5,7 @@ import com.hypixel.hytale.logger.HytaleLogger;
 import javax.annotation.Nullable;
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.Set;
 
 /**
  * All SQL operations for EndgameQoL player data persistence.
@@ -57,6 +58,11 @@ public class EndgameRepository {
             } catch (SQLException ignored) {
                 // Index already exists — expected on subsequent startups
             }
+            try {
+                stmt.execute("CREATE INDEX idx_leaderboard_timestamp ON Endgame_Leaderboard (timestamp)");
+            } catch (SQLException ignored) {
+                // Index already exists — expected on subsequent startups
+            }
 
             // Migration: add columns for existing databases (pre-4.0.0)
             migrateAddColumn(conn, "Endgame_PlayerData", "achievement_data", "TEXT");
@@ -68,11 +74,21 @@ public class EndgameRepository {
         }
     }
 
+    private static final Set<String> ALLOWED_TABLES = Set.of("Endgame_PlayerData", "Endgame_Leaderboard");
+    private static final Set<String> ALLOWED_COLUMNS = Set.of(
+            "achievement_data", "bestiary_data", "accessory_pouch", "combo_personal_best",
+            "player_name", "best_wave", "timestamp");
+
     /**
      * Safely add a column if it doesn't exist. Catches the "duplicate column" error
      * which varies across DB engines, so we just try and swallow the failure.
+     * Validates table/column names against a whitelist to prevent SQL injection.
      */
     private void migrateAddColumn(Connection conn, String table, String column, String type) {
+        if (!ALLOWED_TABLES.contains(table) || !ALLOWED_COLUMNS.contains(column)) {
+            LOGGER.atWarning().log("[Database] Rejected migration: invalid table/column %s.%s", table, column);
+            return;
+        }
         try (Statement stmt = conn.createStatement()) {
             stmt.execute("ALTER TABLE " + table + " ADD COLUMN " + column + " " + type);
             LOGGER.atInfo().log("[Database] Migration: added column %s.%s", table, column);

@@ -37,7 +37,7 @@ Explore two handcrafted dungeons and face three major bosses with multi-phase me
 
 ### Gear & Crafting
 
-62+ weapons across 9 types, 5 armor sets, 6 accessories, legendary tools, and a tiered crafting system.
+40+ weapons across 9 types, 5 armor sets, 6 accessories, legendary tools, and a tiered crafting system.
 
 <buttons>
     <button topic="weapons">Weapons</button>

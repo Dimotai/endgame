@@ -12,6 +12,7 @@ import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.Universe;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import com.hypixel.hytale.logger.HytaleLogger;
 import endgame.plugin.EndgameQoL;
 import endgame.plugin.managers.BountyManager;
 import endgame.plugin.managers.boss.GenericBossManager;
@@ -312,7 +313,9 @@ public class EgAdminCommand extends AbstractCommandCollection {
                         return pRef;
                     }
                 }
-            } catch (Exception ignored) {}
+            } catch (Exception e) {
+                HytaleLogger.get("EndgameQoL").atWarning().log("[EgAdmin] Error finding player '%s': %s", name, e.getMessage());
+            }
             return null;
         }
     }

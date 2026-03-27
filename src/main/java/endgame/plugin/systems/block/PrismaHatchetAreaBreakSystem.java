@@ -22,12 +22,18 @@ import com.hypixel.hytale.math.vector.Vector3i;
 import com.hypixel.hytale.logger.HytaleLogger;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
  * Prisma Hatchet 3x3 area mining system.
  * When a block is broken with the Prisma Hatchet, surrounding blocks in a 3x3 area
  * (same Y-plane) are also broken if they match the hatchet's primary gather types.
+ *
+ * Uses a two-pass algorithm: scan all valid blocks first (read-only),
+ * then break them all and give drops. This prevents world.setBlock() side effects
+ * (tree collapse, block physics) from aborting the loop mid-way.
  */
 public class PrismaHatchetAreaBreakSystem extends EntityEventSystem<EntityStore, com.hypixel.hytale.server.core.event.events.ecs.BreakBlockEvent> {
 
@@ -42,6 +48,9 @@ public class PrismaHatchetAreaBreakSystem extends EntityEventSystem<EntityStore,
     public PrismaHatchetAreaBreakSystem() {
         super(com.hypixel.hytale.server.core.event.events.ecs.BreakBlockEvent.class);
     }
+
+    /** Block position + cached drop info, collected in the scan pass. */
+    private record PendingBreak(int x, int y, int z, String dropItemId) {}
 
     @Override
     public void handle(int index,
@@ -74,25 +83,17 @@ public class PrismaHatchetAreaBreakSystem extends EntityEventSystem<EntityStore,
         Player player = store.getComponent(playerRef, Player.getComponentType());
         if (player == null) return;
 
-        // Get player UUID for claim permission checks (SimpleClaims soft-dep)
         java.util.UUID playerUUID = endgame.plugin.utils.EntityUtils.getUuid(store, playerRef);
         var claimBridge = endgame.plugin.integration.ClaimProtectionBridge.get();
 
         PROCESSING.set(Boolean.TRUE);
         try {
-            int extraBroken = 0;
+            // === PASS 1: Scan all valid blocks (read-only, no world mutation) ===
+            List<PendingBreak> toBreak = new ArrayList<>(8);
 
             for (int dx = -1; dx <= 1; dx++) {
                 for (int dz = -1; dz <= 1; dz++) {
-                    if (dx == 0 && dz == 0) continue; // center already broken by engine
-
-                    // Re-validate player after each break — cascading tree collapse
-                    // from world.setBlock() can invalidate the player entity
-                    if (store.getComponent(playerRef, Player.getComponentType()) == null) {
-                        LOGGER.atFine().log("Player removed during 3x3 break, aborting");
-                        return;
-                    }
-                    if (!world.isAlive()) return;
+                    if (dx == 0 && dz == 0) continue;
 
                     int bx = cx + dx;
                     int bz = cz + dz;
@@ -114,43 +115,44 @@ public class PrismaHatchetAreaBreakSystem extends EntityEventSystem<EntityStore,
                     String gatherType = breaking.getGatherType();
                     if (gatherType == null || !ALLOWED_GATHER_TYPES.contains(gatherType)) continue;
 
-                    // Check claim protection (SimpleClaims soft-dep) before breaking
                     if (!claimBridge.isBreakAllowed(playerUUID, worldName, bx, bz)) {
                         LOGGER.atFine().log("[PrismaHatchet] Skipped %d,%d,%d (claim protected)", bx, cy, bz);
                         continue;
                     }
 
-                    // Cache drop info BEFORE breaking the block
-                    String dropItemId = breaking.getItemId();
+                    toBreak.add(new PendingBreak(bx, cy, bz, breaking.getItemId()));
+                }
+            }
 
-                    // Break the block
+            if (toBreak.isEmpty()) return;
+
+            // === PASS 2: Break blocks and give drops ===
+            int extraBroken = 0;
+            for (PendingBreak block : toBreak) {
+                if (!world.isAlive()) break;
+
+                try {
+                    world.setBlock(block.x, block.y, block.z, "Empty");
+                } catch (Exception e) {
+                    LOGGER.atFine().log("Failed to break block at %d,%d,%d: %s", block.x, block.y, block.z, e.getMessage());
+                    continue;
+                }
+                extraBroken++;
+
+                // Re-fetch player after each setBlock (side effects can invalidate the reference)
+                player = store.getComponent(playerRef, Player.getComponentType());
+                if (player == null) continue;
+
+                if (block.dropItemId != null && !block.dropItemId.isEmpty()) {
                     try {
-                        world.setBlock(bx, cy, bz, "Empty");
-                    } catch (Exception e) {
-                        LOGGER.atFine().log("Failed to break block at %d,%d,%d: %s", bx, cy, bz, e.getMessage());
-                        continue;
-                    }
-                    extraBroken++;
-
-                    // Re-validate player after setBlock — tree collapse can remove the player
-                    player = store.getComponent(playerRef, Player.getComponentType());
-                    if (player == null) {
-                        LOGGER.atFine().log("Player removed after block break at %d,%d,%d, aborting", bx, cy, bz);
-                        return;
-                    }
-
-                    // Give drops to player
-                    if (dropItemId != null && !dropItemId.isEmpty()) {
-                        try {
-                            ItemStack dropStack = new ItemStack(dropItemId, 1);
-                            ItemStackTransaction transaction = player.giveItem(dropStack, playerRef, store);
-                            ItemStack remainder = transaction.getRemainder();
-                            if (remainder != null && !remainder.isEmpty()) {
-                                ItemUtils.dropItem(playerRef, remainder, store);
-                            }
-                        } catch (Exception e) {
-                            LOGGER.atFine().log("Failed to give drop %s: %s", dropItemId, e.getMessage());
+                        ItemStack dropStack = new ItemStack(block.dropItemId, 1);
+                        ItemStackTransaction transaction = player.giveItem(dropStack, playerRef, store);
+                        ItemStack remainder = transaction.getRemainder();
+                        if (remainder != null && !remainder.isEmpty()) {
+                            ItemUtils.dropItem(playerRef, remainder, store);
                         }
+                    } catch (Exception e) {
+                        LOGGER.atFine().log("Failed to give drop %s: %s", block.dropItemId, e.getMessage());
                     }
                 }
             }
@@ -158,32 +160,32 @@ public class PrismaHatchetAreaBreakSystem extends EntityEventSystem<EntityStore,
             // Reduce durability for extra blocks broken
             if (extraBroken > 0) {
                 player = store.getComponent(playerRef, Player.getComponentType());
-                if (player == null) return;
+                if (player != null) {
+                    double durabilityLoss = extraBroken * DURABILITY_LOSS_PER_BLOCK;
+                    double newDurability = heldItem.getDurability() - durabilityLoss;
+                    if (newDurability < 0) newDurability = 0;
 
-                double durabilityLoss = extraBroken * DURABILITY_LOSS_PER_BLOCK;
-                double newDurability = heldItem.getDurability() - durabilityLoss;
-                if (newDurability < 0) newDurability = 0;
-
-                try {
-                    var inv = player.getInventory();
-                    ItemContainer container;
-                    byte activeSlot;
-                    if (inv.usingToolsItem()) {
-                        container = inv.getTools();
-                        activeSlot = inv.getActiveSlot(-8);
-                    } else {
-                        container = inv.getHotbar();
-                        activeSlot = inv.getActiveSlot(-1);
-                    }
-                    if (activeSlot >= 0) {
-                        ItemStack currentSlotItem = container.getItemStack((short) activeSlot);
-                        if (currentSlotItem != null && currentSlotItem.getItemId() != null
-                                && currentSlotItem.getItemId().contains("Hatchet_Prisma")) {
-                            container.setItemStackForSlot((short) activeSlot, currentSlotItem.withDurability(newDurability));
+                    try {
+                        var inv = player.getInventory();
+                        ItemContainer container;
+                        byte activeSlot;
+                        if (inv.usingToolsItem()) {
+                            container = inv.getTools();
+                            activeSlot = inv.getActiveSlot(-8);
+                        } else {
+                            container = inv.getHotbar();
+                            activeSlot = inv.getActiveSlot(-1);
                         }
+                        if (activeSlot >= 0) {
+                            ItemStack currentSlotItem = container.getItemStack((short) activeSlot);
+                            if (currentSlotItem != null && currentSlotItem.getItemId() != null
+                                    && currentSlotItem.getItemId().contains("Hatchet_Prisma")) {
+                                container.setItemStackForSlot((short) activeSlot, currentSlotItem.withDurability(newDurability));
+                            }
+                        }
+                    } catch (Exception e) {
+                        LOGGER.atFine().log("Failed to update durability: %s", e.getMessage());
                     }
-                } catch (Exception e) {
-                    LOGGER.atFine().log("Failed to update durability: %s", e.getMessage());
                 }
             }
         } finally {

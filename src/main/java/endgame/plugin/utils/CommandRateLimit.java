@@ -29,6 +29,13 @@ public final class CommandRateLimit {
     }
 
     /**
+     * Remove a player's entry on disconnect.
+     */
+    public static void clearPlayer(UUID uuid) {
+        if (uuid != null) lastUseTime.remove(uuid);
+    }
+
+    /**
      * Remove stale entries older than 60s. Called from DangerZoneTickSystem.cleanup().
      */
     public static void cleanup() {

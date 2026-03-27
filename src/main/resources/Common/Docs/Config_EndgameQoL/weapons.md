@@ -1,13 +1,13 @@
 ---
 name: Weapons
-description: All 62+ weapons by type
+description: All 40+ weapons by type
 author: Lewai
 sort-index: 1
 ---
 
 # <gradient data="#ff6600:#d16eff:#55ffff">Weapons</gradient>
 
-Endgame & QoL adds 62+ weapons across 9 types, spanning 8 material tiers. Higher tiers unlock stronger stats and unique signature abilities.
+Endgame & QoL adds 40+ weapons across 9 types, spanning 8 material tiers. Higher tiers unlock stronger stats and unique signature abilities.
 
 ---
 

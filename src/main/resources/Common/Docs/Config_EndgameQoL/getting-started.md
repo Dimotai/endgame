@@ -29,7 +29,7 @@ Drop the <#d16eff>EndgameAndQoL</#d16eff> JAR into your server's <#55ffff>Mods/<
 
 On first startup the plugin creates a default <#aaaaaa>EndgameConfig.json</#aaaaaa> with balanced settings. All content loads automatically:
 
-- 62+ weapons, 5 armor sets, 6 accessories
+- 40+ weapons, 5 armor sets, 6 accessories
 - 10+ new NPCs in Zone 4
 - 3 boss encounters + 2 dungeon instances
 - Warden's Trial (4-tier wave survival)

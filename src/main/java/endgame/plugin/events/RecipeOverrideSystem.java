@@ -53,7 +53,10 @@ public class RecipeOverrideSystem extends EntityEventSystem<EntityStore, CraftRe
             "Warden_Challenge_I", "Warden_Challenge_II",
             "Warden_Challenge_III", "Warden_Challenge_IV",
             "Advanced_Glider", "Standard_Glider", "Endgame_Glider",
-            "Hedera_Key"
+            "Hedera_Key",
+            "Armor_Onyxium_Head", "Armor_Onyxium_Chest", "Armor_Onyxium_Legs", "Armor_Onyxium_Hands",
+            "Armor_Prisma_Head", "Armor_Prisma_Chest", "Armor_Prisma_Legs", "Armor_Prisma_Hands",
+            "Armor_Mithril_Head", "Armor_Mithril_Chest", "Armor_Mithril_Legs", "Armor_Mithril_Hands"
     );
 
     private static final Set<String> DISABLED_BY_DEFAULT = Set.of("Ore_Mithril", "Ore_Onyxium");

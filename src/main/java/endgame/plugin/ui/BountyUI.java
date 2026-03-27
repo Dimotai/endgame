@@ -630,20 +630,24 @@ public class BountyUI {
         }
     }
 
+    private static final java.util.Map<String, BountyTemplate> TEMPLATE_CACHE = new java.util.concurrent.ConcurrentHashMap<>();
+
     private static BountyTemplate findTemplate(String id) {
-        for (BountyTemplate t : BountyTemplate.getEasyPool()) {
-            if (t.getId().equals(id)) return t;
-        }
-        for (BountyTemplate t : BountyTemplate.getMediumPool()) {
-            if (t.getId().equals(id)) return t;
-        }
-        for (BountyTemplate t : BountyTemplate.getHardPool()) {
-            if (t.getId().equals(id)) return t;
-        }
-        for (BountyTemplate t : BountyTemplate.getWeeklyPool()) {
-            if (t.getId().equals(id)) return t;
-        }
-        return null;
+        return TEMPLATE_CACHE.computeIfAbsent(id, key -> {
+            for (BountyTemplate t : BountyTemplate.getEasyPool()) {
+                if (t.getId().equals(key)) return t;
+            }
+            for (BountyTemplate t : BountyTemplate.getMediumPool()) {
+                if (t.getId().equals(key)) return t;
+            }
+            for (BountyTemplate t : BountyTemplate.getHardPool()) {
+                if (t.getId().equals(key)) return t;
+            }
+            for (BountyTemplate t : BountyTemplate.getWeeklyPool()) {
+                if (t.getId().equals(key)) return t;
+            }
+            return null;
+        });
     }
 
     private static String escapeHtml(String text) {

@@ -26,8 +26,6 @@ import java.util.Map;
 public class StatusUI {
 
     private static final HytaleLogger LOGGER = HytaleLogger.get("EndgameQoL.StatusUI");
-    private static final String VERSION = "4.0.3";
-
     public static void open(EndgameQoL plugin, PlayerRef playerRef, Store<EntityStore> store) {
         EndgameConfig config = plugin.getConfig().get();
         String locale = I18n.resolveLocale(playerRef);
@@ -92,6 +90,8 @@ public class StatusUI {
         } catch (Exception ignored) {}
         int localesLoaded = I18n.getLoadedLocaleCount();
 
+        String version = String.valueOf(plugin.getManifest().getVersion());
+
         // --- Build page ---
         StringBuilder sb = new StringBuilder();
         sb.append(CSS);
@@ -112,8 +112,7 @@ public class StatusUI {
                         </span>
                     </p>
                     <p class="sd-ver-badge">
-                        <span data-hyui-color="#8855cc">v""").append(VERSION).append("""
-                        </span>
+                        <span data-hyui-color="#8855cc">v""").append(version).append("</span>\n").append("""
                     </p>
                 </div>
                 <div class="sd-accent-line"></div>

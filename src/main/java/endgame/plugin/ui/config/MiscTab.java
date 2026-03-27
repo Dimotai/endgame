@@ -159,7 +159,7 @@ public class MiscTab extends ConfigTabBuilder {
         sb.append("<div class=\"divider\"></div>");
 
         // ── Section: The Gauntlet ──
-        sb.append("<p class=\"section-header\">").append(HtmlUtil.escape(I18n.getFor(locale, "ui.misc.gauntlet"))).append("</p>");
+        sb.append("<p class=\"section-header\">The Gauntlet — WIP</p>");
         sb.append("<div class=\"scope-card\">");
         sb.append(String.format("""
                 <div class="toggle-row">
@@ -169,7 +169,7 @@ public class MiscTab extends ConfigTabBuilder {
                 <div class="slider-row">
                     <label class="slider-label" data-hyui-tooltiptext="HP/Damage scaling per wave (percentage). Range: 0-100.">%s</label>
                     <input type="range" class="slider-number-field" id="GauntletScaling" min="0" max="100" value="%d" step="1" style="anchor-width: 180; anchor-height: 24;"/>
-                    <p class="slider-value">%d%%%%</p>
+                    <p class="slider-value">%d%%</p>
                 </div>
                 <div class="slider-row">
                     <label class="slider-label" data-hyui-tooltiptext="Number of buff choices between boss waves. Range: 1-5.">%s</label>

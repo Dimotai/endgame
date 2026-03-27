@@ -45,13 +45,15 @@ public class RPGLevelingBridge {
      * Reads xpReward from BossConfig (data-driven).
      */
     public void addBossKillXP(UUID playerUuid, BossType bossType) {
-        if (api == null || playerUuid == null || bossType == null) return;
+        RPGLevelingAPI apiRef = api;
+        XPSource sourceRef = bossKillSource;
+        if (apiRef == null || sourceRef == null || playerUuid == null || bossType == null) return;
 
         BossConfig bc = plugin.getConfig().get().getBossConfig(bossType);
         int xp = bc.getXpReward();
         if (xp <= 0) return;
 
-        boolean success = api.addXP(playerUuid, xp, bossKillSource);
+        boolean success = apiRef.addXP(playerUuid, xp, sourceRef);
 
         plugin.getLogger().atFine().log("[RPGLeveling] %s kill → %d XP to %s (success=%b)",
                 bossType.getDisplayName(), xp, playerUuid, success);
@@ -61,10 +63,11 @@ public class RPGLevelingBridge {
      * Award arbitrary XP to a player with a named source (bounty, achievement, etc.).
      */
     public void addXP(UUID playerUuid, int xp, String sourceName) {
-        if (api == null || playerUuid == null || xp <= 0) return;
+        RPGLevelingAPI apiRef = api;
+        if (apiRef == null || playerUuid == null || xp <= 0) return;
         try {
             XPSource source = XPSource.create(sourceName);
-            boolean success = api.addXP(playerUuid, xp, source);
+            boolean success = apiRef.addXP(playerUuid, xp, source);
             plugin.getLogger().atFine().log("[RPGLeveling] %s → %d XP to %s (success=%b)",
                     sourceName, xp, playerUuid, success);
         } catch (Exception e) {

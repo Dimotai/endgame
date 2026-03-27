@@ -41,11 +41,11 @@
   "Tool": {
     "Specs": [
       {
-        "Power": 10.0,
+        "Power": 1.0,
         "GatherType": "SoftBlocks"
       },
       {
-        "Power": 10.0,
+        "Power": 1.0,
         "GatherType": "Soils"
       },
       {
