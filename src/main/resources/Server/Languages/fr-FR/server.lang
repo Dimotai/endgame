@@ -39,8 +39,8 @@ items.Ingredient_Forest_Essence.name = Essence de la Forêt
 items.Ingredient_Forest_Essence.description = Une essence concentrée de la forêt, pulsant d'énergie vitale. Utilisée pour fabriquer les <color is="#2E8B57">Dagues Liées de Vignes</color> et améliorer l'Enclume Endgame au <color is="#FFD700">Niveau 5</color>.
 items.Dragon_Heart.name = Cœur de Dragon
 items.Dragon_Heart.description = Le cœur palpitant d'un dragon terrassé, encore chaud d'un pouvoir ancestral. Nécessaire pour améliorer l'Enclume Endgame au <color is="#FFD700">Niveau 5</color>.
-items.Big_Rex_Cave_Leather.name = Cuir de Souverain Suprême
-items.Big_Rex_Cave_Leather.description = Un cuir épais et résistant récolté sur l'Alpha Rex des cavernes. Il semble ancestral et incroyablement durable. Utilisé pour fabriquer les <color is="#FFD700">Améliorations de Sac Endgame I à III</color>.
+items.Big_Rex_Cave_Leather.name = Cuir d'Alpha Rex
+items.Big_Rex_Cave_Leather.description = Un cuir épais et résistant récolté sur l'Alpha Rex. Il semble ancestral et incroyablement durable. Utilisé pour fabriquer les <color is="#FFD700">Améliorations de Sac Endgame I à III</color>.
 items.Endgame_Upgrade_Backpack_1.name = Amélioration de Sac Endgame I
 items.Endgame_Upgrade_Backpack_1.description = Augmente la capacité de votre sac de 9 emplacements.
 items.Endgame_Upgrade_Backpack_2.name = Amélioration de Sac Endgame II
@@ -82,7 +82,7 @@ items.Weapon_Daggers_Prisma.name = Dagues de Prisma
 items.Weapon_Daggers_Prisma.description = Lames jumelles forgées en cristal prismatique, réfractant la lumière à chaque coup. Leur tranchant vibre d'énergie résonnante qui brise les défenses à l'impact.
 items.Hedera_Key.name = Clé d'Hedera
 items.Hedera_Key.description = Une clé dorée forgée à partir des vignes ancestrales d'<color is="#2E8B57">Hedera</color>. Ouvre les portes scellées du <color is="#2E8B57">Donjon du Marais</color>.
-items.Endgame_Portal_Frozen_Dungeon.name = Clé du Donjon Gelé
+items.Endgame_Portal_Frozen_Dungeon.name = Clé du Donjon de Glace
 items.Endgame_Portal_Frozen_Dungeon.description = Une clé forgée dans la glace éternelle, sa surface crépite d'énergie gelée. <color is="#b8860b">Clic Droit</color> sur un <color is="#a9a9a9">Portail Ancestral</color> pour ouvrir le passage vers <color is="#7de8ff">Frostfall</color>.\nUn bastion fracassé suspendu au-dessus du vide, où des <color is="#7de8ff">Yétis de Glace</color> rôdent dans les ruines ouvertes et un <color is="#7de8ff">Dragon de Glace</color> survole les cieux gelés.
 portals.frozen_dungeon = Porte de Frostfall
 portals.frozen_dungeon.description = Une faille hurlante de <color is="#7de8ff">glace et de vide</color>, ses bords crépitant d'éclairs gelés. Au-delà se trouve un bastion en ruines ouvert au <color is="#B0C4DE">ciel infini</color>.
@@ -95,9 +95,9 @@ portals.swamp_dungeon.tip2 = <i><color is="#2E8B57">et quelque part dans les pro
 npcRoles.Endgame_Yeti.name = Yéti de Glace
 npcRoles.Endgame_Rat_Frost.name = Rat de Glace
 npcRoles.Endgame_Toad_Frost.name = Crapaud de Glace
-items.Flocon_Currency.name = Monnaie Flocon
-items.Flocon_Currency.description = Un flocon de neige scintillant qui ne fond jamais, pulsant de la magie glaciale du Donjon Gelé.
-items.Swamp_Currency.name = Monnaie du Marais
+items.Flocon_Currency.name = Monnaie du Donjon de Glace
+items.Flocon_Currency.description = Un flocon de neige scintillant qui ne fond jamais, pulsant de la magie glaciale du Donjon de Glace.
+items.Swamp_Currency.name = Monnaie du Donjon du Marais
 items.Swamp_Currency.description = Un jeton trouble dragué des profondeurs du Donjon du Marais, enduit de mousse ancestrale et d'enchantement sombre.
 items.Swamp_Ingot.name = Lingot du Marais
 items.Swamp_Ingot.description = Un lingot dense fondu à partir de minerais trouvés dans les profondeurs du Donjon du Marais, veiné de résidus bioluminescents. Utilisé pour fabriquer la <color is="#FFD700">Clé d'Hedera</color>.

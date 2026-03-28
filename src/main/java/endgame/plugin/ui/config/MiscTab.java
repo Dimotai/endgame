@@ -158,31 +158,40 @@ public class MiscTab extends ConfigTabBuilder {
 
         sb.append("<div class=\"divider\"></div>");
 
-        // ── Section: The Gauntlet ──
-        sb.append("<p class=\"section-header\">The Gauntlet — WIP</p>");
+        // ── Section: Warden Trials ──
+        sb.append("<p class=\"section-header\">Warden Trials</p>");
         sb.append("<div class=\"scope-card\">");
         sb.append(String.format("""
                 <div class="toggle-row">
-                    <input type="checkbox" id="GauntletEnabled" %s/>
-                    <label class="toggle-label" data-hyui-tooltiptext="Enable infinite escalating wave survival mode.">%s</label>
+                    <input type="checkbox" id="WardenTrialEnabled" %s/>
+                    <label class="toggle-label" data-hyui-tooltiptext="Enable Warden Trial challenges.">Enabled</label>
                 </div>
                 <div class="slider-row">
-                    <label class="slider-label" data-hyui-tooltiptext="HP/Damage scaling per wave (percentage). Range: 0-100.">%s</label>
-                    <input type="range" class="slider-number-field" id="GauntletScaling" min="0" max="100" value="%d" step="1" style="anchor-width: 180; anchor-height: 24;"/>
-                    <p class="slider-value">%d%%</p>
+                    <label class="slider-label" data-hyui-tooltiptext="Time limit for Tier I (seconds). 0 = no limit.">Tier I Timer</label>
+                    <input type="range" class="slider-number-field" id="WardenTimer1" min="0" max="600" value="%d" step="10" style="anchor-width: 180; anchor-height: 24;"/>
+                    <p class="slider-value">%ds</p>
                 </div>
                 <div class="slider-row">
-                    <label class="slider-label" data-hyui-tooltiptext="Number of buff choices between boss waves. Range: 1-5.">%s</label>
-                    <input type="range" class="slider-number-field" id="GauntletBuffCount" min="1" max="5" value="%d" step="1" style="anchor-width: 180; anchor-height: 24;"/>
-                    <p class="slider-value">%d</p>
+                    <label class="slider-label" data-hyui-tooltiptext="Time limit for Tier II (seconds). 0 = no limit.">Tier II Timer</label>
+                    <input type="range" class="slider-number-field" id="WardenTimer2" min="0" max="600" value="%d" step="10" style="anchor-width: 180; anchor-height: 24;"/>
+                    <p class="slider-value">%ds</p>
+                </div>
+                <div class="slider-row">
+                    <label class="slider-label" data-hyui-tooltiptext="Time limit for Tier III (seconds). 0 = no limit.">Tier III Timer</label>
+                    <input type="range" class="slider-number-field" id="WardenTimer3" min="0" max="600" value="%d" step="10" style="anchor-width: 180; anchor-height: 24;"/>
+                    <p class="slider-value">%ds</p>
+                </div>
+                <div class="slider-row">
+                    <label class="slider-label" data-hyui-tooltiptext="Time limit for Tier IV (seconds). 0 = no limit.">Tier IV Timer</label>
+                    <input type="range" class="slider-number-field" id="WardenTimer4" min="0" max="600" value="%d" step="10" style="anchor-width: 180; anchor-height: 24;"/>
+                    <p class="slider-value">%ds</p>
                 </div>
                 """,
-                config.isGauntletEnabled() ? "checked" : "",
-                HtmlUtil.escape(I18n.getFor(locale, "ui.misc.gauntlet_toggle")),
-                HtmlUtil.escape(I18n.getFor(locale, "ui.misc.gauntlet_scaling")),
-                config.getGauntletScalingPercent(), config.getGauntletScalingPercent(),
-                HtmlUtil.escape(I18n.getFor(locale, "ui.misc.gauntlet_buff_count")),
-                config.getGauntletBuffCount(), config.getGauntletBuffCount()));
+                config.isWardenTrialEnabled() ? "checked" : "",
+                config.getWardenTrialTimer(0), config.getWardenTrialTimer(0),
+                config.getWardenTrialTimer(1), config.getWardenTrialTimer(1),
+                config.getWardenTrialTimer(2), config.getWardenTrialTimer(2),
+                config.getWardenTrialTimer(3), config.getWardenTrialTimer(3)));
         sb.append("</div>");
 
         sb.append("<div class=\"divider\"></div>");
@@ -349,26 +358,22 @@ public class MiscTab extends ConfigTabBuilder {
             LOGGER.atFine().log("[ConfigUI] Combo decay: %s", data);
         });
 
-        // ── Gauntlet ──
+        // ── Warden Trials ──
 
-        builder.addEventListener("GauntletEnabled", CustomUIEventBindingType.ValueChanged, (data, ctx) -> {
+        builder.addEventListener("WardenTrialEnabled", CustomUIEventBindingType.ValueChanged, (data, ctx) -> {
             if (data == null) return;
-            config.setGauntletEnabled(Boolean.parseBoolean(data.toString()));
-            saveManager.markDirty();
-            LOGGER.atInfo().log("[ConfigUI] Gauntlet enabled: %s", data);
-        });
-
-        builder.addEventListener("GauntletScaling", CustomUIEventBindingType.ValueChanged, (data, ctx) -> {
-            if (data == null) return;
-            config.setGauntletScalingPercent(parseInt(data, 10));
+            config.setWardenTrialEnabled(Boolean.parseBoolean(data.toString()));
             saveManager.markDirty();
         });
 
-        builder.addEventListener("GauntletBuffCount", CustomUIEventBindingType.ValueChanged, (data, ctx) -> {
-            if (data == null) return;
-            config.setGauntletBuffCount(parseInt(data, 3));
-            saveManager.markDirty();
-        });
+        for (int tier = 0; tier < 4; tier++) {
+            final int t = tier;
+            builder.addEventListener("WardenTimer" + (tier + 1), CustomUIEventBindingType.ValueChanged, (data, ctx) -> {
+                if (data == null) return;
+                config.setWardenTrialTimer(t, parseInt(data, 270));
+                saveManager.markDirty();
+            });
+        }
 
         // ── Bounty Board ──
 

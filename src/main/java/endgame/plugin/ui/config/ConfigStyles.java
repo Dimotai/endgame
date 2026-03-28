@@ -22,7 +22,7 @@ public final class ConfigStyles {
                 /* Cards — unified dark navy */
                 .card { layout-mode: top; padding: 10; background-color: #181c28; margin-bottom: 6; }
                 .card-row { layout-mode: left; vertical-align: center; anchor-height: 36; padding: 6; }
-                .card-title { font-size: 13; color: #ffffff; font-weight: bold; anchor-width: 100; }
+                .card-title { font-size: 13; color: #ffffff; font-weight: bold; anchor-width: 130; }
                 .card-dropdown { anchor-width: 280; anchor-height: 32; }
 
                 /* Scope/toggle cards — same base, subtle left accent via padding */
@@ -35,20 +35,20 @@ public final class ConfigStyles {
                 .custom-card { layout-mode: top; padding: 12; background-color: #1e2030; margin-bottom: 8; }
                 .custom-header { font-size: 13; color: #bb99ff; font-weight: bold; anchor-height: 22; }
                 .slider-row { layout-mode: left; vertical-align: center; anchor-height: 40; padding-top: 4; }
-                .slider-label { font-size: 12; color: #c0c8d8; anchor-width: 100; }
+                .slider-label { font-size: 12; color: #c0c8d8; anchor-width: 140; }
                 .slider { anchor-width: 200; anchor-height: 24; }
                 .slider-value { font-size: 14; color: #bb99ff; font-weight: bold; anchor-width: 70; padding-left: 12; }
 
                 /* Info grid */
                 .info-grid { layout-mode: top; padding-top: 6; }
                 .info-row { layout-mode: left; anchor-height: 26; padding: 4; background-color: #1e2233; margin-bottom: 2; }
-                .info-name { font-size: 12; color: #bb99ff; anchor-width: 160; }
+                .info-name { font-size: 12; color: #bb99ff; anchor-width: 180; }
                 .info-stats { font-size: 11; color: #8899aa; }
 
                 /* Combat inputs */
                 .combat-section { layout-mode: top; background-color: #141820; padding: 6; margin-bottom: 4; }
                 .combat-row { layout-mode: left; vertical-align: center; anchor-height: 30; padding-left: 8; margin-bottom: 2; }
-                .combat-label { font-size: 12; color: #c0c8d8; anchor-width: 130; }
+                .combat-label { font-size: 12; color: #c0c8d8; anchor-width: 160; }
                 .combat-input { anchor-width: 70; anchor-height: 26; }
                 .combat-hint { font-size: 10; color: #556677; padding-left: 8; }
                 .combat-value { font-size: 11; color: #66cc88; padding-left: 4; anchor-width: 80; }

@@ -256,10 +256,9 @@ public class IntegrationTab extends ConfigTabBuilder {
                     <p class="group-header">%s</p>
                     <p class="section-hint">%s</p>
                     <div class="info-grid">
-                        <div class="info-row"><p class="info-name">Frozen Dungeon</p><p class="info-stats">Levels 80-110 | Yeti: Lv100, Rat: Lv85</p></div>
-                        <div class="info-row"><p class="info-name">Frost Dragon</p><p class="info-stats">Levels 90-115 | Boss: Lv110</p></div>
-                        <div class="info-row"><p class="info-name">Hedera</p><p class="info-stats">Levels 100-135 | Boss: Lv130</p></div>
-                        <div class="info-row"><p class="info-name">Golem Void</p><p class="info-stats">Levels 110-155 | Boss: Lv150, Spectre: Lv120</p></div>
+                        <div class="info-row"><p class="info-name">Frozen Dungeon</p><p class="info-stats">Levels 80-110 | Boss: Lv105, Yeti: Lv100, Rat: Lv85</p></div>
+                        <div class="info-row"><p class="info-name">Swamp Dungeon</p><p class="info-stats">Levels 100-135 | Boss: Lv130, Crocodile: Lv125</p></div>
+                        <div class="info-row"><p class="info-name">Void Instance</p><p class="info-stats">Levels 110-155 | Boss: Lv150, Eye: Lv130</p></div>
                     </div>
                     <p class="section-hint">%s</p>
                 </div>
@@ -276,6 +275,7 @@ public class IntegrationTab extends ConfigTabBuilder {
                     <div class="info-grid">
                         <div class="info-row"><p class="info-name">Frozen Dungeon</p><p class="info-stats">Levels 10-25 | Boss: Lv30</p></div>
                         <div class="info-row"><p class="info-name">Swamp Dungeon</p><p class="info-stats">Levels 30-45 | Boss: Lv50</p></div>
+                        <div class="info-row"><p class="info-name">Void Instance</p><p class="info-stats">Levels 50-65 | Boss: Lv70</p></div>
                     </div>
                     <p class="section-hint">%s</p>
                 </div>

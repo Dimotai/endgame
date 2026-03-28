@@ -72,18 +72,17 @@ public class CraftingTab extends ConfigTabBuilder {
                     <span data-hyui-color="#FFD700" data-hyui-bold="true">%s</span>
                 </p>
                 <p class="section-hint">
-                    <span data-hyui-color="#ff6666">%s</span>
-                    <span data-hyui-color="#888888">%s</span>
+                    <span data-hyui-color="#ff6666">%s </span><span data-hyui-color="#888888">%s</span>
                 </p>
                 """,
                 HtmlUtil.escape(I18n.getFor(locale, "ui.crafting.title")),
                 HtmlUtil.escape(I18n.getFor(locale, "ui.crafting.restart_hint")),
-                HtmlUtil.escape(I18n.getFor(locale, "ui.crafting.restart_hint2"))));
+                HtmlUtil.escape(I18n.getFor(locale, "ui.crafting.restart_hint2").trim())));
 
         // Search bar
         sb.append(String.format("""
                 <div class="card-row" style="margin-bottom: 8;">
-                    <p style="anchor-width: 60; font-size: 12;"><span data-hyui-color="#888888">%s</span></p>
+                    <p style="anchor-width: 90; font-size: 12;"><span data-hyui-color="#888888">%s</span></p>
                     <input type="text" id="craft_search" value="%s" style="anchor-width: 300; anchor-height: 28;"/>
                     <p style="padding-left: 12; font-size: 11;"><span data-hyui-color="#666666">%s</span></p>
                 </div>
@@ -180,8 +179,8 @@ public class CraftingTab extends ConfigTabBuilder {
         d.append(String.format("""
                     <div class="combat-row">
                         <p class="combat-label"><span data-hyui-color="#888888" data-hyui-bold="true">%s</span></p>
-                        <p style="anchor-width: 200;"><span data-hyui-color="#ffffff">%s</span></p>
-                        <p style="anchor-width: 30;"><span data-hyui-color="#888888">%s</span></p>
+                        <p style="flex-weight: 1;"><span data-hyui-color="#ffffff">%s</span></p>
+                        <p style="anchor-width: 55; horizontal-align: right;"><span data-hyui-color="#888888">%s</span></p>
                         <input type="number" id="craft_outqty_%d" value="%d" min="1" max="99" style="anchor-width: 55; anchor-height: 26;"/>
                     </div>
                 """, I18n.getFor(locale, "ui.crafting.output"), esc(outputName),
@@ -195,8 +194,8 @@ public class CraftingTab extends ConfigTabBuilder {
                 d.append(String.format("""
                     <div class="combat-row">
                         <p class="combat-label"><span data-hyui-color="#888888" data-hyui-bold="true">%s</span></p>
-                        <p style="anchor-width: 200;"><span data-hyui-color="#cccccc">%s</span></p>
-                        <p style="anchor-width: 30;"><span data-hyui-color="#888888">%s</span></p>
+                        <p style="flex-weight: 1;"><span data-hyui-color="#cccccc">%s</span></p>
+                        <p style="anchor-width: 55; horizontal-align: right;"><span data-hyui-color="#888888">%s</span></p>
                         <input type="number" id="craft_inqty_%d_%d" value="%d" min="1" max="999" style="anchor-width: 55; anchor-height: 26;"/>
                     </div>
                     """, I18n.getFor(locale, "ui.crafting.input", i + 1), esc(itemName),
@@ -210,8 +209,8 @@ public class CraftingTab extends ConfigTabBuilder {
             d.append(String.format("""
                     <div class="combat-row">
                         <p class="combat-label"><span data-hyui-color="#888888" data-hyui-bold="true">%s</span></p>
-                        <p style="anchor-width: 200;"><span data-hyui-color="#cccccc">%s</span></p>
-                        <p style="anchor-width: 30;"><span data-hyui-color="#888888">%s</span></p>
+                        <p style="flex-weight: 1;"><span data-hyui-color="#cccccc">%s</span></p>
+                        <p style="anchor-width: 55; horizontal-align: right;"><span data-hyui-color="#888888">%s</span></p>
                         <input type="number" id="craft_tier_%d" value="%d" min="0" max="10" style="anchor-width: 55; anchor-height: 26;"/>
                     </div>
                 """, I18n.getFor(locale, "ui.crafting.bench"), esc(benchName),

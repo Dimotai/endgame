@@ -9,14 +9,14 @@ Hytale server plugin adding endgame content: bosses, weapons, dungeons, NPCs, cr
 - **3 Boss encounters** — Dragon Frost, Hedera, Golem Void with multi-phase AI and player scaling
 - **40 Weapons** — Longswords, daggers, spears, staves, battleaxes, maces, shields, bows across 7 material tiers
 - **2 Dungeons** — Frozen Dungeon and Swamp Dungeon with unique enemies, traders, and loot
-- **5 Armor sets** — Mithril, Onyxium, Prisma, Hedera, Frost Bone
+- **3 Armor sets** — Mithril, Onyxium, Prisma (helmet, chestplate, leggings, boots)
 - **6 Accessories** — Trinket Pouch with Frostwalkers, Ocean Striders, Void Amulet, Blazefist, Pocket Garden, Hedera Seed
 - **Achievement System** — 42 achievements across 8 categories (Combat, Boss, Bounty, Discovery, Crafting, Exploration, Speedrun, Mining)
 - **Bounty Board** — 54 bounty templates with daily/weekly quests, mining and exploration bounties, reputation ranks
 - **Combo Meter** — Kill streak tracker with tier effects
 - **Warden Trials** — 4-tier wave survival challenge
 - **Bestiary** — 32 NPC entries with kill milestones
-- **Multi-language** — EN, PT-BR, RU (FR, ES prepared — will activate when Hytale adds official support)
+- **Multi-language** — EN, PT-BR, RU, FR, ES (FR/ES active via "Use System Language" setting)
 - **Database support** — Optional SQL persistence (SQLite, MySQL, MariaDB, PostgreSQL)
 
 ## Requirements
@@ -73,6 +73,11 @@ src/main/resources/
   Server/                   # Server-side JSON assets (items, NPCs, drops, instances, etc.)
   Common/                   # Client-side shared assets (models, textures, icons, UI, docs)
 ```
+
+## Wiki
+
+- **External wiki**: [wiki.hytalemodding.dev/mod/endgame-qol](https://wiki.hytalemodding.dev/mod/endgame-qol)
+- **In-game wiki**: Install [Voile](https://www.curseforge.com/hytale/mods/docs) and use `/wiki` or `/voile` in chat
 
 ## License
 
