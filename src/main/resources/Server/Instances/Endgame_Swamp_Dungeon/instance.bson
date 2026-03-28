@@ -29,9 +29,6 @@
     "$type": "04"
   },
   "GameplayConfig": "Config_Endgame_Void",
-  "WorldMap": {
-    "Type": "Disabled"
-  },
   "IsCompassUpdating": true,
   "IsTicking": true,
   "IsGameTimePaused": true,

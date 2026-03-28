@@ -280,6 +280,8 @@ public class AchievementManager {
         if (currentValue >= template.getTarget()) {
             state.markCompleted(achievementId);
             LOGGER.atFine().log("[Achievement] %s completed '%s'", playerUuid, achievementId);
+            plugin.getGameEventBus().publish(new endgame.plugin.events.domain.GameEvent.AchievementUnlockEvent(
+                    playerUuid, achievementId, template.getName()));
 
             // Award XP if RPG Leveling active
             if (template.getXpReward() > 0 && plugin.isRPGLevelingActive()) {
@@ -301,6 +303,8 @@ public class AchievementManager {
         state.setProgress(achievementId, 1);
         state.markCompleted(achievementId);
         LOGGER.atFine().log("[Achievement] %s completed '%s'", playerUuid, achievementId);
+        plugin.getGameEventBus().publish(new endgame.plugin.events.domain.GameEvent.AchievementUnlockEvent(
+                playerUuid, achievementId, template.getName()));
 
         if (template.getXpReward() > 0 && plugin.isRPGLevelingActive()) {
             try {

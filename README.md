@@ -60,10 +60,13 @@ src/main/java/endgame/plugin/
   events/                   # Event handlers
   integration/              # Optional mod bridges (RPGLeveling, EndlessLeveling, OrbisGuard)
   managers/                 # Game managers (boss, combo, gauntlet, bounty, achievement)
+  migration/                # Data migration helpers
+  services/                 # Domain services (sound, event bus, boss kill credit)
   spawns/                   # NPC spawn systems
   systems/                  # ECS systems (boss, weapon, effect, trial, accessory)
   ui/                       # HyUI pages and HUD
   utils/                    # Utilities
+  watchers/                 # Entity watchers (temple events)
 
 src/main/resources/
   manifest.json             # Plugin manifest

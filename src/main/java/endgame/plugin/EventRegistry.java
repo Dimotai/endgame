@@ -1,5 +1,8 @@
 package endgame.plugin;
 
+import com.hypixel.hytale.math.vector.Transform;
+import com.hypixel.hytale.math.vector.Vector3i;
+import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.event.events.player.AddPlayerToWorldEvent;
 import com.hypixel.hytale.server.core.event.events.player.DrainPlayerFromWorldEvent;
 import com.hypixel.hytale.server.core.event.events.player.PlayerDisconnectEvent;
@@ -8,6 +11,8 @@ import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.Universe;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.WorldConfig;
+import com.hypixel.hytale.server.core.universe.world.events.AddWorldEvent;
+import com.hypixel.hytale.server.core.universe.world.worldmap.markers.MapMarkerBuilder;
 
 import endgame.plugin.utils.I18n;
 
@@ -47,6 +52,7 @@ public class EventRegistry {
         plugin.getEventRegistry().registerGlobal(PlayerDisconnectEvent.class, this::onPlayerDisconnect);
         plugin.getEventRegistry().registerGlobal(DrainPlayerFromWorldEvent.class, this::onPlayerLeaveWorld);
         plugin.getEventRegistry().registerGlobal(AddPlayerToWorldEvent.class, this::onPlayerEnterWorld);
+        plugin.getEventRegistry().registerGlobal(AddWorldEvent.class, this::onWorldAdded);
         plugin.getEntityStoreRegistry().registerSystem(new endgame.plugin.ui.snake.ArcadeMachineUseSystem());
     }
 
@@ -183,6 +189,14 @@ public class EventRegistry {
                 boolean isEndgame = EndgameQoL.isEndgameInstance(world);
                 boolean isFrozen = EndgameQoL.isFrozenDungeonInstance(world);
                 boolean isSwamp = EndgameQoL.isSwampDungeonInstance(world);
+
+                // Publish dungeon enter event
+                if ((isFrozen || isSwamp) && playerUuid != null) {
+                    String dungeonType = isFrozen ? "frozen_dungeon" : "swamp_dungeon";
+                    plugin.getGameEventBus().publish(
+                            new endgame.plugin.events.domain.GameEvent.DungeonEnterEvent(playerUuid, dungeonType));
+                }
+
                 if ((isEndgame || isFrozen || isSwamp) && world.isAlive()) {
                     world.execute(() -> {
                         if (isEndgame) {
@@ -207,6 +221,40 @@ public class EventRegistry {
             plugin.getLogger().atFine().log("[EndgameQoL] Player entering world: %s — boss bar cleanup done", worldName);
         } catch (Exception e) {
             plugin.getLogger().atWarning().withCause(e).log("[EndgameQoL] Error in onPlayerEnterWorld (non-fatal)");
+        }
+    }
+
+    private void onWorldAdded(AddWorldEvent event) {
+        try {
+            World world = event.getWorld();
+            if (world == null) return;
+
+            // Register map markers for Swamp Dungeon POIs
+            if (EndgameQoL.isSwampDungeonInstance(world)) {
+                world.getWorldMapManager().addMarkerProvider("endgame_swamp_poi", (w, player, collector) -> {
+                    collector.add(new MapMarkerBuilder("swamp_rope", "Rope_Infused.png",
+                            new Transform(new Vector3i(-68, 72, 130)))
+                            .withName(Message.raw("Infused Rope (4/5)")).build());
+                    collector.add(new MapMarkerBuilder("swamp_gem", "Swamp_Gem_Icon.png",
+                            new Transform(new Vector3i(72, 79, 104)))
+                            .withName(Message.raw("Swamp Gem (Breakable) (3/5)")).build());
+                    collector.add(new MapMarkerBuilder("swamp_bramble", "Hedera_Bramble_Icon.png",
+                            new Transform(new Vector3i(-59, 86, 2)))
+                            .withName(Message.raw("Hedera's Bramble (5/5)")).build());
+                    collector.add(new MapMarkerBuilder("swamp_scale", "Swamp_Crocodile_Scale.png",
+                            new Transform(new Vector3i(62, 61, 20)))
+                            .withName(Message.raw("Crocodile Scale (2/5)")).build());
+                    collector.add(new MapMarkerBuilder("swamp_ingot", "Swamp_Ingot_Icon.png",
+                            new Transform(new Vector3i(51, 102, 59)))
+                            .withName(Message.raw("Trader & Swamp Ingot (1/5)")).build());
+                    collector.add(new MapMarkerBuilder("swamp_autel", "Hedera_Autel.png",
+                            new Transform(new Vector3i(21, 60, -88)))
+                            .withName(Message.raw("Hedera Autel (Craft Hedera Key)")).build());
+                });
+                plugin.getLogger().atFine().log("[EndgameQoL] Registered Swamp Dungeon map markers");
+            }
+        } catch (Exception e) {
+            plugin.getLogger().atFine().log("[EndgameQoL] Failed to register map markers: %s", e.getMessage());
         }
     }
 }

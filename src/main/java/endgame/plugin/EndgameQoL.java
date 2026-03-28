@@ -70,6 +70,8 @@ public class EndgameQoL extends JavaPlugin {
     private DatabaseInitializer databaseInitializer;
     private LegacyDataMigration legacyMigration;
 
+    private final endgame.plugin.events.domain.GameEventBus gameEventBus = new endgame.plugin.events.domain.GameEventBus();
+
     private endgame.plugin.events.RecipeOverrideSystem recipeOverrideSystem;
     private ForgottenTempleWatcher forgottenTempleWatcher;
     private endgame.plugin.integration.rpgleveling.RPGLevelingBridge rpgLevelingBridge;
@@ -104,6 +106,9 @@ public class EndgameQoL extends JavaPlugin {
     @Override
     protected void setup() {
         this.getLogger().atInfo().log("[EndgameQoL] Setup started...");
+
+        // Initialize services
+        endgame.plugin.services.SoundService.register(this, gameEventBus);
 
         // Phase 2 migration: restore old values from backup into the live config
         endgame.plugin.config.ConfigMigration.restoreFromBackupIfNeeded(getDataDirectory(), this.config);
@@ -447,7 +452,8 @@ public class EndgameQoL extends JavaPlugin {
             this.databaseInitializer.shutdown();
         }
 
-        // Reset static state so reload picks up config changes
+        // Clear event bus
+        gameEventBus.clear();
         endgame.plugin.events.PlayerEventHandler.reset();
         endgame.plugin.managers.RecipeManager.reset();
 
@@ -514,6 +520,10 @@ public class EndgameQoL extends JavaPlugin {
     }
 
     // --- Config getters ---
+
+    public endgame.plugin.events.domain.GameEventBus getGameEventBus() {
+        return gameEventBus;
+    }
 
     public Config<EndgameConfig> getConfig() {
         return config;

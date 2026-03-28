@@ -1,31 +1,24 @@
 package endgame.plugin.systems.boss;
 
-import endgame.plugin.managers.BountyManager;
+import endgame.plugin.events.domain.BossKillHelper;
 import endgame.plugin.managers.boss.EnrageTracker;
 import endgame.plugin.managers.boss.GenericBossManager;
-import endgame.plugin.utils.EntityUtils;
 
 import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.query.Query;
-import com.hypixel.hytale.server.core.modules.entity.damage.Damage;
 import com.hypixel.hytale.server.core.modules.entity.damage.DeathComponent;
 import com.hypixel.hytale.server.core.modules.entity.damage.DeathSystems;
-import com.hypixel.hytale.server.core.entity.entities.Player;
-import com.hypixel.hytale.server.core.universe.PlayerRef;
-import com.hypixel.hytale.server.core.universe.Universe;
-import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.entities.NPCEntity;
 import endgame.plugin.EndgameQoL;
 
 import javax.annotation.Nonnull;
-import java.util.UUID;
 
 /**
  * Death system for bosses handled by GenericBossManager (Frost Dragon, Hedera).
- * Unregisters the boss and clears all boss bars on death.
+ * Publishes a BossKillEvent via the GameEventBus for decoupled handling.
  */
 public class GenericBossDeathSystem extends DeathSystems.OnDeathSystem {
 
@@ -62,55 +55,12 @@ public class GenericBossDeathSystem extends DeathSystems.OnDeathSystem {
             enrageTracker.removeBoss(ref);
             damageSystem.clearDamageTracking(ref);
 
-            // Bounty + Achievement hooks
-            long elapsedSeconds = (System.currentTimeMillis() - state.spawnTimestamp) / 1000;
-            try {
-                if (plugin.getConfig().get().isSharedBossKillCredit()) {
-                    // Shared credit: all players in the same world get bounty + achievement
-                    World bossWorld = store.getExternalData().getWorld();
-                    for (PlayerRef pr : Universe.get().getPlayers()) {
-                        if (pr == null) continue;
-                        Ref<EntityStore> pRef = pr.getReference();
-                        if (pRef == null || !pRef.isValid()) continue;
-                        Player p = pRef.getStore().getComponent(pRef, Player.getComponentType());
-                        if (p == null || !bossWorld.equals(p.getWorld())) continue;
-                        UUID pUuid = EntityUtils.getUuid(pRef.getStore(), pRef);
-                        if (pUuid == null) continue;
-                        notifyBossKill(pUuid, state.npcTypeId, elapsedSeconds);
-                    }
-                } else {
-                    // Solo credit: only the killer
-                    Damage deathInfo = component.getDeathInfo();
-                    if (deathInfo != null && deathInfo.getSource() instanceof Damage.EntitySource es) {
-                        Ref<EntityStore> killerRef = es.getRef();
-                        if (killerRef != null && killerRef.isValid()) {
-                            Player player = killerRef.getStore().getComponent(killerRef, Player.getComponentType());
-                            if (player != null) {
-                                UUID killerUuid = EntityUtils.getUuid(killerRef.getStore(), killerRef);
-                                if (killerUuid != null) {
-                                    notifyBossKill(killerUuid, state.npcTypeId, elapsedSeconds);
-                                }
-                            }
-                        }
-                    }
-                }
-            } catch (Exception ex) {
-                plugin.getLogger().atFine().log("[GenericBoss] Could not notify bounty/achievement of boss kill: %s", ex.getMessage());
-            }
+            BossKillHelper.publishBossKill(plugin, store, component,
+                    state.npcTypeId, state.config.displayName, state.spawnTimestamp);
 
             plugin.getLogger().atFine().log("[GenericBoss] Boss cleanup complete — bars hidden, boss unregistered");
         } catch (Exception e) {
             plugin.getLogger().atWarning().log("[GenericBoss] Error handling boss death: %s", e.getMessage());
-        }
-    }
-
-    private void notifyBossKill(UUID playerUuid, String npcTypeId, long elapsedSeconds) {
-        BountyManager bountyManager = plugin.getBountyManager();
-        if (bountyManager != null) {
-            bountyManager.onBossKill(playerUuid, npcTypeId, elapsedSeconds);
-        }
-        if (plugin.getAchievementManager() != null) {
-            plugin.getAchievementManager().onBossKill(playerUuid, npcTypeId);
         }
     }
 }

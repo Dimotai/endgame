@@ -283,10 +283,11 @@ public class SystemRegistry {
         if (this.comboKillTracker != null) {
             this.comboKillTracker.setNpcKillCallback((uuid, npcTypeId) -> {
                 this.bountyManager.onNPCKill(uuid, npcTypeId);
-                // Achievement + Bestiary hook
                 if (plugin.getAchievementManager() != null) {
                     plugin.getAchievementManager().onNPCKill(uuid, npcTypeId);
                 }
+                // Publish domain event for future listeners
+                plugin.getGameEventBus().publish(new endgame.plugin.events.domain.GameEvent.NPCKillEvent(uuid, npcTypeId));
             });
         }
 
@@ -294,6 +295,17 @@ public class SystemRegistry {
         if (this.comboMeterManager != null) {
             this.comboMeterManager.setComboTierCallback((uuid, tier) -> this.bountyManager.onComboTier(uuid, tier));
         }
+
+        // Subscribe to domain events — decoupled boss kill handling
+        var eventBus = plugin.getGameEventBus();
+        eventBus.subscribe(endgame.plugin.events.domain.GameEvent.BossKillEvent.class, event -> {
+            for (java.util.UUID playerUuid : event.creditedPlayers()) {
+                this.bountyManager.onBossKill(playerUuid, event.bossTypeId(), event.encounterDurationSeconds());
+                if (plugin.getAchievementManager() != null) {
+                    plugin.getAchievementManager().onBossKill(playerUuid, event.bossTypeId());
+                }
+            }
+        });
     }
 
     private void registerAccessorySystems() {

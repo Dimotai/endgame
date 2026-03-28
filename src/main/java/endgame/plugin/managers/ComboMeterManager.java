@@ -155,6 +155,8 @@ public class ComboMeterManager {
             if (cb != null) {
                 cb.onComboTier(playerUuid, newTier);
             }
+            plugin.getGameEventBus().publish(new endgame.plugin.events.domain.GameEvent.ComboTierChangeEvent(
+                    playerUuid, oldTier, newTier, state.comboCount));
         }
 
         if (shouldRebuildHud) {
