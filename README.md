@@ -81,6 +81,4 @@ src/main/resources/
 
 ## License
 
-All rights reserved.
-
-You are free to fork this project for private use or to contribute to the original repository.
+This project is licensed under the [GNU General Public License v3.0](LICENSE). You are free to use, modify, and redistribute this project under the terms of the GPL v3. Any derivative work must also be released under the same license.
