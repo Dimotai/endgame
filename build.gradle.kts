@@ -26,7 +26,7 @@ dependencies {
     implementation("com.zaxxer:HikariCP:5.1.0")
 
     compileOnly("org.zuxaw:RPGLeveling:0.3.2")
-    compileOnly("com.airijko:EndlessLeveling:6.9.2")
+    compileOnly("com.airijko:EndlessLeveling:7.1")
     compileOnly("com.orbisguard:OrbisGuard:0.8.8")
 
     compileOnly("org.xerial:sqlite-jdbc:3.45.1.0")
@@ -49,6 +49,7 @@ tasks.shadowJar {
     mergeServiceFiles()
     relocate("com.zaxxer.hikari", "endgame.shaded.hikari")
     relocate("org.slf4j", "endgame.shaded.slf4j")
+    from("LICENSE") { into("META-INF") }
 }
 
 // Auto-deploy to Hytale Mods folder after build
