@@ -38,8 +38,8 @@ public final class SoundService {
         bus.subscribe(GameEvent.BossKillEvent.class, event -> {
             int idx = resolveSoundIndex(SOUND_BOSS_KILL);
             if (idx == 0) return;
-            for (UUID uuid : event.creditedPlayers()) {
-                playToPlayer(uuid, idx);
+            if (event.killerUuid() != null) {
+                playToPlayer(event.killerUuid(), idx);
             }
         });
 

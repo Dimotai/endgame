@@ -13,6 +13,7 @@ public sealed interface GameEvent {
     /** A boss was killed. Fired from boss death systems. */
     record BossKillEvent(
             Set<UUID> creditedPlayers,
+            UUID killerUuid,
             String bossTypeId,
             String displayName,
             long encounterDurationSeconds

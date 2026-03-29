@@ -39,8 +39,21 @@ public final class BossKillHelper {
                                         String displayName, long spawnTimestamp) {
         long elapsedSeconds = (System.currentTimeMillis() - spawnTimestamp) / 1000;
         Set<UUID> creditedPlayers = new HashSet<>();
+        UUID killerUuid = null;
 
         try {
+            // Resolve killer from death info
+            Damage deathInfo = deathComponent.getDeathInfo();
+            if (deathInfo != null && deathInfo.getSource() instanceof Damage.EntitySource es) {
+                Ref<EntityStore> killerRef = es.getRef();
+                if (killerRef != null && killerRef.isValid()) {
+                    Player player = killerRef.getStore().getComponent(killerRef, Player.getComponentType());
+                    if (player != null) {
+                        killerUuid = EntityUtils.getUuid(killerRef.getStore(), killerRef);
+                    }
+                }
+            }
+
             if (plugin.getConfig().get().isSharedBossKillCredit()) {
                 // Shared credit: all players in the same world
                 World bossWorld = store.getExternalData().getWorld();
@@ -57,17 +70,7 @@ public final class BossKillHelper {
                 }
             } else {
                 // Solo credit: only the killer
-                Damage deathInfo = deathComponent.getDeathInfo();
-                if (deathInfo != null && deathInfo.getSource() instanceof Damage.EntitySource es) {
-                    Ref<EntityStore> killerRef = es.getRef();
-                    if (killerRef != null && killerRef.isValid()) {
-                        Player player = killerRef.getStore().getComponent(killerRef, Player.getComponentType());
-                        if (player != null) {
-                            UUID killerUuid = EntityUtils.getUuid(killerRef.getStore(), killerRef);
-                            if (killerUuid != null) creditedPlayers.add(killerUuid);
-                        }
-                    }
-                }
+                if (killerUuid != null) creditedPlayers.add(killerUuid);
             }
         } catch (Exception e) {
             plugin.getLogger().atFine().log("[BossKill] Could not determine credited players: %s", e.getMessage());
@@ -75,7 +78,7 @@ public final class BossKillHelper {
 
         if (!creditedPlayers.isEmpty()) {
             plugin.getGameEventBus().publish(new GameEvent.BossKillEvent(
-                    creditedPlayers, npcTypeId, displayName, elapsedSeconds));
+                    creditedPlayers, killerUuid, npcTypeId, displayName, elapsedSeconds));
         }
     }
 }

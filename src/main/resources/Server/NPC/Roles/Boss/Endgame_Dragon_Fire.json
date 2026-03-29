@@ -114,6 +114,9 @@
                 ]
             }
         },
+        "_CombatConfig": {
+            "EntityEffect": "Immunity_Fire"
+        },
         "AlwaysSleepAtNight": false,
         "DayTimeNapWeight": 0,
         "EnableSpawn": false,

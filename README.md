@@ -21,7 +21,7 @@ Hytale server plugin adding endgame content: bosses, weapons, dungeons, NPCs, cr
 
 ## Requirements
 
-- **Java 25** (bundled with Hytale Server)
+- **Java 25** (auto-provisioned by [Hygradle](https://github.com/hygradle/hygradle) — JetBrains Runtime with hot-reload support)
 - **Hytale Server** `2026.03.26` or later
 
 ## Dependencies
@@ -38,15 +38,36 @@ Hytale server plugin adding endgame content: bosses, weapons, dungeons, NPCs, cr
 HyUI and HikariCP are bundled inside the plugin JAR via shadow/shading — no separate download needed.
 Optional dependencies go in your server's `Mods/` folder.
 
-## Build
+## Development Setup
+
+This project uses [Hygradle](https://github.com/hygradle/hygradle) for build tooling, authentication, and dev server management.
+
+### Build
 
 ```bash
-./gradlew compileJava    # Compile only (fast check)
-./gradlew build          # Full build + auto-deploy to Mods folder
-./gradlew shadowJar      # Shadow JAR only (no deploy)
+./gradlew compileJava       # Compile only (fast check)
+./gradlew build             # Full build + shadow JAR + auto-deploy to Mods folder
+./gradlew shadowJar         # Shadow JAR only (no deploy)
 ```
 
-Output JAR in `build/libs/`. The `build` task auto-deploys to `%APPDATA%/Hytale/UserData/Mods/`.
+### Dev Server (with hot-reload)
+
+```bash
+./gradlew startDevServer    # Build, authenticate, and launch server with hot-reload
+```
+
+First run will:
+- Download the JetBrains Runtime JDK 25 (supports hot-reload)
+- Download Hytale server assets
+- Open your browser for OAuth authentication
+
+Subsequent runs reuse cached JDK, assets, and auth tokens.
+
+**Hot-reload workflow:**
+1. Start the dev server: `./gradlew startDevServer`
+2. Make code changes
+3. In another terminal: `./gradlew compileJava`
+4. Changes apply live — no server restart needed for method body changes
 
 ## Project Structure
 
@@ -57,11 +78,11 @@ src/main/java/endgame/plugin/
   components/               # ECS components
   config/                   # BuilderCodec config system
   database/                 # Optional SQL persistence
-  events/                   # Event handlers
+  events/                   # Event handlers + domain events (GameEventBus)
   integration/              # Optional mod bridges (RPGLeveling, EndlessLeveling, OrbisGuard)
   managers/                 # Game managers (boss, combo, gauntlet, bounty, achievement)
   migration/                # Data migration helpers
-  services/                 # Domain services (sound, event bus, boss kill credit)
+  services/                 # Domain services (sound)
   spawns/                   # NPC spawn systems
   systems/                  # ECS systems (boss, weapon, effect, trial, accessory)
   ui/                       # HyUI pages and HUD
