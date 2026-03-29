@@ -127,6 +127,14 @@ public class OrbisGuardBridge {
                 }
             }
 
+            // Allow chest/door/light access — OrbisGuard denies these by default for non-members
+            for (String accessFlag : new String[]{"chest-access", "door-access", "light-access"}) {
+                IFlag<?> flag = flags.getFlag(accessFlag);
+                if (flag != null) {
+                    manager.setFlagFromString(regionId, flag, "allow");
+                }
+            }
+
             // Blocked commands — set BLOCKED_CMDS flag
             String blockedCmds = config.getOgBlockedCommands();
             if (blockedCmds != null && !blockedCmds.isBlank()) {
