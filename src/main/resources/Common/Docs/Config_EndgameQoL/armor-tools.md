@@ -51,7 +51,7 @@ All endgame armor provides Physical and Projectile damage resistance plus stat b
 
 **Recipe (chest)** — 8 Prisma Bars, 5 Prismic Leather, 1 Emerald Gem at Endgame Bench Tier 5
 
-! Mana regen is always active, even during combat. HP regen pauses when taking damage and resumes after 15 seconds. Both are configurable per-tier in <#55ffff>/egconfig</#55ffff>.
+! Mana regen is always active, even during combat. HP regen pauses when taking damage and resumes after 15 seconds. Both are configurable per-tier in <#55ffff>/eg config</#55ffff>.
 
 ---
 

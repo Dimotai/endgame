@@ -96,7 +96,7 @@ A massive thorned beast with a 3-attack combo chain. Displays an elite boss bar 
 
 ## <#aaaaaa>Block Protection</#aaaaaa>
 
-Blocks inside the Swamp Dungeon are unbreakable and unplaceable by default, except for <#55aaff>Swamp Gem</#55aaff> nodes which can still be broken. This is controlled by <#aaaaaa>EnableDungeonBlockProtection</#aaaaaa> in <#55ffff>/egconfig</#55ffff> (enabled by default).
+Blocks inside the Swamp Dungeon are unbreakable and unplaceable by default, except for <#55aaff>Swamp Gem</#55aaff> nodes which can still be broken. This is controlled by <#aaaaaa>EnableDungeonBlockProtection</#aaaaaa> in <#55ffff>/eg config</#55ffff> (enabled by default).
 
 ---
 

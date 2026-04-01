@@ -17,6 +17,7 @@ import endgame.plugin.ui.BestiaryUI;
 import endgame.plugin.ui.BountyUI;
 import endgame.plugin.ui.GauntletUI;
 import endgame.plugin.ui.StatusUI;
+import endgame.plugin.ui.nativeconfig.NativeConfigPage;
 import endgame.plugin.utils.CommandRateLimit;
 import endgame.plugin.utils.EntityUtils;
 import endgame.plugin.utils.I18n;
@@ -29,22 +30,23 @@ import java.util.UUID;
  * /eg — Parent command collection for EndgameQoL.
  *
  * Subcommands:
- *   /eg status      — Diagnostics dashboard (requires endgameqol.admin)
- *   /eg bestiary    — Bestiary & Achievements
+ *   /eg config       — Config UI (alias: /egconfig)
+ *   /eg admin ...    — Admin commands (alias: /egadmin)
+ *   /eg status       — Diagnostics dashboard
+ *   /eg bestiary     — Bestiary & Achievements
  *   /eg achievements — Achievements page
- *   /eg lang        — Language selection
- *   /eg bounty      — Bounty Board
- *   /eg gauntlet    — The Gauntlet leaderboard
- *
- * Running /eg with no subcommand shows help text.
- *
- * Permissions use default-allow: all players can use commands unless the server
- * owner explicitly denies them (e.g. "-endgameqol.bounty" or "-endgameqol.*").
+ *   /eg lang         — Language selection
+ *   /eg bounty       — Bounty Board
+ *   /eg gauntlet     — The Gauntlet leaderboard
  */
 public class EgCommand extends AbstractCommandCollection {
 
     public EgCommand(EndgameQoL plugin) {
         super("eg", "EndgameQoL commands");
+        // /eg config — opens config UI (also available as /egconfig)
+        this.addSubCommand(new ConfigSubCommand(plugin));
+        // /eg admin — admin commands (also available as /egadmin)
+        this.addSubCommand(new EgAdminCommand(plugin));
         this.addSubCommand(new StatusSubCommand(plugin));
         this.addSubCommand(new LangSubCommand());
         this.addSubCommand(new BestiarySubCommand(plugin));
@@ -71,6 +73,23 @@ public class EgCommand extends AbstractCommandCollection {
 
     private static void sendNoPermission(@Nonnull PlayerRef playerRef) {
         playerRef.sendMessage(Message.raw("[EndgameQoL] You don't have permission to use this command.").color("#ff5555"));
+    }
+
+    // /eg config — opens config UI
+    private static class ConfigSubCommand extends AbstractPlayerCommand {
+        private final EndgameQoL plugin;
+
+        ConfigSubCommand(EndgameQoL plugin) {
+            super("config", "Open the EndgameQoL configuration UI");
+            this.plugin = plugin;
+            requirePermission("endgameqol.config");
+        }
+
+        @Override
+        protected void execute(@Nonnull CommandContext context, @Nonnull Store<EntityStore> store,
+                               @Nonnull Ref<EntityStore> ref, @Nonnull PlayerRef playerRef, @Nonnull World world) {
+            NativeConfigPage.open(playerRef, store, plugin);
+        }
     }
 
     // /eg status — admin only (default-deny via requirePermission)

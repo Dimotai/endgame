@@ -33,14 +33,14 @@ All daggers deal <#ff6600>1.5x backstab damage</#ff6600> when hitting enemies fr
 
 **<#ff6600>Onyxium Daggers</#ff6600>** — 9-12 swings, 33-38 stabs, 97 pounce (148 backstab). Signature Razorstrike: 63-92 (138 backstab). Drains 2 stamina per hit. 1.5x backstab. 280 durability.
 
-**<#55ff55>Hedera Daggers</#55ff55>** — 10-12 swings, 34-39 stabs, 105 pounce (155 backstab). Scream: 130 damage (AOE). Poison on hit (5/tick, 4 ticks). 8% lifesteal. Configurable in <#55ffff>/egconfig</#55ffff>. 1.5x backstab. 290 durability.
+**<#55ff55>Hedera Daggers</#55ff55>** — 10-12 swings, 34-39 stabs, 105 pounce (155 backstab). Scream: 130 damage (AOE). Poison on hit (5/tick, 4 ticks). 8% lifesteal. Configurable in <#55ffff>/eg config</#55ffff>. 1.5x backstab. 290 durability.
 
 **<#d16eff>Prisma Daggers</#d16eff>** — Legendary. 15-19 basic, 145 signature lunge (210 backstab). Hits apply <#d16eff>Void Mark</#d16eff> (10s). Signature teleports behind marked targets. <#ff5555>3x execution damage below 25% HP</#ff5555>. 30% headshot bonus on stabs. 1.5x backstab. +200 Mana, +30 Signature Energy, +20 Stamina. 400 durability.
 
 **<#d16eff>Stance Switch</#d16eff>** — Press Ability3 to toggle between:
 - **Combat Mode** (purple glow) — Signature teleports behind target
 - **Blink Mode** (cyan glow) — Signature teleports ~12 blocks forward. <#d16eff>Shadow Trail</#d16eff> damages enemies along the path (15 Physical, configurable). Safe teleport checks for solid blocks before blinking
-2-second cooldown between switches. Configurable blink distance via <#55ffff>/egconfig</#55ffff>.
+2-second cooldown between switches. Configurable blink distance via <#55ffff>/eg config</#55ffff>.
 
 ---
 

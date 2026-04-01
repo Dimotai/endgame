@@ -107,7 +107,7 @@ The <#55ffff>Endgame Workbench</#55ffff> is the central crafting station for all
 
 ## <#aaaaaa>Toggleable Recipes</#aaaaaa>
 
-Server admins can enable or disable specific recipes in <#55ffff>/egconfig</#55ffff> under the Crafting tab:
+Server admins can enable or disable specific recipes in <#55ffff>/eg config</#55ffff> under the Crafting tab:
 
 | Recipe | Default | Bench Tier |
 |:-------|:-------:|:-----------|

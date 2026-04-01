@@ -7,7 +7,7 @@ sort-index: 2
 
 # <gradient data="#55ffff:#aaaaaa:#55ffff">Configuration</gradient>
 
-All settings are managed through <#55ffff>/egconfig</#55ffff> (requires <#aaaaaa>endgameqol.config</#aaaaaa> permission). Changes apply immediately and persist across restarts.
+All settings are managed through <#55ffff>/eg config</#55ffff> (requires <#aaaaaa>endgameqol.config</#aaaaaa> permission). Changes apply immediately and persist across restarts.
 
 ---
 
@@ -185,9 +185,9 @@ For advanced recipe customization, edit <#55ffff>RecipeOverrides.json</#55ffff> 
 - Change the <#aaaaaa>bench</#aaaaaa> and tier requirement
 - Change the <#aaaaaa>craft time</#aaaaaa>
 
-Edit the file, restart the server, and all players see the updated recipes globally. <#ff5555>Requires a server restart</#ff5555> (unlike /egconfig which is live).
+Edit the file, restart the server, and all players see the updated recipes globally. <#ff5555>Requires a server restart</#ff5555> (unlike /eg config which is live).
 
-The crafting toggles above (<#55ffff>/egconfig</#55ffff>) are still useful for quick on/off switches that apply immediately without restart.
+The crafting toggles above (<#55ffff>/eg config</#55ffff>) are still useful for quick on/off switches that apply immediately without restart.
 
 ---
 
@@ -235,7 +235,7 @@ When enabled, player data (bounties, leaderboard) syncs to a database (SQLite, M
 
 <#aaaaaa>EnableDungeonBlockProtection</#aaaaaa> — Protect dungeon blocks (default: <#55ff55>true</#55ff55>)
 
-! Changed in v4.0.0: Block protection is now <#55ff55>enabled by default</#55ff55> for both the Frozen Dungeon and Swamp Dungeon. Disable in <#55ffff>/egconfig</#55ffff> Misc tab if you want players to break/place blocks inside dungeons.
+! Changed in v4.0.0: Block protection is now <#55ff55>enabled by default</#55ff55> for both the Frozen Dungeon and Swamp Dungeon. Disable in <#55ffff>/eg config</#55ffff> Misc tab if you want players to break/place blocks inside dungeons.
 
 <#aaaaaa>VorthakEnabled</#aaaaaa> — Enable/disable Vorthak merchant spawning in the Forgotten Temple (default: <#55ff55>true</#55ff55>)
 
@@ -292,7 +292,7 @@ Boss NPC levels are cleared from Endless Leveling's cache on death to prevent me
 
 <#aaaaaa>OrbisGuardEnabled</#aaaaaa> — Toggle automatic instance protection (<#ff6600>disabled by default</#ff6600>)
 
-Fully optional. If OrbisGuard:OrbisGuard is installed and enabled in <#55ffff>/egconfig</#55ffff>, EndgameQoL automatically creates protection regions on dungeon instance worlds.
+Fully optional. If OrbisGuard:OrbisGuard is installed and enabled in <#55ffff>/eg config</#55ffff>, EndgameQoL automatically creates protection regions on dungeon instance worlds.
 
 ### How It Works
 
@@ -309,7 +309,7 @@ Fully optional. If OrbisGuard:OrbisGuard is installed and enabled in <#55ffff>/e
 | Block PvP | <#55ff55>true</#55ff55> | Disable PvP inside instances |
 | Blocked Commands | /spawn, /sethome, /tpa | Commands blocked inside instances |
 
-All settings appear in the <#55ffff>Integration</#55ffff> tab of <#55ffff>/egconfig</#55ffff> when OrbisGuard is enabled.
+All settings appear in the <#55ffff>Integration</#55ffff> tab of <#55ffff>/eg config</#55ffff> when OrbisGuard is enabled.
 
 ! OrbisGuard protection works independently from EndgameQoL's built-in block protection (<#aaaaaa>EnableDungeonBlockProtection</#aaaaaa>). You can use both — OrbisGuard adds PvP and command blocking on top.
 

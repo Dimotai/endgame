@@ -1,0 +1,1020 @@
+$C = "../Common.ui";
+
+// ========== STYLES (MMOSkillTree / EndlessLeveling patterns) ==========
+
+@ToggleOnStyle = TextButtonStyle(
+  Default: (Background: #1a3d2e, LabelStyle: (FontSize: 14, TextColor: #4aff7f, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Hovered: (Background: #2a4d3e, LabelStyle: (FontSize: 14, TextColor: #6aff9f, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Pressed: (Background: #0a2d1e, LabelStyle: (FontSize: 14, TextColor: #4aff7f, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Sounds: $C.@ButtonSounds
+);
+@ToggleOffStyle = TextButtonStyle(
+  Default: (Background: #3d1a1a, LabelStyle: (FontSize: 14, TextColor: #ff4a4a, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Hovered: (Background: #4d2a2a, LabelStyle: (FontSize: 14, TextColor: #ff6a6a, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Pressed: (Background: #2d0a0a, LabelStyle: (FontSize: 14, TextColor: #ff4a4a, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Sounds: $C.@ButtonSounds
+);
+
+@AdjustBtnStyle = TextButtonStyle(
+  Default: (Background: #1a2633, LabelStyle: (FontSize: 14, TextColor: #96a9be, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Hovered: (Background: #2b3542, LabelStyle: (FontSize: 14, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Pressed: (Background: #0a1119, LabelStyle: (FontSize: 14, TextColor: #96a9be, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Sounds: $C.@ButtonSounds
+);
+
+@ActionBtnStyle = TextButtonStyle(
+  Default: (Background: #2b3542, LabelStyle: (FontSize: 13, TextColor: #96a9be, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Hovered: (Background: #3b4552, LabelStyle: (FontSize: 13, TextColor: #ffffff, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Pressed: (Background: #1b2532, LabelStyle: (FontSize: 13, TextColor: #96a9be, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Sounds: $C.@ButtonSounds
+);
+@ActionActiveBtnStyle = TextButtonStyle(
+  Default: (Background: #1a3d2e, LabelStyle: (FontSize: 13, TextColor: #4aff7f, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Hovered: (Background: #2a4d3e, LabelStyle: (FontSize: 13, TextColor: #6aff9f, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Pressed: (Background: #0a2d1e, LabelStyle: (FontSize: 13, TextColor: #4aff7f, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Sounds: $C.@ButtonSounds
+);
+
+@ApplyBtnStyle = TextButtonStyle(
+  Default: (Background: #1a3d2e, LabelStyle: (FontSize: 14, TextColor: #4aff7f, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Hovered: (Background: #2a4d3e, LabelStyle: (FontSize: 14, TextColor: #6aff9f, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Pressed: (Background: #0a2d1e, LabelStyle: (FontSize: 14, TextColor: #4aff7f, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Sounds: $C.@ButtonSounds
+);
+
+@TabStyle = TextButtonStyle(
+  Default: (Background: #0a1119, LabelStyle: (FontSize: 13, TextColor: #96a9be, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Hovered: (Background: #141c26, LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Pressed: (Background: #0a1119, LabelStyle: (FontSize: 13, TextColor: #96a9be, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Sounds: $C.@ButtonSounds
+);
+@TabActiveStyle = TextButtonStyle(
+  Default: (Background: #1a2633, LabelStyle: (FontSize: 13, TextColor: #ffffff, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Hovered: (Background: #1a2633, LabelStyle: (FontSize: 13, TextColor: #ffffff, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Pressed: (Background: #1a2633, LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Sounds: $C.@ButtonSounds
+);
+
+// Reusable label styles
+@LabelStyle = (FontSize: 14, TextColor: #ffffff, RenderBold: true, VerticalAlignment: Center);
+@SubLabelStyle = (FontSize: 13, TextColor: #c0cee5, VerticalAlignment: Center);
+@ValueStyle = (FontSize: 14, TextColor: #6fe3ff, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center);
+@InputFieldStyle = (FontSize: 12, TextColor: #ffffff);
+
+$C.@PageOverlay {
+  $C.@DecoratedContainer {
+    Anchor: (Width: 950, Height: 700);
+
+    #Title {
+      Group {
+        $C.@Title {
+          @Text = "EndgameQoL Configuration";
+        }
+      }
+    }
+
+    #Content {
+      LayoutMode: Top;
+      Padding: (Full: 0);
+
+      // ======== GLOBAL SEARCH ========
+      Group #GlobalSearchBar {
+        LayoutMode: Left;
+        Anchor: (Height: 34);
+        Padding: (Horizontal: 10, Vertical: 3);
+        $C.@TextField #GlobalSearch { FlexWeight: 1; Anchor: (Height: 28); Style: @InputFieldStyle; Background: #0a1119; Padding: (Horizontal: 8); PlaceholderText: "Search all settings..."; }
+        Group { Anchor: (Width: 6); }
+        TextButton #GlobalSearchBtn { Anchor: (Width: 76, Height: 28); Text: "Search"; Style: @ApplyBtnStyle; }
+        Group { Anchor: (Width: 4); }
+        TextButton #GlobalSearchClear { Anchor: (Width: 60, Height: 28); Text: "Clear"; Style: @ActionBtnStyle; }
+      }
+
+      // ======== TAB BAR ========
+      Group #TabBar {
+        LayoutMode: Left;
+        Anchor: (Height: 36);
+
+        $C.@TextButton #TabDifficulty { FlexWeight: 1; Anchor: (Height: 32); Text: "Difficulty"; Style: @TabActiveStyle; }
+        Group { Anchor: (Width: 2); }
+        $C.@TextButton #TabScaling { FlexWeight: 1; Anchor: (Height: 32); Text: "Scaling"; Style: @TabStyle; }
+        Group { Anchor: (Width: 2); }
+        $C.@TextButton #TabWeapons { FlexWeight: 1; Anchor: (Height: 32); Text: "Weapons"; Style: @TabStyle; }
+        Group { Anchor: (Width: 2); }
+        $C.@TextButton #TabArmor { FlexWeight: 1; Anchor: (Height: 32); Text: "Armor"; Style: @TabStyle; }
+        Group { Anchor: (Width: 2); }
+        $C.@TextButton #TabCrafting { FlexWeight: 1; Anchor: (Height: 32); Text: "Crafting"; Style: @TabStyle; }
+        Group { Anchor: (Width: 2); }
+        $C.@TextButton #TabMisc { FlexWeight: 1; Anchor: (Height: 32); Text: "Misc"; Style: @TabStyle; }
+        Group { Anchor: (Width: 2); }
+        $C.@TextButton #TabIntegration { FlexWeight: 1; Anchor: (Height: 32); Text: "Integration"; Style: @TabStyle; }
+      }
+      Group { Anchor: (Height: 1); Background: #2b3542; }
+
+      // ==================== GLOBAL SEARCH RESULTS ====================
+      Group #SearchResults {
+        FlexWeight: 1;
+        LayoutMode: TopScrolling;
+        ScrollbarStyle: $C.@DefaultScrollbarStyle;
+        Padding: (Full: 16);
+        Visible: false;
+
+        Label #SearchResultsTitle { Style: (FontSize: 16, TextColor: #ffaa4a, RenderBold: true); Anchor: (Height: 24); Text: "Search Results"; }
+        Label #SearchResultsCount { Style: (FontSize: 12, TextColor: #6a7a8e); Anchor: (Height: 16); Text: "0 results"; }
+        Group { Anchor: (Height: 1); Background: #1e2a36; }
+        Group { Anchor: (Height: 8); }
+
+        Group #SR0 { LayoutMode: Left; Anchor: (Height: 32, Bottom: 2); Background: #0b141f(0.84); Padding: (Horizontal: 10, Vertical: 2); Visible: false;
+          Label #SR0Tab { Style: (FontSize: 11, TextColor: #4a9eff, VerticalAlignment: Center); Anchor: (Width: 90); Text: ""; }
+          Label #SR0Name { Style: @LabelStyle; FlexWeight: 1; Text: ""; }
+          Label #SR0Val { Style: @ValueStyle; Anchor: (Width: 90, Height: 24); Background: #061420; Text: ""; }
+          Group { Anchor: (Width: 6); }
+          TextButton #SR0Btn { Anchor: (Width: 80, Height: 26); Text: "Toggle"; Style: @ActionBtnStyle; }
+        }
+        Group #SR1 { LayoutMode: Left; Anchor: (Height: 32, Bottom: 2); Background: #0b141f(0.84); Padding: (Horizontal: 10, Vertical: 2); Visible: false;
+          Label #SR1Tab { Style: (FontSize: 11, TextColor: #4a9eff, VerticalAlignment: Center); Anchor: (Width: 90); Text: ""; }
+          Label #SR1Name { Style: @LabelStyle; FlexWeight: 1; Text: ""; }
+          Label #SR1Val { Style: @ValueStyle; Anchor: (Width: 90, Height: 24); Background: #061420; Text: ""; }
+          Group { Anchor: (Width: 6); }
+          TextButton #SR1Btn { Anchor: (Width: 80, Height: 26); Text: "Toggle"; Style: @ActionBtnStyle; }
+        }
+        Group #SR2 { LayoutMode: Left; Anchor: (Height: 32, Bottom: 2); Background: #0b141f(0.84); Padding: (Horizontal: 10, Vertical: 2); Visible: false;
+          Label #SR2Tab { Style: (FontSize: 11, TextColor: #4a9eff, VerticalAlignment: Center); Anchor: (Width: 90); Text: ""; }
+          Label #SR2Name { Style: @LabelStyle; FlexWeight: 1; Text: ""; }
+          Label #SR2Val { Style: @ValueStyle; Anchor: (Width: 90, Height: 24); Background: #061420; Text: ""; }
+          Group { Anchor: (Width: 6); }
+          TextButton #SR2Btn { Anchor: (Width: 80, Height: 26); Text: "Toggle"; Style: @ActionBtnStyle; }
+        }
+        Group #SR3 { LayoutMode: Left; Anchor: (Height: 32, Bottom: 2); Background: #0b141f(0.84); Padding: (Horizontal: 10, Vertical: 2); Visible: false;
+          Label #SR3Tab { Style: (FontSize: 11, TextColor: #4a9eff, VerticalAlignment: Center); Anchor: (Width: 90); Text: ""; }
+          Label #SR3Name { Style: @LabelStyle; FlexWeight: 1; Text: ""; }
+          Label #SR3Val { Style: @ValueStyle; Anchor: (Width: 90, Height: 24); Background: #061420; Text: ""; }
+          Group { Anchor: (Width: 6); }
+          TextButton #SR3Btn { Anchor: (Width: 80, Height: 26); Text: "Toggle"; Style: @ActionBtnStyle; }
+        }
+        Group #SR4 { LayoutMode: Left; Anchor: (Height: 32, Bottom: 2); Background: #0b141f(0.84); Padding: (Horizontal: 10, Vertical: 2); Visible: false;
+          Label #SR4Tab { Style: (FontSize: 11, TextColor: #4a9eff, VerticalAlignment: Center); Anchor: (Width: 90); Text: ""; }
+          Label #SR4Name { Style: @LabelStyle; FlexWeight: 1; Text: ""; }
+          Label #SR4Val { Style: @ValueStyle; Anchor: (Width: 90, Height: 24); Background: #061420; Text: ""; }
+          Group { Anchor: (Width: 6); }
+          TextButton #SR4Btn { Anchor: (Width: 80, Height: 26); Text: "Toggle"; Style: @ActionBtnStyle; }
+        }
+        Group #SR5 { LayoutMode: Left; Anchor: (Height: 32, Bottom: 2); Background: #0b141f(0.84); Padding: (Horizontal: 10, Vertical: 2); Visible: false;
+          Label #SR5Tab { Style: (FontSize: 11, TextColor: #4a9eff, VerticalAlignment: Center); Anchor: (Width: 90); Text: ""; }
+          Label #SR5Name { Style: @LabelStyle; FlexWeight: 1; Text: ""; }
+          Label #SR5Val { Style: @ValueStyle; Anchor: (Width: 90, Height: 24); Background: #061420; Text: ""; }
+          Group { Anchor: (Width: 6); }
+          TextButton #SR5Btn { Anchor: (Width: 80, Height: 26); Text: "Toggle"; Style: @ActionBtnStyle; }
+        }
+        Group #SR6 { LayoutMode: Left; Anchor: (Height: 32, Bottom: 2); Background: #0b141f(0.84); Padding: (Horizontal: 10, Vertical: 2); Visible: false;
+          Label #SR6Tab { Style: (FontSize: 11, TextColor: #4a9eff, VerticalAlignment: Center); Anchor: (Width: 90); Text: ""; }
+          Label #SR6Name { Style: @LabelStyle; FlexWeight: 1; Text: ""; }
+          Label #SR6Val { Style: @ValueStyle; Anchor: (Width: 90, Height: 24); Background: #061420; Text: ""; }
+          Group { Anchor: (Width: 6); }
+          TextButton #SR6Btn { Anchor: (Width: 80, Height: 26); Text: "Toggle"; Style: @ActionBtnStyle; }
+        }
+        Group #SR7 { LayoutMode: Left; Anchor: (Height: 32, Bottom: 2); Background: #0b141f(0.84); Padding: (Horizontal: 10, Vertical: 2); Visible: false;
+          Label #SR7Tab { Style: (FontSize: 11, TextColor: #4a9eff, VerticalAlignment: Center); Anchor: (Width: 90); Text: ""; }
+          Label #SR7Name { Style: @LabelStyle; FlexWeight: 1; Text: ""; }
+          Label #SR7Val { Style: @ValueStyle; Anchor: (Width: 90, Height: 24); Background: #061420; Text: ""; }
+          Group { Anchor: (Width: 6); }
+          TextButton #SR7Btn { Anchor: (Width: 80, Height: 26); Text: "Toggle"; Style: @ActionBtnStyle; }
+        }
+        Group #SR8 { LayoutMode: Left; Anchor: (Height: 32, Bottom: 2); Background: #0b141f(0.84); Padding: (Horizontal: 10, Vertical: 2); Visible: false;
+          Label #SR8Tab { Style: (FontSize: 11, TextColor: #4a9eff, VerticalAlignment: Center); Anchor: (Width: 90); Text: ""; }
+          Label #SR8Name { Style: @LabelStyle; FlexWeight: 1; Text: ""; }
+          Label #SR8Val { Style: @ValueStyle; Anchor: (Width: 90, Height: 24); Background: #061420; Text: ""; }
+          Group { Anchor: (Width: 6); }
+          TextButton #SR8Btn { Anchor: (Width: 80, Height: 26); Text: "Toggle"; Style: @ActionBtnStyle; }
+        }
+        Group #SR9 { LayoutMode: Left; Anchor: (Height: 32, Bottom: 2); Background: #0b141f(0.84); Padding: (Horizontal: 10, Vertical: 2); Visible: false;
+          Label #SR9Tab { Style: (FontSize: 11, TextColor: #4a9eff, VerticalAlignment: Center); Anchor: (Width: 90); Text: ""; }
+          Label #SR9Name { Style: @LabelStyle; FlexWeight: 1; Text: ""; }
+          Label #SR9Val { Style: @ValueStyle; Anchor: (Width: 90, Height: 24); Background: #061420; Text: ""; }
+          Group { Anchor: (Width: 6); }
+          TextButton #SR9Btn { Anchor: (Width: 80, Height: 26); Text: "Toggle"; Style: @ActionBtnStyle; }
+        }
+        Group #SR10 { LayoutMode: Left; Anchor: (Height: 32, Bottom: 2); Background: #0b141f(0.84); Padding: (Horizontal: 10, Vertical: 2); Visible: false;
+          Label #SR10Tab { Style: (FontSize: 11, TextColor: #4a9eff, VerticalAlignment: Center); Anchor: (Width: 90); Text: ""; }
+          Label #SR10Name { Style: @LabelStyle; FlexWeight: 1; Text: ""; }
+          Label #SR10Val { Style: @ValueStyle; Anchor: (Width: 90, Height: 24); Background: #061420; Text: ""; }
+          Group { Anchor: (Width: 6); }
+          TextButton #SR10Btn { Anchor: (Width: 80, Height: 26); Text: "Toggle"; Style: @ActionBtnStyle; }
+        }
+        Group #SR11 { LayoutMode: Left; Anchor: (Height: 32, Bottom: 2); Background: #0b141f(0.84); Padding: (Horizontal: 10, Vertical: 2); Visible: false;
+          Label #SR11Tab { Style: (FontSize: 11, TextColor: #4a9eff, VerticalAlignment: Center); Anchor: (Width: 90); Text: ""; }
+          Label #SR11Name { Style: @LabelStyle; FlexWeight: 1; Text: ""; }
+          Label #SR11Val { Style: @ValueStyle; Anchor: (Width: 90, Height: 24); Background: #061420; Text: ""; }
+          Group { Anchor: (Width: 6); }
+          TextButton #SR11Btn { Anchor: (Width: 80, Height: 26); Text: "Toggle"; Style: @ActionBtnStyle; }
+        }
+        Group #SR12 { LayoutMode: Left; Anchor: (Height: 32, Bottom: 2); Background: #0b141f(0.84); Padding: (Horizontal: 10, Vertical: 2); Visible: false;
+          Label #SR12Tab { Style: (FontSize: 11, TextColor: #4a9eff, VerticalAlignment: Center); Anchor: (Width: 90); Text: ""; }
+          Label #SR12Name { Style: @LabelStyle; FlexWeight: 1; Text: ""; }
+          Label #SR12Val { Style: @ValueStyle; Anchor: (Width: 90, Height: 24); Background: #061420; Text: ""; }
+          Group { Anchor: (Width: 6); }
+          TextButton #SR12Btn { Anchor: (Width: 80, Height: 26); Text: "Toggle"; Style: @ActionBtnStyle; }
+        }
+        Group #SR13 { LayoutMode: Left; Anchor: (Height: 32, Bottom: 2); Background: #0b141f(0.84); Padding: (Horizontal: 10, Vertical: 2); Visible: false;
+          Label #SR13Tab { Style: (FontSize: 11, TextColor: #4a9eff, VerticalAlignment: Center); Anchor: (Width: 90); Text: ""; }
+          Label #SR13Name { Style: @LabelStyle; FlexWeight: 1; Text: ""; }
+          Label #SR13Val { Style: @ValueStyle; Anchor: (Width: 90, Height: 24); Background: #061420; Text: ""; }
+          Group { Anchor: (Width: 6); }
+          TextButton #SR13Btn { Anchor: (Width: 80, Height: 26); Text: "Toggle"; Style: @ActionBtnStyle; }
+        }
+        Group #SR14 { LayoutMode: Left; Anchor: (Height: 32, Bottom: 2); Background: #0b141f(0.84); Padding: (Horizontal: 10, Vertical: 2); Visible: false;
+          Label #SR14Tab { Style: (FontSize: 11, TextColor: #4a9eff, VerticalAlignment: Center); Anchor: (Width: 90); Text: ""; }
+          Label #SR14Name { Style: @LabelStyle; FlexWeight: 1; Text: ""; }
+          Label #SR14Val { Style: @ValueStyle; Anchor: (Width: 90, Height: 24); Background: #061420; Text: ""; }
+          Group { Anchor: (Width: 6); }
+          TextButton #SR14Btn { Anchor: (Width: 80, Height: 26); Text: "Toggle"; Style: @ActionBtnStyle; }
+        }
+      }
+
+      // ==================== DIFFICULTY TAB ====================
+      Group #ContentDifficulty {
+        FlexWeight: 1;
+        LayoutMode: TopScrolling;
+        ScrollbarStyle: $C.@DefaultScrollbarStyle;
+        Padding: (Full: 16);
+        Visible: true;
+
+        Label { Style: (FontSize: 16, TextColor: #ffaa4a, RenderBold: true); Anchor: (Height: 24); Text: "Difficulty Settings"; }
+        Label { Style: (FontSize: 12, TextColor: #6a7a8e); Anchor: (Height: 16); Text: "Global difficulty preset for bosses and mobs"; }
+        Group { Anchor: (Height: 1); Background: #1e2a36; }
+        Group { Anchor: (Height: 10); }
+
+        // Preset buttons
+        Group {
+          Background: #0b141f(0.84); LayoutMode: Left; Anchor: (Height: 48); Padding: (Full: 10);
+          Label { Style: @LabelStyle; FlexWeight: 1; Text: "Preset"; }
+          TextButton #PresetEasy { Anchor: (Width: 80, Height: 28); Text: "Easy"; Style: @ActionBtnStyle; }
+          Group { Anchor: (Width: 6); }
+          TextButton #PresetMedium { Anchor: (Width: 90, Height: 28); Text: "Medium"; Style: @ActionBtnStyle; }
+          Group { Anchor: (Width: 6); }
+          TextButton #PresetHard { Anchor: (Width: 80, Height: 28); Text: "Hard"; Style: @ActionBtnStyle; }
+          Group { Anchor: (Width: 6); }
+          TextButton #PresetExtreme { Anchor: (Width: 90, Height: 28); Text: "Extreme"; Style: @ActionBtnStyle; }
+          Group { Anchor: (Width: 6); }
+          TextButton #PresetCustom { Anchor: (Width: 90, Height: 28); Text: "Custom"; Style: @ActionBtnStyle; }
+        }
+        Group { Anchor: (Height: 6); }
+
+        // Custom multipliers
+        Group #CustomBox {
+          Background: #0b141f(0.84); LayoutMode: Top; Padding: (Full: 12); Visible: false;
+          Label { Style: (FontSize: 14, TextColor: #bb99ff, RenderBold: true); Anchor: (Height: 20); Text: "Custom Multipliers"; }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @SubLabelStyle; FlexWeight: 1; Text: "Health Multiplier"; }
+            $C.@TextField #HealthValue { Anchor: (Width: 70, Height: 24); Style: @InputFieldStyle; Background: #061420; Padding: (Horizontal: 4); }
+            Label { Style: (FontSize: 10, TextColor: #6a7a8e, VerticalAlignment: Center); Anchor: (Width: 30); Text: "HP"; }
+            Group { Anchor: (Width: 4); }
+            TextButton #HealthDown { Anchor: (Width: 40, Height: 28); Text: "-"; Style: @AdjustBtnStyle; }
+            Group { Anchor: (Width: 4); }
+            TextButton #HealthUp { Anchor: (Width: 40, Height: 28); Text: "+"; Style: @AdjustBtnStyle; }
+          }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @SubLabelStyle; FlexWeight: 1; Text: "Damage Multiplier"; }
+            $C.@TextField #DamageValue { Anchor: (Width: 70, Height: 24); Style: @InputFieldStyle; Background: #061420; Padding: (Horizontal: 4); }
+            Label { Style: (FontSize: 10, TextColor: #6a7a8e, VerticalAlignment: Center); Anchor: (Width: 30); Text: "DMG"; }
+            Group { Anchor: (Width: 4); }
+            TextButton #DamageDown { Anchor: (Width: 40, Height: 28); Text: "-"; Style: @AdjustBtnStyle; }
+            Group { Anchor: (Width: 4); }
+            TextButton #DamageUp { Anchor: (Width: 40, Height: 28); Text: "+"; Style: @AdjustBtnStyle; }
+          }
+        }
+        Group { Anchor: (Height: 6); }
+
+        // Scope
+        Group { Background: #0b141f(0.84); LayoutMode: Left; Anchor: (Height: 44); Padding: (Full: 10);
+          Label { Style: (FontSize: 14, TextColor: #96a9be, VerticalAlignment: Center); Anchor: (Width: 80); Text: "Applies to"; }
+          Label { Style: @LabelStyle; Anchor: (Width: 60); Text: "Bosses"; }
+          TextButton #ToggleBosses { Anchor: (Width: 80, Height: 28); Text: "ON"; Style: @ToggleOnStyle; }
+          Group { Anchor: (Width: 20); }
+          Label { Style: @LabelStyle; Anchor: (Width: 50); Text: "Mobs"; }
+          TextButton #ToggleMobs { Anchor: (Width: 80, Height: 28); Text: "ON"; Style: @ToggleOnStyle; }
+        }
+        Group { Anchor: (Height: 10); }
+
+        // Reference
+        Label { Style: (FontSize: 14, TextColor: #96a9be, RenderBold: true); Anchor: (Height: 20); Text: "Preset Reference"; }
+        Group { Anchor: (Height: 4); }
+        Group { LayoutMode: Top; Background: #0b141f(0.84); Padding: (Full: 10);
+          Group { LayoutMode: Left; Anchor: (Height: 18); Label { Style: (FontSize: 12, TextColor: #55ff55, RenderBold: true); Anchor: (Width: 90); Text: "Easy"; } Label { Style: (FontSize: 12, TextColor: #96a9be); FlexWeight: 1; Text: "HP x0.5 / DMG x0.5"; } }
+          Group { LayoutMode: Left; Anchor: (Height: 18); Label { Style: (FontSize: 12, TextColor: #ffff55, RenderBold: true); Anchor: (Width: 90); Text: "Medium"; } Label { Style: (FontSize: 12, TextColor: #96a9be); FlexWeight: 1; Text: "HP x1.0 / DMG x1.0"; } }
+          Group { LayoutMode: Left; Anchor: (Height: 18); Label { Style: (FontSize: 12, TextColor: #ff8833, RenderBold: true); Anchor: (Width: 90); Text: "Hard"; } Label { Style: (FontSize: 12, TextColor: #96a9be); FlexWeight: 1; Text: "HP x1.5 / DMG x1.25"; } }
+          Group { LayoutMode: Left; Anchor: (Height: 18); Label { Style: (FontSize: 12, TextColor: #ff3333, RenderBold: true); Anchor: (Width: 90); Text: "Extreme"; } Label { Style: (FontSize: 12, TextColor: #96a9be); FlexWeight: 1; Text: "HP x2.5 / DMG x2.0"; } }
+          Group { LayoutMode: Left; Anchor: (Height: 18); Label { Style: (FontSize: 12, TextColor: #bb99ff, RenderBold: true); Anchor: (Width: 90); Text: "Custom"; } Label { Style: (FontSize: 12, TextColor: #96a9be); FlexWeight: 1; Text: "Set your own values"; } }
+        }
+      }
+
+      // ==================== SCALING TAB ====================
+      Group #ContentScaling {
+        FlexWeight: 1;
+        LayoutMode: TopScrolling;
+        ScrollbarStyle: $C.@DefaultScrollbarStyle;
+        Padding: (Full: 16);
+        Visible: false;
+
+        Label { Style: (FontSize: 16, TextColor: #ffaa4a, RenderBold: true); Anchor: (Height: 24); Text: "Boss & Mob Scaling"; }
+        Label { Style: (FontSize: 12, TextColor: #6a7a8e); Anchor: (Height: 16); Text: "Override health, damage, and player scaling per boss"; }
+        Group { Anchor: (Height: 1); Background: #1e2a36; }
+        Group { Anchor: (Height: 10); }
+
+        // Prisma toggles
+        Group { Background: #0b141f(0.84); LayoutMode: Top; Padding: (Full: 12);
+          Label { Style: (FontSize: 14, TextColor: #bb88ff, RenderBold: true); Anchor: (Height: 20); Text: "Prisma Balance"; }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @LabelStyle; FlexWeight: 1; Text: "Prisma Armor Vulnerability"; }
+            TextButton #TogglePrismaArmor { Anchor: (Width: 80, Height: 28); Text: "ON"; Style: @ToggleOnStyle; }
+          }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @LabelStyle; FlexWeight: 1; Text: "Prisma Weapon Boss Block"; }
+            TextButton #TogglePrismaWeapon { Anchor: (Width: 80, Height: 28); Text: "ON"; Style: @ToggleOnStyle; }
+          }
+        }
+        Group { Anchor: (Height: 10); }
+
+        // Boss cards
+        Group #BossDragonFrost { Background: #0b141f(0.84); LayoutMode: Top; Padding: (Full: 12);
+          Label { Style: (FontSize: 14, TextColor: #55ccff, RenderBold: true); Anchor: (Height: 20); Text: "Dragon Frost"; }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @SubLabelStyle; FlexWeight: 1; Text: "HP Override"; }
+            $C.@TextField #DragonFrostHP { Anchor: (Width: 70, Height: 24); Style: @InputFieldStyle; Background: #061420; Padding: (Horizontal: 4); }
+            Label { Style: (FontSize: 10, TextColor: #6a7a8e, VerticalAlignment: Center); Anchor: (Width: 30); Text: "HP"; }
+            Group { Anchor: (Width: 6); }
+            TextButton #DragonFrostHPDown { Anchor: (Width: 40, Height: 28); Text: "-"; Style: @AdjustBtnStyle; }
+            Group { Anchor: (Width: 4); }
+            TextButton #DragonFrostHPUp { Anchor: (Width: 40, Height: 28); Text: "+"; Style: @AdjustBtnStyle; }
+          }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @SubLabelStyle; FlexWeight: 1; Text: "Damage Multiplier"; }
+            $C.@TextField #DragonFrostDMG { Anchor: (Width: 70, Height: 24); Style: @InputFieldStyle; Background: #061420; Padding: (Horizontal: 4); }
+            Label { Style: (FontSize: 10, TextColor: #6a7a8e, VerticalAlignment: Center); Anchor: (Width: 30); Text: "DMG"; }
+            Group { Anchor: (Width: 6); }
+            TextButton #DragonFrostDMGDown { Anchor: (Width: 40, Height: 28); Text: "-"; Style: @AdjustBtnStyle; }
+            Group { Anchor: (Width: 4); }
+            TextButton #DragonFrostDMGUp { Anchor: (Width: 40, Height: 28); Text: "+"; Style: @AdjustBtnStyle; }
+          }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @SubLabelStyle; FlexWeight: 1; Text: "Player Scaling"; }
+            $C.@TextField #DragonFrostScale { Anchor: (Width: 70, Height: 24); Style: @InputFieldStyle; Background: #061420; Padding: (Horizontal: 4); }
+            Label { Style: (FontSize: 10, TextColor: #6a7a8e, VerticalAlignment: Center); Anchor: (Width: 30); Text: "%"; }
+            Group { Anchor: (Width: 6); }
+            TextButton #DragonFrostScaleDown { Anchor: (Width: 40, Height: 28); Text: "-"; Style: @AdjustBtnStyle; }
+            Group { Anchor: (Width: 4); }
+            TextButton #DragonFrostScaleUp { Anchor: (Width: 40, Height: 28); Text: "+"; Style: @AdjustBtnStyle; }
+          }
+        }
+        Group { Anchor: (Height: 8); }
+
+        Group #BossHedera { Background: #0b141f(0.84); LayoutMode: Top; Padding: (Full: 12);
+          Label { Style: (FontSize: 14, TextColor: #55ff88, RenderBold: true); Anchor: (Height: 20); Text: "Hedera"; }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @SubLabelStyle; FlexWeight: 1; Text: "HP Override"; }
+            $C.@TextField #HederaHP { Anchor: (Width: 70, Height: 24); Style: @InputFieldStyle; Background: #061420; Padding: (Horizontal: 4); }
+            Label { Style: (FontSize: 10, TextColor: #6a7a8e, VerticalAlignment: Center); Anchor: (Width: 30); Text: "HP"; }
+            Group { Anchor: (Width: 6); }
+            TextButton #HederaHPDown { Anchor: (Width: 40, Height: 28); Text: "-"; Style: @AdjustBtnStyle; }
+            Group { Anchor: (Width: 4); }
+            TextButton #HederaHPUp { Anchor: (Width: 40, Height: 28); Text: "+"; Style: @AdjustBtnStyle; }
+          }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @SubLabelStyle; FlexWeight: 1; Text: "Damage Multiplier"; }
+            $C.@TextField #HederaDMG { Anchor: (Width: 70, Height: 24); Style: @InputFieldStyle; Background: #061420; Padding: (Horizontal: 4); }
+            Label { Style: (FontSize: 10, TextColor: #6a7a8e, VerticalAlignment: Center); Anchor: (Width: 30); Text: "DMG"; }
+            Group { Anchor: (Width: 6); }
+            TextButton #HederaDMGDown { Anchor: (Width: 40, Height: 28); Text: "-"; Style: @AdjustBtnStyle; }
+            Group { Anchor: (Width: 4); }
+            TextButton #HederaDMGUp { Anchor: (Width: 40, Height: 28); Text: "+"; Style: @AdjustBtnStyle; }
+          }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @SubLabelStyle; FlexWeight: 1; Text: "Player Scaling"; }
+            $C.@TextField #HederaScale { Anchor: (Width: 70, Height: 24); Style: @InputFieldStyle; Background: #061420; Padding: (Horizontal: 4); }
+            Label { Style: (FontSize: 10, TextColor: #6a7a8e, VerticalAlignment: Center); Anchor: (Width: 30); Text: "%"; }
+            Group { Anchor: (Width: 6); }
+            TextButton #HederaScaleDown { Anchor: (Width: 40, Height: 28); Text: "-"; Style: @AdjustBtnStyle; }
+            Group { Anchor: (Width: 4); }
+            TextButton #HederaScaleUp { Anchor: (Width: 40, Height: 28); Text: "+"; Style: @AdjustBtnStyle; }
+          }
+        }
+        Group { Anchor: (Height: 8); }
+
+        Group #BossGolemVoid { Background: #0b141f(0.84); LayoutMode: Top; Padding: (Full: 12);
+          Label { Style: (FontSize: 14, TextColor: #bb88ff, RenderBold: true); Anchor: (Height: 20); Text: "Golem Void"; }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @SubLabelStyle; FlexWeight: 1; Text: "HP Override"; }
+            $C.@TextField #GolemVoidHP { Anchor: (Width: 70, Height: 24); Style: @InputFieldStyle; Background: #061420; Padding: (Horizontal: 4); }
+            Label { Style: (FontSize: 10, TextColor: #6a7a8e, VerticalAlignment: Center); Anchor: (Width: 30); Text: "HP"; }
+            Group { Anchor: (Width: 6); }
+            TextButton #GolemVoidHPDown { Anchor: (Width: 40, Height: 28); Text: "-"; Style: @AdjustBtnStyle; }
+            Group { Anchor: (Width: 4); }
+            TextButton #GolemVoidHPUp { Anchor: (Width: 40, Height: 28); Text: "+"; Style: @AdjustBtnStyle; }
+          }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @SubLabelStyle; FlexWeight: 1; Text: "Damage Multiplier"; }
+            $C.@TextField #GolemVoidDMG { Anchor: (Width: 70, Height: 24); Style: @InputFieldStyle; Background: #061420; Padding: (Horizontal: 4); }
+            Label { Style: (FontSize: 10, TextColor: #6a7a8e, VerticalAlignment: Center); Anchor: (Width: 30); Text: "DMG"; }
+            Group { Anchor: (Width: 6); }
+            TextButton #GolemVoidDMGDown { Anchor: (Width: 40, Height: 28); Text: "-"; Style: @AdjustBtnStyle; }
+            Group { Anchor: (Width: 4); }
+            TextButton #GolemVoidDMGUp { Anchor: (Width: 40, Height: 28); Text: "+"; Style: @AdjustBtnStyle; }
+          }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @SubLabelStyle; FlexWeight: 1; Text: "Player Scaling"; }
+            $C.@TextField #GolemVoidScale { Anchor: (Width: 70, Height: 24); Style: @InputFieldStyle; Background: #061420; Padding: (Horizontal: 4); }
+            Label { Style: (FontSize: 10, TextColor: #6a7a8e, VerticalAlignment: Center); Anchor: (Width: 30); Text: "%"; }
+            Group { Anchor: (Width: 6); }
+            TextButton #GolemVoidScaleDown { Anchor: (Width: 40, Height: 28); Text: "-"; Style: @AdjustBtnStyle; }
+            Group { Anchor: (Width: 4); }
+            TextButton #GolemVoidScaleUp { Anchor: (Width: 40, Height: 28); Text: "+"; Style: @AdjustBtnStyle; }
+          }
+        }
+        Group { Anchor: (Height: 10); }
+        TextButton #ApplyScaling { Anchor: (Width: 180, Height: 32); Text: "Apply Changes"; Style: @ApplyBtnStyle; }
+      }
+
+      // ==================== WEAPONS TAB ====================
+      Group #ContentWeapons {
+        FlexWeight: 1;
+        LayoutMode: TopScrolling;
+        ScrollbarStyle: $C.@DefaultScrollbarStyle;
+        Padding: (Full: 16);
+        Visible: false;
+
+        Label { Style: (FontSize: 16, TextColor: #ffaa4a, RenderBold: true); Anchor: (Height: 24); Text: "Weapon Effects"; }
+        Label { Style: (FontSize: 12, TextColor: #6a7a8e); Anchor: (Height: 16); Text: "Toggle and configure weapon special effects"; }
+        Group { Anchor: (Height: 1); Background: #1e2a36; }
+        Group { Anchor: (Height: 10); }
+
+        // Hedera Daggers
+        Group { Background: #0b141f(0.84); LayoutMode: Top; Padding: (Full: 12);
+          Label { Style: (FontSize: 14, TextColor: #55ff88, RenderBold: true); Anchor: (Height: 20); Text: "Hedera Daggers"; }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @LabelStyle; FlexWeight: 1; Text: "Poison"; }
+            TextButton #ToggleHederaPoison { Anchor: (Width: 80, Height: 28); Text: "ON"; Style: @ToggleOnStyle; }
+          }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @SubLabelStyle; FlexWeight: 1; Text: "  Poison DMG"; }
+            $C.@TextField #HederaPoisonDmg { Anchor: (Width: 70, Height: 24); Style: @InputFieldStyle; Background: #061420; Padding: (Horizontal: 4); }
+            Label { Style: (FontSize: 10, TextColor: #6a7a8e, VerticalAlignment: Center); Anchor: (Width: 30); Text: "DMG"; }
+            Group { Anchor: (Width: 6); }
+            TextButton #HederaPoisonDmgDown { Anchor: (Width: 40, Height: 28); Text: "-"; Style: @AdjustBtnStyle; }
+            Group { Anchor: (Width: 4); }
+            TextButton #HederaPoisonDmgUp { Anchor: (Width: 40, Height: 28); Text: "+"; Style: @AdjustBtnStyle; }
+          }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @SubLabelStyle; FlexWeight: 1; Text: "  Poison Ticks"; }
+            $C.@TextField #HederaPoisonTicks { Anchor: (Width: 70, Height: 24); Style: @InputFieldStyle; Background: #061420; Padding: (Horizontal: 4); }
+            Label { Style: (FontSize: 10, TextColor: #6a7a8e, VerticalAlignment: Center); Anchor: (Width: 30); Text: "ticks"; }
+            Group { Anchor: (Width: 6); }
+            TextButton #HederaPoisonTicksDown { Anchor: (Width: 40, Height: 28); Text: "-"; Style: @AdjustBtnStyle; }
+            Group { Anchor: (Width: 4); }
+            TextButton #HederaPoisonTicksUp { Anchor: (Width: 40, Height: 28); Text: "+"; Style: @AdjustBtnStyle; }
+          }
+          Group { Anchor: (Height: 1); Background: #1e2a36; }
+          Group { Anchor: (Height: 4); }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @LabelStyle; FlexWeight: 1; Text: "Lifesteal"; }
+            TextButton #ToggleHederaLifesteal { Anchor: (Width: 80, Height: 28); Text: "ON"; Style: @ToggleOnStyle; }
+          }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @SubLabelStyle; FlexWeight: 1; Text: "  Lifesteal %"; }
+            $C.@TextField #HederaLifestealPct { Anchor: (Width: 70, Height: 24); Style: @InputFieldStyle; Background: #061420; Padding: (Horizontal: 4); }
+            Label { Style: (FontSize: 10, TextColor: #6a7a8e, VerticalAlignment: Center); Anchor: (Width: 30); Text: "%"; }
+            Group { Anchor: (Width: 6); }
+            TextButton #HederaLifestealPctDown { Anchor: (Width: 40, Height: 28); Text: "-"; Style: @AdjustBtnStyle; }
+            Group { Anchor: (Width: 4); }
+            TextButton #HederaLifestealPctUp { Anchor: (Width: 40, Height: 28); Text: "+"; Style: @AdjustBtnStyle; }
+          }
+        }
+        Group { Anchor: (Height: 8); }
+
+        // Blazefist
+        Group { Background: #0b141f(0.84); LayoutMode: Top; Padding: (Full: 12);
+          Label { Style: (FontSize: 14, TextColor: #ff8833, RenderBold: true); Anchor: (Height: 20); Text: "Blazefist"; }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @LabelStyle; FlexWeight: 1; Text: "Burn Effect"; }
+            TextButton #ToggleBlazefist { Anchor: (Width: 80, Height: 28); Text: "ON"; Style: @ToggleOnStyle; }
+          }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @SubLabelStyle; FlexWeight: 1; Text: "  Burn DMG"; }
+            $C.@TextField #BlazefistDmg { Anchor: (Width: 70, Height: 24); Style: @InputFieldStyle; Background: #061420; Padding: (Horizontal: 4); }
+            Label { Style: (FontSize: 10, TextColor: #6a7a8e, VerticalAlignment: Center); Anchor: (Width: 30); Text: "DMG"; }
+            Group { Anchor: (Width: 6); }
+            TextButton #BlazefistDmgDown { Anchor: (Width: 40, Height: 28); Text: "-"; Style: @AdjustBtnStyle; }
+            Group { Anchor: (Width: 4); }
+            TextButton #BlazefistDmgUp { Anchor: (Width: 40, Height: 28); Text: "+"; Style: @AdjustBtnStyle; }
+          }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @SubLabelStyle; FlexWeight: 1; Text: "  Burn Ticks"; }
+            $C.@TextField #BlazefistTicks { Anchor: (Width: 70, Height: 24); Style: @InputFieldStyle; Background: #061420; Padding: (Horizontal: 4); }
+            Label { Style: (FontSize: 10, TextColor: #6a7a8e, VerticalAlignment: Center); Anchor: (Width: 30); Text: "ticks"; }
+            Group { Anchor: (Width: 6); }
+            TextButton #BlazefistTicksDown { Anchor: (Width: 40, Height: 28); Text: "-"; Style: @AdjustBtnStyle; }
+            Group { Anchor: (Width: 4); }
+            TextButton #BlazefistTicksUp { Anchor: (Width: 40, Height: 28); Text: "+"; Style: @AdjustBtnStyle; }
+          }
+        }
+        Group { Anchor: (Height: 8); }
+
+        // Simple toggle weapons
+        Group { Background: #0b141f(0.84); LayoutMode: Top; Padding: (Full: 12);
+          Label { Style: (FontSize: 14, TextColor: #96a9be, RenderBold: true); Anchor: (Height: 20); Text: "Other Weapon Effects"; }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @LabelStyle; FlexWeight: 1; Text: "Prisma Mirage"; }
+            TextButton #TogglePrismaMirage { Anchor: (Width: 80, Height: 28); Text: "ON"; Style: @ToggleOnStyle; }
+          }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @LabelStyle; FlexWeight: 1; Text: "Void Mark"; }
+            TextButton #ToggleVoidMark { Anchor: (Width: 80, Height: 28); Text: "ON"; Style: @ToggleOnStyle; }
+          }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @LabelStyle; FlexWeight: 1; Text: "Dagger Blink"; }
+            TextButton #ToggleDaggerBlink { Anchor: (Width: 80, Height: 28); Text: "ON"; Style: @ToggleOnStyle; }
+          }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @LabelStyle; FlexWeight: 1; Text: "Dagger Trail"; }
+            TextButton #ToggleDaggerTrail { Anchor: (Width: 80, Height: 28); Text: "ON"; Style: @ToggleOnStyle; }
+          }
+        }
+      }
+
+      // ==================== ARMOR TAB ====================
+      Group #ContentArmor {
+        FlexWeight: 1;
+        LayoutMode: TopScrolling;
+        ScrollbarStyle: $C.@DefaultScrollbarStyle;
+        Padding: (Full: 16);
+        Visible: false;
+
+        Label { Style: (FontSize: 16, TextColor: #ffaa4a, RenderBold: true); Anchor: (Height: 24); Text: "Armor Effects"; }
+        Label { Style: (FontSize: 12, TextColor: #6a7a8e); Anchor: (Height: 16); Text: "Mana regen and HP regen from armor sets"; }
+        Group { Anchor: (Height: 1); Background: #1e2a36; }
+        Group { Anchor: (Height: 10); }
+
+        // Mana Regen
+        Group { Background: #0b141f(0.84); LayoutMode: Top; Padding: (Full: 12);
+          Label { Style: (FontSize: 14, TextColor: #55ccff, RenderBold: true); Anchor: (Height: 20); Text: "Mana Regeneration"; }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @LabelStyle; FlexWeight: 1; Text: "Enabled"; }
+            TextButton #ToggleManaRegen { Anchor: (Width: 80, Height: 28); Text: "ON"; Style: @ToggleOnStyle; }
+          }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @SubLabelStyle; FlexWeight: 1; Text: "  Mithril / piece"; }
+            $C.@TextField #ManaRegenMithril { Anchor: (Width: 70, Height: 24); Style: @InputFieldStyle; Background: #061420; Padding: (Horizontal: 4); }
+            Label { Style: (FontSize: 10, TextColor: #6a7a8e, VerticalAlignment: Center); Anchor: (Width: 30); Text: "/s"; }
+            Group { Anchor: (Width: 6); }
+            TextButton #ManaRegenMithrilDown { Anchor: (Width: 40, Height: 28); Text: "-"; Style: @AdjustBtnStyle; }
+            Group { Anchor: (Width: 4); }
+            TextButton #ManaRegenMithrilUp { Anchor: (Width: 40, Height: 28); Text: "+"; Style: @AdjustBtnStyle; }
+          }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @SubLabelStyle; FlexWeight: 1; Text: "  Onyxium / piece"; }
+            $C.@TextField #ManaRegenOnyxium { Anchor: (Width: 70, Height: 24); Style: @InputFieldStyle; Background: #061420; Padding: (Horizontal: 4); }
+            Label { Style: (FontSize: 10, TextColor: #6a7a8e, VerticalAlignment: Center); Anchor: (Width: 30); Text: "/s"; }
+            Group { Anchor: (Width: 6); }
+            TextButton #ManaRegenOnyxiumDown { Anchor: (Width: 40, Height: 28); Text: "-"; Style: @AdjustBtnStyle; }
+            Group { Anchor: (Width: 4); }
+            TextButton #ManaRegenOnyxiumUp { Anchor: (Width: 40, Height: 28); Text: "+"; Style: @AdjustBtnStyle; }
+          }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @SubLabelStyle; FlexWeight: 1; Text: "  Prisma / piece"; }
+            $C.@TextField #ManaRegenPrisma { Anchor: (Width: 70, Height: 24); Style: @InputFieldStyle; Background: #061420; Padding: (Horizontal: 4); }
+            Label { Style: (FontSize: 10, TextColor: #6a7a8e, VerticalAlignment: Center); Anchor: (Width: 30); Text: "/s"; }
+            Group { Anchor: (Width: 6); }
+            TextButton #ManaRegenPrismaDown { Anchor: (Width: 40, Height: 28); Text: "-"; Style: @AdjustBtnStyle; }
+            Group { Anchor: (Width: 4); }
+            TextButton #ManaRegenPrismaUp { Anchor: (Width: 40, Height: 28); Text: "+"; Style: @AdjustBtnStyle; }
+          }
+        }
+        Group { Anchor: (Height: 8); }
+
+        // HP Regen
+        Group { Background: #0b141f(0.84); LayoutMode: Top; Padding: (Full: 12);
+          Label { Style: (FontSize: 14, TextColor: #ff5577, RenderBold: true); Anchor: (Height: 20); Text: "HP Regeneration"; }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @LabelStyle; FlexWeight: 1; Text: "Enabled"; }
+            TextButton #ToggleHPRegen { Anchor: (Width: 80, Height: 28); Text: "ON"; Style: @ToggleOnStyle; }
+          }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @SubLabelStyle; FlexWeight: 1; Text: "  Delay (seconds)"; }
+            $C.@TextField #HPRegenDelay { Anchor: (Width: 70, Height: 24); Style: @InputFieldStyle; Background: #061420; Padding: (Horizontal: 4); }
+            Label { Style: (FontSize: 10, TextColor: #6a7a8e, VerticalAlignment: Center); Anchor: (Width: 30); Text: "sec"; }
+            Group { Anchor: (Width: 6); }
+            TextButton #HPRegenDelayDown { Anchor: (Width: 40, Height: 28); Text: "-"; Style: @AdjustBtnStyle; }
+            Group { Anchor: (Width: 4); }
+            TextButton #HPRegenDelayUp { Anchor: (Width: 40, Height: 28); Text: "+"; Style: @AdjustBtnStyle; }
+          }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @SubLabelStyle; FlexWeight: 1; Text: "  Onyxium / piece"; }
+            $C.@TextField #HPRegenOnyxium { Anchor: (Width: 70, Height: 24); Style: @InputFieldStyle; Background: #061420; Padding: (Horizontal: 4); }
+            Label { Style: (FontSize: 10, TextColor: #6a7a8e, VerticalAlignment: Center); Anchor: (Width: 30); Text: "/s"; }
+            Group { Anchor: (Width: 6); }
+            TextButton #HPRegenOnyxiumDown { Anchor: (Width: 40, Height: 28); Text: "-"; Style: @AdjustBtnStyle; }
+            Group { Anchor: (Width: 4); }
+            TextButton #HPRegenOnyxiumUp { Anchor: (Width: 40, Height: 28); Text: "+"; Style: @AdjustBtnStyle; }
+          }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @SubLabelStyle; FlexWeight: 1; Text: "  Prisma / piece"; }
+            $C.@TextField #HPRegenPrisma { Anchor: (Width: 70, Height: 24); Style: @InputFieldStyle; Background: #061420; Padding: (Horizontal: 4); }
+            Label { Style: (FontSize: 10, TextColor: #6a7a8e, VerticalAlignment: Center); Anchor: (Width: 30); Text: "/s"; }
+            Group { Anchor: (Width: 6); }
+            TextButton #HPRegenPrismaDown { Anchor: (Width: 40, Height: 28); Text: "-"; Style: @AdjustBtnStyle; }
+            Group { Anchor: (Width: 4); }
+            TextButton #HPRegenPrismaUp { Anchor: (Width: 40, Height: 28); Text: "+"; Style: @AdjustBtnStyle; }
+          }
+        }
+      }
+
+      // ==================== CRAFTING TAB ====================
+      Group #ContentCrafting {
+        FlexWeight: 1;
+        LayoutMode: TopScrolling;
+        ScrollbarStyle: $C.@DefaultScrollbarStyle;
+        Padding: (Full: 16);
+        Visible: false;
+
+        Label { Style: (FontSize: 16, TextColor: #ffaa4a, RenderBold: true); Anchor: (Height: 24); Text: "Crafting Recipes"; }
+        Label { Style: (FontSize: 12, TextColor: #6a7a8e); Anchor: (Height: 16); Text: "Enable or disable crafting recipe categories"; }
+        Group { Anchor: (Height: 1); Background: #1e2a36; }
+        Group { Anchor: (Height: 10); }
+
+        // ---- Recipe Override Editor ----
+        Label { Style: (FontSize: 16, TextColor: #ffaa4a, RenderBold: true); Anchor: (Height: 24); Text: "Recipe Overrides"; }
+        Label { Style: (FontSize: 12, TextColor: #ff6666); Anchor: (Height: 16); Text: "Server restart required after changes"; }
+        Group { Anchor: (Height: 1); Background: #1e2a36; }
+        Group { Anchor: (Height: 8); }
+
+        // Search bar
+        Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 6);
+          Label { Style: (FontSize: 13, TextColor: #96a9be, VerticalAlignment: Center); Anchor: (Width: 60); Text: "Search"; }
+          $C.@TextField #RecipeSearch { FlexWeight: 1; Anchor: (Height: 28); Style: @InputFieldStyle; Background: #1a2633; Padding: (Horizontal: 8); PlaceholderText: "Filter recipes..."; }
+          Group { Anchor: (Width: 6); }
+          TextButton #RecipeSearchBtn { Anchor: (Width: 70, Height: 28); Text: "Search"; Style: @ApplyBtnStyle; }
+          Group { Anchor: (Width: 4); }
+          TextButton #RecipeSearchClear { Anchor: (Width: 60, Height: 28); Text: "Clear"; Style: @ActionBtnStyle; }
+        }
+
+        // Category filter buttons
+        Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 8);
+          TextButton #CatAll { Anchor: (Width: 70, Height: 28); Text: "All"; Style: @ActionActiveBtnStyle; }
+          Group { Anchor: (Width: 4); }
+          TextButton #CatPortals { Anchor: (Width: 80, Height: 28); Text: "Portals"; Style: @ActionBtnStyle; }
+          Group { Anchor: (Width: 4); }
+          TextButton #CatWeapons { Anchor: (Width: 86, Height: 28); Text: "Weapons"; Style: @ActionBtnStyle; }
+          Group { Anchor: (Width: 4); }
+          TextButton #CatArmor { Anchor: (Width: 76, Height: 28); Text: "Armor"; Style: @ActionBtnStyle; }
+          Group { Anchor: (Width: 4); }
+          TextButton #CatOther { Anchor: (Width: 76, Height: 28); Text: "Other"; Style: @ActionBtnStyle; }
+          Group { FlexWeight: 1; }
+          Label #CraftPageLabel { Style: (FontSize: 12, TextColor: #6a7a8e, VerticalAlignment: Center); Anchor: (Width: 80); Text: "1 / 1"; }
+        }
+
+        // ======= RECIPE LIST VIEW =======
+        Group #CraftList { LayoutMode: Top; Visible: true;
+          Group #Row0 { LayoutMode: Left; Anchor: (Height: 32, Bottom: 2); Background: #0b141f(0.84); Padding: (Horizontal: 10, Vertical: 2); Visible: false;
+            Label #Row0Name { Style: @LabelStyle; FlexWeight: 1; Text: ""; }
+            TextButton #Row0Toggle { Anchor: (Width: 80, Height: 26); Text: "ON"; Style: @ToggleOnStyle; }
+            Group { Anchor: (Width: 6); }
+            TextButton #Row0Edit { Anchor: (Width: 70, Height: 26); Text: "Edit"; Style: @ActionBtnStyle; }
+          }
+          Group #Row1 { LayoutMode: Left; Anchor: (Height: 32, Bottom: 2); Background: #0b141f(0.84); Padding: (Horizontal: 10, Vertical: 2); Visible: false;
+            Label #Row1Name { Style: @LabelStyle; FlexWeight: 1; Text: ""; }
+            TextButton #Row1Toggle { Anchor: (Width: 80, Height: 26); Text: "ON"; Style: @ToggleOnStyle; }
+            Group { Anchor: (Width: 6); }
+            TextButton #Row1Edit { Anchor: (Width: 70, Height: 26); Text: "Edit"; Style: @ActionBtnStyle; }
+          }
+          Group #Row2 { LayoutMode: Left; Anchor: (Height: 32, Bottom: 2); Background: #0b141f(0.84); Padding: (Horizontal: 10, Vertical: 2); Visible: false;
+            Label #Row2Name { Style: @LabelStyle; FlexWeight: 1; Text: ""; }
+            TextButton #Row2Toggle { Anchor: (Width: 80, Height: 26); Text: "ON"; Style: @ToggleOnStyle; }
+            Group { Anchor: (Width: 6); }
+            TextButton #Row2Edit { Anchor: (Width: 70, Height: 26); Text: "Edit"; Style: @ActionBtnStyle; }
+          }
+          Group #Row3 { LayoutMode: Left; Anchor: (Height: 32, Bottom: 2); Background: #0b141f(0.84); Padding: (Horizontal: 10, Vertical: 2); Visible: false;
+            Label #Row3Name { Style: @LabelStyle; FlexWeight: 1; Text: ""; }
+            TextButton #Row3Toggle { Anchor: (Width: 80, Height: 26); Text: "ON"; Style: @ToggleOnStyle; }
+            Group { Anchor: (Width: 6); }
+            TextButton #Row3Edit { Anchor: (Width: 70, Height: 26); Text: "Edit"; Style: @ActionBtnStyle; }
+          }
+          Group #Row4 { LayoutMode: Left; Anchor: (Height: 32, Bottom: 2); Background: #0b141f(0.84); Padding: (Horizontal: 10, Vertical: 2); Visible: false;
+            Label #Row4Name { Style: @LabelStyle; FlexWeight: 1; Text: ""; }
+            TextButton #Row4Toggle { Anchor: (Width: 80, Height: 26); Text: "ON"; Style: @ToggleOnStyle; }
+            Group { Anchor: (Width: 6); }
+            TextButton #Row4Edit { Anchor: (Width: 70, Height: 26); Text: "Edit"; Style: @ActionBtnStyle; }
+          }
+          Group #Row5 { LayoutMode: Left; Anchor: (Height: 32, Bottom: 2); Background: #0b141f(0.84); Padding: (Horizontal: 10, Vertical: 2); Visible: false;
+            Label #Row5Name { Style: @LabelStyle; FlexWeight: 1; Text: ""; }
+            TextButton #Row5Toggle { Anchor: (Width: 80, Height: 26); Text: "ON"; Style: @ToggleOnStyle; }
+            Group { Anchor: (Width: 6); }
+            TextButton #Row5Edit { Anchor: (Width: 70, Height: 26); Text: "Edit"; Style: @ActionBtnStyle; }
+          }
+          Group #Row6 { LayoutMode: Left; Anchor: (Height: 32, Bottom: 2); Background: #0b141f(0.84); Padding: (Horizontal: 10, Vertical: 2); Visible: false;
+            Label #Row6Name { Style: @LabelStyle; FlexWeight: 1; Text: ""; }
+            TextButton #Row6Toggle { Anchor: (Width: 80, Height: 26); Text: "ON"; Style: @ToggleOnStyle; }
+            Group { Anchor: (Width: 6); }
+            TextButton #Row6Edit { Anchor: (Width: 70, Height: 26); Text: "Edit"; Style: @ActionBtnStyle; }
+          }
+          Group #Row7 { LayoutMode: Left; Anchor: (Height: 32, Bottom: 2); Background: #0b141f(0.84); Padding: (Horizontal: 10, Vertical: 2); Visible: false;
+            Label #Row7Name { Style: @LabelStyle; FlexWeight: 1; Text: ""; }
+            TextButton #Row7Toggle { Anchor: (Width: 80, Height: 26); Text: "ON"; Style: @ToggleOnStyle; }
+            Group { Anchor: (Width: 6); }
+            TextButton #Row7Edit { Anchor: (Width: 70, Height: 26); Text: "Edit"; Style: @ActionBtnStyle; }
+          }
+          Group #Row8 { LayoutMode: Left; Anchor: (Height: 32, Bottom: 2); Background: #0b141f(0.84); Padding: (Horizontal: 10, Vertical: 2); Visible: false;
+            Label #Row8Name { Style: @LabelStyle; FlexWeight: 1; Text: ""; }
+            TextButton #Row8Toggle { Anchor: (Width: 80, Height: 26); Text: "ON"; Style: @ToggleOnStyle; }
+            Group { Anchor: (Width: 6); }
+            TextButton #Row8Edit { Anchor: (Width: 70, Height: 26); Text: "Edit"; Style: @ActionBtnStyle; }
+          }
+          Group #Row9 { LayoutMode: Left; Anchor: (Height: 32, Bottom: 2); Background: #0b141f(0.84); Padding: (Horizontal: 10, Vertical: 2); Visible: false;
+            Label #Row9Name { Style: @LabelStyle; FlexWeight: 1; Text: ""; }
+            TextButton #Row9Toggle { Anchor: (Width: 80, Height: 26); Text: "ON"; Style: @ToggleOnStyle; }
+            Group { Anchor: (Width: 6); }
+            TextButton #Row9Edit { Anchor: (Width: 70, Height: 26); Text: "Edit"; Style: @ActionBtnStyle; }
+          }
+          Group { Anchor: (Height: 6); }
+          // Pagination
+          Group { LayoutMode: Left; Anchor: (Height: 32);
+            TextButton #CraftPrev { Anchor: (Width: 80, Height: 28); Text: "< Prev"; Style: @ActionBtnStyle; }
+            Group { Anchor: (Width: 6); }
+            TextButton #CraftNext { Anchor: (Width: 80, Height: 28); Text: "Next >"; Style: @ActionBtnStyle; }
+          }
+        }
+
+        // ======= RECIPE DETAIL VIEW =======
+        Group #CraftDetail { LayoutMode: Top; Visible: false;
+          TextButton #DetailBack { Anchor: (Width: 110, Height: 28); Text: "< Back"; Style: @ActionBtnStyle; }
+          Group { Anchor: (Height: 8); }
+          Group { Background: #0b141f(0.84); LayoutMode: Top; Padding: (Full: 12);
+            Label #DetailName { Style: (FontSize: 15, TextColor: #ffffff, RenderBold: true); Anchor: (Height: 22); Text: "Recipe Name"; }
+            Group { Anchor: (Height: 4); }
+            Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+              Label { Style: @LabelStyle; FlexWeight: 1; Text: "Enabled"; }
+              TextButton #DetailToggle { Anchor: (Width: 80, Height: 28); Text: "ON"; Style: @ToggleOnStyle; }
+            }
+            Group { Anchor: (Height: 1); Background: #1e2a36; }
+            Group { Anchor: (Height: 6); }
+            // Output
+            Label { Style: (FontSize: 13, TextColor: #4ade80, RenderBold: true); Anchor: (Height: 18); Text: "Output"; }
+            Group { LayoutMode: Left; Anchor: (Height: 30, Bottom: 2);
+              $C.@TextField #DetailOutputField { FlexWeight: 1; Anchor: (Height: 28); Style: @InputFieldStyle; Background: #1a2633; Padding: (Horizontal: 8); }
+            }
+            Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+              Label { Style: @SubLabelStyle; FlexWeight: 1; Text: "  Quantity"; }
+              Label #DetailOutputQty { Style: @ValueStyle; Anchor: (Width: 50, Height: 24); Background: #061420; Text: "1"; }
+              Group { Anchor: (Width: 6); }
+              TextButton #DetailOutQtyDown { Anchor: (Width: 40, Height: 28); Text: "-"; Style: @AdjustBtnStyle; }
+              Group { Anchor: (Width: 4); }
+              TextButton #DetailOutQtyUp { Anchor: (Width: 40, Height: 28); Text: "+"; Style: @AdjustBtnStyle; }
+            }
+            Group { Anchor: (Height: 1); Background: #1e2a36; }
+            Group { Anchor: (Height: 4); }
+            // Inputs (up to 6 slots, hidden if unused)
+            Label { Style: (FontSize: 13, TextColor: #55ccff, RenderBold: true); Anchor: (Height: 18); Text: "Inputs"; }
+            Group #DetailIn0 { LayoutMode: Top; Anchor: (Bottom: 4); Visible: false;
+              Group { LayoutMode: Left; Anchor: (Height: 28);
+                $C.@TextField #DetailIn0Field { FlexWeight: 1; Anchor: (Height: 26); Style: @InputFieldStyle; Background: #1a2633; Padding: (Horizontal: 8); }
+                Group { Anchor: (Width: 6); }
+                Label { Style: @SubLabelStyle; Anchor: (Width: 30); Text: "Qty"; }
+                Label #DetailIn0Qty { Style: @ValueStyle; Anchor: (Width: 50, Height: 24); Background: #061420; Text: "1"; }
+                Group { Anchor: (Width: 4); }
+                TextButton #DetailIn0Down { Anchor: (Width: 36, Height: 26); Text: "-"; Style: @AdjustBtnStyle; }
+                Group { Anchor: (Width: 3); }
+                TextButton #DetailIn0Up { Anchor: (Width: 36, Height: 26); Text: "+"; Style: @AdjustBtnStyle; }
+              }
+            }
+            Group #DetailIn1 { LayoutMode: Top; Anchor: (Bottom: 4); Visible: false;
+              Group { LayoutMode: Left; Anchor: (Height: 28);
+                $C.@TextField #DetailIn1Field { FlexWeight: 1; Anchor: (Height: 26); Style: @InputFieldStyle; Background: #1a2633; Padding: (Horizontal: 8); }
+                Group { Anchor: (Width: 6); }
+                Label { Style: @SubLabelStyle; Anchor: (Width: 30); Text: "Qty"; }
+                Label #DetailIn1Qty { Style: @ValueStyle; Anchor: (Width: 50, Height: 24); Background: #061420; Text: "1"; }
+                Group { Anchor: (Width: 4); }
+                TextButton #DetailIn1Down { Anchor: (Width: 36, Height: 26); Text: "-"; Style: @AdjustBtnStyle; }
+                Group { Anchor: (Width: 3); }
+                TextButton #DetailIn1Up { Anchor: (Width: 36, Height: 26); Text: "+"; Style: @AdjustBtnStyle; }
+              }
+            }
+            Group #DetailIn2 { LayoutMode: Top; Anchor: (Bottom: 4); Visible: false;
+              Group { LayoutMode: Left; Anchor: (Height: 28);
+                $C.@TextField #DetailIn2Field { FlexWeight: 1; Anchor: (Height: 26); Style: @InputFieldStyle; Background: #1a2633; Padding: (Horizontal: 8); }
+                Group { Anchor: (Width: 6); }
+                Label { Style: @SubLabelStyle; Anchor: (Width: 30); Text: "Qty"; }
+                Label #DetailIn2Qty { Style: @ValueStyle; Anchor: (Width: 50, Height: 24); Background: #061420; Text: "1"; }
+                Group { Anchor: (Width: 4); }
+                TextButton #DetailIn2Down { Anchor: (Width: 36, Height: 26); Text: "-"; Style: @AdjustBtnStyle; }
+                Group { Anchor: (Width: 3); }
+                TextButton #DetailIn2Up { Anchor: (Width: 36, Height: 26); Text: "+"; Style: @AdjustBtnStyle; }
+              }
+            }
+            Group #DetailIn3 { LayoutMode: Top; Anchor: (Bottom: 4); Visible: false;
+              Group { LayoutMode: Left; Anchor: (Height: 28);
+                $C.@TextField #DetailIn3Field { FlexWeight: 1; Anchor: (Height: 26); Style: @InputFieldStyle; Background: #1a2633; Padding: (Horizontal: 8); }
+                Group { Anchor: (Width: 6); }
+                Label { Style: @SubLabelStyle; Anchor: (Width: 30); Text: "Qty"; }
+                Label #DetailIn3Qty { Style: @ValueStyle; Anchor: (Width: 50, Height: 24); Background: #061420; Text: "1"; }
+                Group { Anchor: (Width: 4); }
+                TextButton #DetailIn3Down { Anchor: (Width: 36, Height: 26); Text: "-"; Style: @AdjustBtnStyle; }
+                Group { Anchor: (Width: 3); }
+                TextButton #DetailIn3Up { Anchor: (Width: 36, Height: 26); Text: "+"; Style: @AdjustBtnStyle; }
+              }
+            }
+            Group #DetailIn4 { LayoutMode: Top; Anchor: (Bottom: 4); Visible: false;
+              Group { LayoutMode: Left; Anchor: (Height: 28);
+                $C.@TextField #DetailIn4Field { FlexWeight: 1; Anchor: (Height: 26); Style: @InputFieldStyle; Background: #1a2633; Padding: (Horizontal: 8); }
+                Group { Anchor: (Width: 6); }
+                Label { Style: @SubLabelStyle; Anchor: (Width: 30); Text: "Qty"; }
+                Label #DetailIn4Qty { Style: @ValueStyle; Anchor: (Width: 50, Height: 24); Background: #061420; Text: "1"; }
+                Group { Anchor: (Width: 4); }
+                TextButton #DetailIn4Down { Anchor: (Width: 36, Height: 26); Text: "-"; Style: @AdjustBtnStyle; }
+                Group { Anchor: (Width: 3); }
+                TextButton #DetailIn4Up { Anchor: (Width: 36, Height: 26); Text: "+"; Style: @AdjustBtnStyle; }
+              }
+            }
+            Group #DetailIn5 { LayoutMode: Top; Anchor: (Bottom: 4); Visible: false;
+              Group { LayoutMode: Left; Anchor: (Height: 28);
+                $C.@TextField #DetailIn5Field { FlexWeight: 1; Anchor: (Height: 26); Style: @InputFieldStyle; Background: #1a2633; Padding: (Horizontal: 8); }
+                Group { Anchor: (Width: 6); }
+                Label { Style: @SubLabelStyle; Anchor: (Width: 30); Text: "Qty"; }
+                Label #DetailIn5Qty { Style: @ValueStyle; Anchor: (Width: 50, Height: 24); Background: #061420; Text: "1"; }
+                Group { Anchor: (Width: 4); }
+                TextButton #DetailIn5Down { Anchor: (Width: 36, Height: 26); Text: "-"; Style: @AdjustBtnStyle; }
+                Group { Anchor: (Width: 3); }
+                TextButton #DetailIn5Up { Anchor: (Width: 36, Height: 26); Text: "+"; Style: @AdjustBtnStyle; }
+              }
+            }
+            Group { Anchor: (Height: 1); Background: #1e2a36; }
+            Group { Anchor: (Height: 4); }
+            // Bench
+            Group #DetailBenchRow { LayoutMode: Top; Anchor: (Bottom: 4); Visible: false;
+              Label { Style: (FontSize: 13, TextColor: #E8A93B, RenderBold: true); Anchor: (Height: 18); Text: "Bench"; }
+              Group { LayoutMode: Left; Anchor: (Height: 28);
+                $C.@TextField #DetailBenchField { FlexWeight: 1; Anchor: (Height: 26); Style: @InputFieldStyle; Background: #1a2633; Padding: (Horizontal: 8); }
+                Group { Anchor: (Width: 6); }
+                Label { Style: @SubLabelStyle; Anchor: (Width: 30); Text: "Tier"; }
+                Label #DetailBenchTier { Style: @ValueStyle; Anchor: (Width: 50, Height: 24); Background: #061420; Text: "0"; }
+                Group { Anchor: (Width: 4); }
+                TextButton #DetailTierDown { Anchor: (Width: 36, Height: 26); Text: "-"; Style: @AdjustBtnStyle; }
+                Group { Anchor: (Width: 3); }
+                TextButton #DetailTierUp { Anchor: (Width: 36, Height: 26); Text: "+"; Style: @AdjustBtnStyle; }
+              }
+            }
+            // Craft Time
+            Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+              Label { Style: (FontSize: 13, TextColor: #96a9be, RenderBold: true, VerticalAlignment: Center); Anchor: (Width: 100); Text: "Craft Time"; }
+              Label #DetailCraftTime { Style: @ValueStyle; Anchor: (Width: 90, Height: 24); Background: #061420; Text: "5.0s"; }
+              Group { Anchor: (Width: 6); }
+              TextButton #DetailTimeDown { Anchor: (Width: 40, Height: 28); Text: "-"; Style: @AdjustBtnStyle; }
+              Group { Anchor: (Width: 4); }
+              TextButton #DetailTimeUp { Anchor: (Width: 40, Height: 28); Text: "+"; Style: @AdjustBtnStyle; }
+            }
+          }
+          Group { Anchor: (Height: 8); }
+          TextButton #DetailSave { Anchor: (Width: 140, Height: 32); Text: "Save Recipe"; Style: @ApplyBtnStyle; }
+        }
+      }
+
+      // ==================== MISC TAB ====================
+      Group #ContentMisc {
+        FlexWeight: 1;
+        LayoutMode: TopScrolling;
+        ScrollbarStyle: $C.@DefaultScrollbarStyle;
+        Padding: (Full: 16);
+        Visible: false;
+
+        Label { Style: (FontSize: 16, TextColor: #ffaa4a, RenderBold: true); Anchor: (Height: 24); Text: "Miscellaneous"; }
+        Group { Anchor: (Height: 1); Background: #1e2a36; }
+        Group { Anchor: (Height: 10); }
+
+        // Instance Rules
+        Group { Background: #0b141f(0.84); LayoutMode: Top; Padding: (Full: 12);
+          Label { Style: (FontSize: 14, TextColor: #ff5577, RenderBold: true); Anchor: (Height: 20); Text: "Instance Rules"; }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @LabelStyle; FlexWeight: 1; Text: "PvP Enabled"; }
+            TextButton #TogglePvp { Anchor: (Width: 80, Height: 28); Text: "OFF"; Style: @ToggleOffStyle; }
+          }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @LabelStyle; FlexWeight: 1; Text: "Dungeon Block Protection"; }
+            TextButton #ToggleDungeonProt { Anchor: (Width: 80, Height: 28); Text: "ON"; Style: @ToggleOnStyle; }
+          }
+        }
+        Group { Anchor: (Height: 8); }
+
+        // Combo
+        Group { Background: #0b141f(0.84); LayoutMode: Top; Padding: (Full: 12);
+          Label { Style: (FontSize: 14, TextColor: #ffaa33, RenderBold: true); Anchor: (Height: 20); Text: "Combo Meter"; }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @LabelStyle; FlexWeight: 1; Text: "Enabled"; }
+            TextButton #ToggleCombo { Anchor: (Width: 80, Height: 28); Text: "ON"; Style: @ToggleOnStyle; }
+          }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @LabelStyle; FlexWeight: 1; Text: "Tier Effects"; }
+            TextButton #ToggleComboTierEff { Anchor: (Width: 80, Height: 28); Text: "ON"; Style: @ToggleOnStyle; }
+          }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @LabelStyle; FlexWeight: 1; Text: "Decay"; }
+            TextButton #ToggleComboDecay { Anchor: (Width: 80, Height: 28); Text: "ON"; Style: @ToggleOnStyle; }
+          }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @SubLabelStyle; FlexWeight: 1; Text: "Timer (seconds)"; }
+            $C.@TextField #ComboTimer { Anchor: (Width: 70, Height: 24); Style: @InputFieldStyle; Background: #061420; Padding: (Horizontal: 4); }
+            Label { Style: (FontSize: 10, TextColor: #6a7a8e, VerticalAlignment: Center); Anchor: (Width: 30); Text: "sec"; }
+            Group { Anchor: (Width: 6); }
+            TextButton #ComboTimerDown { Anchor: (Width: 40, Height: 28); Text: "-"; Style: @AdjustBtnStyle; }
+            Group { Anchor: (Width: 4); }
+            TextButton #ComboTimerUp { Anchor: (Width: 40, Height: 28); Text: "+"; Style: @AdjustBtnStyle; }
+          }
+        }
+        Group { Anchor: (Height: 8); }
+
+        // Bounty
+        Group { Background: #0b141f(0.84); LayoutMode: Top; Padding: (Full: 12);
+          Label { Style: (FontSize: 14, TextColor: #E8A93B, RenderBold: true); Anchor: (Height: 20); Text: "Bounty Board"; }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @LabelStyle; FlexWeight: 1; Text: "Enabled"; }
+            TextButton #ToggleBounty { Anchor: (Width: 80, Height: 28); Text: "ON"; Style: @ToggleOnStyle; }
+          }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @LabelStyle; FlexWeight: 1; Text: "Streak Bonus"; }
+            TextButton #ToggleBountyStreak { Anchor: (Width: 80, Height: 28); Text: "ON"; Style: @ToggleOnStyle; }
+          }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @LabelStyle; FlexWeight: 1; Text: "Weekly Bounty"; }
+            TextButton #ToggleBountyWeekly { Anchor: (Width: 80, Height: 28); Text: "ON"; Style: @ToggleOnStyle; }
+          }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @SubLabelStyle; FlexWeight: 1; Text: "Refresh (hours)"; }
+            $C.@TextField #BountyRefresh { Anchor: (Width: 70, Height: 24); Style: @InputFieldStyle; Background: #061420; Padding: (Horizontal: 4); }
+            Label { Style: (FontSize: 10, TextColor: #6a7a8e, VerticalAlignment: Center); Anchor: (Width: 29); Text: "hrs"; }
+            Group { Anchor: (Width: 6); }
+            TextButton #BountyRefreshDown { Anchor: (Width: 40, Height: 28); Text: "-"; Style: @AdjustBtnStyle; }
+            Group { Anchor: (Width: 4); }
+            TextButton #BountyRefreshUp { Anchor: (Width: 40, Height: 28); Text: "+"; Style: @AdjustBtnStyle; }
+          }
+        }
+        Group { Anchor: (Height: 8); }
+
+        // Warden + Vorthak
+        Group { Background: #0b141f(0.84); LayoutMode: Top; Padding: (Full: 12);
+          Label { Style: (FontSize: 14, TextColor: #96a9be, RenderBold: true); Anchor: (Height: 20); Text: "Other Features"; }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @LabelStyle; FlexWeight: 1; Text: "Warden Trials"; }
+            TextButton #ToggleWarden { Anchor: (Width: 80, Height: 28); Text: "ON"; Style: @ToggleOnStyle; }
+          }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @LabelStyle; FlexWeight: 1; Text: "Vorthak Merchant"; }
+            TextButton #ToggleVorthak { Anchor: (Width: 80, Height: 28); Text: "ON"; Style: @ToggleOnStyle; }
+          }
+        }
+      }
+
+      // ==================== INTEGRATION TAB ====================
+      Group #ContentIntegration {
+        FlexWeight: 1;
+        LayoutMode: TopScrolling;
+        ScrollbarStyle: $C.@DefaultScrollbarStyle;
+        Padding: (Full: 16);
+        Visible: false;
+
+        Label { Style: (FontSize: 16, TextColor: #ffaa4a, RenderBold: true); Anchor: (Height: 24); Text: "Mod Integration"; }
+        Label { Style: (FontSize: 12, TextColor: #6a7a8e); Anchor: (Height: 28); Text: "RPG Leveling and Endless Leveling are auto-enabled when detected. Restart required after changes."; }
+        Group { Anchor: (Height: 1); Background: #1e2a36; }
+        Group { Anchor: (Height: 10); }
+
+        // RPG Leveling
+        Group { Background: #0b141f(0.84); LayoutMode: Top; Padding: (Full: 12);
+          Label { Style: (FontSize: 14, TextColor: #55ccff, RenderBold: true); Anchor: (Height: 20); Text: "RPG Leveling"; }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @LabelStyle; FlexWeight: 1; Text: "Enabled"; }
+            TextButton #ToggleRPGLeveling { Anchor: (Width: 80, Height: 28); Text: "OFF"; Style: @ToggleOffStyle; }
+          }
+          Label { Style: (FontSize: 11, TextColor: #4a9eff); Anchor: (Height: 16); Text: "Restart required after changing"; }
+        }
+        Group { Anchor: (Height: 8); }
+
+        // Endless Leveling
+        Group { Background: #0b141f(0.84); LayoutMode: Top; Padding: (Full: 12);
+          Label { Style: (FontSize: 14, TextColor: #E8A93B, RenderBold: true); Anchor: (Height: 20); Text: "Endless Leveling"; }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @LabelStyle; FlexWeight: 1; Text: "Enabled"; }
+            TextButton #ToggleEndlessLeveling { Anchor: (Width: 80, Height: 28); Text: "OFF"; Style: @ToggleOffStyle; }
+          }
+          Label { Style: (FontSize: 11, TextColor: #4a9eff); Anchor: (Height: 16); Text: "Restart required after changing"; }
+        }
+        Group { Anchor: (Height: 8); }
+
+        // OrbisGuard
+        Group { Background: #0b141f(0.84); LayoutMode: Top; Padding: (Full: 12);
+          Label { Style: (FontSize: 14, TextColor: #55ff88, RenderBold: true); Anchor: (Height: 20); Text: "OrbisGuard"; }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @LabelStyle; FlexWeight: 1; Text: "Enabled"; }
+            TextButton #ToggleOrbisGuard { Anchor: (Width: 80, Height: 28); Text: "OFF"; Style: @ToggleOffStyle; }
+          }
+          Label { Style: (FontSize: 11, TextColor: #4a9eff); Anchor: (Height: 16); Text: "Restart required after changing"; }
+        }
+      }
+    }
+  }
+}
+
+$C.@BackButton {}

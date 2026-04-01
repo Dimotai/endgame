@@ -7,7 +7,7 @@ sort-index: 3
 
 # <gradient data="#ff5555:#ff6600:#d16eff">Bosses & Elites</gradient>
 
-Endgame & QoL adds three major boss encounters and several elite mobs. All have configurable HP, damage, player scaling, enrage thresholds, and XP rewards via <#55ffff>/egconfig</#55ffff>.
+Endgame & QoL adds three major boss encounters and several elite mobs. All have configurable HP, damage, player scaling, enrage thresholds, and XP rewards via <#55ffff>/eg config</#55ffff>.
 
 ---
 
@@ -33,7 +33,7 @@ In multiplayer, bosses intelligently switch targets between players:
 | Highest Damage | 40% | Targets the top damage dealer |
 | Random | 20% | Picks a random nearby player |
 
-Evaluated every 8-10 seconds (configurable: 2000-30000ms in <#55ffff>/egconfig</#55ffff> Misc tab).
+Evaluated every 8-10 seconds (configurable: 2000-30000ms in <#55ffff>/eg config</#55ffff> Misc tab).
 
 ---
 
@@ -61,7 +61,7 @@ All three main bosses can enter an <#ff5555>enraged state</#ff5555> when taking 
 | Effect | 1.5x damage for 8 seconds |
 | Cooldown | 15 seconds |
 
-! All thresholds are configurable per-boss in <#55ffff>/egconfig</#55ffff> (Combat > Bosses > Enrage System).
+! All thresholds are configurable per-boss in <#55ffff>/eg config</#55ffff> (Combat > Bosses > Enrage System).
 
 ---
 

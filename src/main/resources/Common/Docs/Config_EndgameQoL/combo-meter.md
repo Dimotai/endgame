@@ -36,7 +36,7 @@ Each damage tier can optionally grant special effects:
 
 **Lifesteal** — Heal a percentage of damage dealt
 
-Effects are configurable per tier in <#55ffff>/egconfig</#55ffff> under the Misc tab.
+Effects are configurable per tier in <#55ffff>/eg config</#55ffff> under the Misc tab.
 
 ---
 
@@ -58,7 +58,7 @@ Your combo decays over time if you don't score another kill. The decay timer is 
 
 <#aaaaaa>ComboEnabled</#aaaaaa> — Toggle the combo system on/off (default: true)
 
-All tier thresholds, damage multipliers, effects, and decay timers are configurable in <#55ffff>/egconfig</#55ffff> under the Misc tab.
+All tier thresholds, damage multipliers, effects, and decay timers are configurable in <#55ffff>/eg config</#55ffff> under the Misc tab.
 
 ---
 

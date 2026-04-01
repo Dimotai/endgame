@@ -90,7 +90,7 @@ The dungeon features a light snow environment with icy blue fog. Visibility has 
 
 ## <#aaaaaa>Block Protection</#aaaaaa>
 
-Block protection is <#55ff55>enabled by default</#55ff55> in v4.0.0. Blocks inside the Frozen Dungeon are unbreakable and unplaceable, except for <#55ffff>Mithril Snow Ore</#55ffff> which can still be mined. Disable in <#55ffff>/egconfig</#55ffff> under the Misc tab if desired.
+Block protection is <#55ff55>enabled by default</#55ff55> in v4.0.0. Blocks inside the Frozen Dungeon are unbreakable and unplaceable, except for <#55ffff>Mithril Snow Ore</#55ffff> which can still be mined. Disable in <#55ffff>/eg config</#55ffff> under the Misc tab if desired.
 
 ---
 

@@ -11,8 +11,6 @@ import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import endgame.plugin.components.FrostwalkerIceComponent;
 import endgame.plugin.components.PlayerEndgameComponent;
-import endgame.plugin.commands.EgAdminCommand;
-import endgame.plugin.commands.EgConfigCommand;
 import endgame.plugin.commands.EgCommand;
 import endgame.plugin.config.EndgameConfig;
 import endgame.plugin.config.PlayerLocaleStorage;
@@ -147,9 +145,7 @@ public class EndgameQoL extends JavaPlugin {
                 "EndgameOpenTradeUI", endgame.plugin.ui.BuilderActionOpenTradeUI::new);
 
         // Commands
-        this.getCommandRegistry().registerCommand(new EgConfigCommand(this));
         this.getCommandRegistry().registerCommand(new EgCommand(this));
-        this.getCommandRegistry().registerCommand(new EgAdminCommand(this));
 
 
         // Frostwalker ice block component (ChunkStore)
@@ -194,25 +190,20 @@ public class EndgameQoL extends JavaPlugin {
 
     private void initRPGLevelingIntegration() {
         // Register config defaults via RPG Leveling's API (0.3.3+).
-        // Only overrides values matching RPG Leveling's bundled defaults — admin customizations preserved.
         endgame.plugin.integration.rpgleveling.RPGLevelingConfigPatcher.register();
 
-        // Auto-detect on first run: if RPGLevelingAutoDetected is "pending", this is a fresh config.
-        // Enable if the mod is present, disable if not, then persist the decision.
-        if (config.get().isRPGLevelingAutoDetectPending()) {
-            boolean modPresent = false;
-            try {
-                Class.forName("org.zuxaw.plugin.api.RPGLevelingAPI");
-                modPresent = true;
-            } catch (ClassNotFoundException ignored) {}
-
-            config.get().setRPGLevelingEnabled(modPresent);
-            config.get().setRPGLevelingAutoDetected("done");
+        // Auto-detect: enable when mod is newly detected, respect manual disable.
+        // States: "pending" (fresh), "absent" (mod not found), "present" (mod found and auto-enabled), "disabled" (admin manually disabled)
+        boolean modPresent = isClassAvailable("org.zuxaw.plugin.api.RPGLevelingAPI");
+        String state = config.get().getRPGLevelingAutoDetected();
+        if (modPresent && !config.get().isRPGLevelingEnabled() && !"disabled".equals(state)) {
+            config.get().setRPGLevelingEnabled(true);
+            config.get().setRPGLevelingAutoDetected("present");
             config.save();
-            this.getLogger().atInfo().log(
-                    "[EndgameQoL] First run — RPG Leveling %s (mod %s). Saved to config.",
-                    modPresent ? "auto-enabled" : "auto-disabled",
-                    modPresent ? "detected" : "not found");
+            this.getLogger().atInfo().log("[EndgameQoL] RPG Leveling detected — auto-enabled");
+        } else if (!modPresent && !"absent".equals(state)) {
+            config.get().setRPGLevelingAutoDetected("absent");
+            config.save();
         }
 
         if (!config.get().isRPGLevelingEnabled()) {
@@ -237,21 +228,17 @@ public class EndgameQoL extends JavaPlugin {
     }
 
     private void initEndlessLevelingIntegration() {
-        // Auto-detect on first run
-        if (config.get().isEndlessLevelingAutoDetectPending()) {
-            boolean modPresent = false;
-            try {
-                Class.forName("com.airijko.endlessleveling.api.EndlessLevelingAPI");
-                modPresent = true;
-            } catch (ClassNotFoundException ignored) {}
-
-            config.get().setEndlessLevelingEnabled(modPresent);
-            config.get().setEndlessLevelingAutoDetected("done");
+        // Auto-detect: enable when mod is newly detected, respect manual disable.
+        boolean modPresent = isClassAvailable("com.airijko.endlessleveling.api.EndlessLevelingAPI");
+        String state = config.get().getEndlessLevelingAutoDetected();
+        if (modPresent && !config.get().isEndlessLevelingEnabled() && !"disabled".equals(state)) {
+            config.get().setEndlessLevelingEnabled(true);
+            config.get().setEndlessLevelingAutoDetected("present");
             config.save();
-            this.getLogger().atInfo().log(
-                    "[EndgameQoL] First run — Endless Leveling %s (mod %s). Saved to config.",
-                    modPresent ? "auto-enabled" : "auto-disabled",
-                    modPresent ? "detected" : "not found");
+            this.getLogger().atInfo().log("[EndgameQoL] Endless Leveling detected — auto-enabled");
+        } else if (!modPresent && !"absent".equals(state)) {
+            config.get().setEndlessLevelingAutoDetected("absent");
+            config.save();
         }
 
         if (!config.get().isEndlessLevelingEnabled()) {
@@ -276,20 +263,16 @@ public class EndgameQoL extends JavaPlugin {
     }
 
     private void initOrbisGuardIntegration() {
-        // Auto-detect on first run
-        if (config.get().isOrbisGuardAutoDetectPending()) {
-            boolean modPresent = false;
-            try {
-                Class.forName("com.orbisguard.api.OrbisGuardAPI");
-                modPresent = true;
-            } catch (ClassNotFoundException ignored) {}
-
-            // Disabled by default — don't auto-enable even if present
-            config.get().setOrbisGuardAutoDetected("done");
+        // OrbisGuard: detect but never auto-enable (disabled by default, admin must opt-in)
+        boolean modPresent = isClassAvailable("com.orbisguard.api.OrbisGuardAPI");
+        String state = config.get().getOrbisGuardAutoDetected();
+        if (!modPresent && !"absent".equals(state)) {
+            config.get().setOrbisGuardAutoDetected("absent");
             config.save();
-            this.getLogger().atInfo().log(
-                    "[EndgameQoL] First run — OrbisGuard %s (disabled by default). Enable in /egconfig Integration tab.",
-                    modPresent ? "detected" : "not found");
+        } else if (modPresent && "pending".equals(state)) {
+            config.get().setOrbisGuardAutoDetected("detected");
+            config.save();
+            this.getLogger().atInfo().log("[EndgameQoL] OrbisGuard detected — disabled by default. Enable in /egconfig Integration tab.");
         }
 
         if (!config.get().isOrbisGuardEnabled()) {
@@ -309,6 +292,15 @@ public class EndgameQoL extends JavaPlugin {
         } catch (ClassNotFoundException e) {
             orbisGuardBridge = null;
             this.getLogger().atWarning().log("[EndgameQoL] OrbisGuard enabled in config but mod not found — skipping integration");
+        }
+    }
+
+    private static boolean isClassAvailable(String className) {
+        try {
+            Class.forName(className);
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
         }
     }
 

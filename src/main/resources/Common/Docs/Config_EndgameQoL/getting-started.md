@@ -42,7 +42,7 @@ On first startup the plugin creates a default <#aaaaaa>EndgameConfig.json</#aaaa
 
 ## <#55ffff>Quick Configuration</#55ffff>
 
-Open the config UI with <#55ffff>/egconfig</#55ffff> (requires <#aaaaaa>endgameqol.config</#aaaaaa> permission). All changes apply immediately.
+Open the config UI with <#55ffff>/eg config</#55ffff> (requires <#aaaaaa>endgameqol.config</#aaaaaa> permission). All changes apply immediately.
 
 | Tab | What you can tune |
 |:----|:------------------|
@@ -60,12 +60,12 @@ Open the config UI with <#55ffff>/egconfig</#55ffff> (requires <#aaaaaa>endgameq
 
 Player commands (<#55ffff>/eg bounty</#55ffff>, <#55ffff>/eg bestiary</#55ffff>, etc.) are **allowed by default** — all players can use them. To restrict a command, add the negated permission (e.g. <#ff5555>-endgameqol.bounty</#ff5555>).
 
-Admin commands (<#55ffff>/egconfig</#55ffff>, <#55ffff>/egadmin</#55ffff>) are **denied by default** — grant <#aaaaaa>endgameqol.config</#aaaaaa> and <#aaaaaa>endgameqol.admin</#aaaaaa> explicitly. Server operators have them automatically.
+Admin commands (<#55ffff>/eg config</#55ffff>, <#55ffff>/eg admin</#55ffff>) are **denied by default** — grant <#aaaaaa>endgameqol.config</#aaaaaa> and <#aaaaaa>endgameqol.admin</#aaaaaa> explicitly. Server operators have them automatically.
 
 | Command | Permission |
 |:--------|:-----------|
-| /egconfig | endgameqol.config |
-| /eg status, /egadmin | endgameqol.admin |
+| /eg config | endgameqol.config |
+| /eg status, /eg admin | endgameqol.admin |
 | /eg bestiary | endgameqol.bestiary |
 | /eg achievements | endgameqol.achievements |
 | /eg bounty | endgameqol.bounty |
@@ -75,11 +75,11 @@ Admin commands (<#55ffff>/egconfig</#55ffff>, <#55ffff>/egadmin</#55ffff>) are *
 
 ## <#ff6600>Recipe Customization</#ff6600>
 
-Beyond the quick toggles in <#55ffff>/egconfig</#55ffff>, you can fully customize all ~96 recipes via <#55ffff>RecipeOverrides.json</#55ffff> in <#aaaaaa>Saves/save/mods/Config_Endgame&QoL/</#aaaaaa>. Auto-generated on first boot.
+Beyond the quick toggles in <#55ffff>/eg config</#55ffff>, you can fully customize all ~96 recipes via <#55ffff>RecipeOverrides.json</#55ffff> in <#aaaaaa>Saves/save/mods/Config_Endgame&QoL/</#aaaaaa>. Auto-generated on first boot.
 
 **Per recipe you can:** disable it, change ingredients/quantities, change the output, change the bench/tier requirement, change craft time.
 
-! RecipeOverrides requires a <#ff5555>server restart</#ff5555>. Use <#55ffff>/egconfig</#55ffff> Crafting tab for instant on/off toggles.
+! RecipeOverrides requires a <#ff5555>server restart</#ff5555>. Use <#55ffff>/eg config</#55ffff> Crafting tab for instant on/off toggles.
 
 ---
 
@@ -109,7 +109,7 @@ You can also set Custom multipliers (10-1000%) and fine-tune each boss individua
 - Database: SQLite or MySQL for persistent player data
 
 **Large server (20+ players):**
-- Tune per-boss player scaling in <#55ffff>/egconfig</#55ffff> (default +50%/player may need adjustment)
+- Tune per-boss player scaling in <#55ffff>/eg config</#55ffff> (default +50%/player may need adjustment)
 - MySQL/MariaDB for cross-instance player sync
 - Consider restricting some commands via permissions
 

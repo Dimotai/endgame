@@ -119,7 +119,7 @@ public class TradeUI extends InteractiveCustomUIPage<TradeUI.TradeEventData> {
             // Output item
             cmd.set(rowSel + " #OutputSlot.ItemId", outputId);
             cmd.set(rowSel + " #ItemName.Text", formatItemId(outputId));
-            cmd.set(rowSel + " #ItemQty.Text", outputQty > 1 ? "x" + outputQty : "");
+            cmd.set(rowSel + " #ItemQty.Text", "x" + outputQty);
 
             // Grey out if out of stock or can't afford
             if (outOfStock) {

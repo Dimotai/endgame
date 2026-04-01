@@ -266,20 +266,6 @@ public class EndgameConfig {
     public boolean isBountyWeeklyEnabled() { return bounty.isWeeklyEnabled(); }
     public void setBountyWeeklyEnabled(boolean e) { bounty.setWeeklyEnabled(e); }
 
-    // --- Crafting ---
-    public boolean isEnableGliderCrafting() { return crafting.isEnableGliderCrafting(); }
-    public void setEnableGliderCrafting(boolean e) { crafting.setEnableGliderCrafting(e); }
-    public boolean isEnableMithrilOreCrafting() { return crafting.isEnableMithrilOreCrafting(); }
-    public void setEnableMithrilOreCrafting(boolean e) { crafting.setEnableMithrilOreCrafting(e); }
-    public boolean isEnablePortalKeyTaiga() { return crafting.isEnablePortalKeyTaiga(); }
-    public void setEnablePortalKeyTaiga(boolean e) { crafting.setEnablePortalKeyTaiga(e); }
-    public boolean isEnablePortalKeyHederasLair() { return crafting.isEnablePortalKeyHederasLair(); }
-    public void setEnablePortalKeyHederasLair(boolean e) { crafting.setEnablePortalKeyHederasLair(e); }
-    public boolean isEnablePortalHedera() { return crafting.isEnablePortalHedera(); }
-    public void setEnablePortalHedera(boolean e) { crafting.setEnablePortalHedera(e); }
-    public boolean isEnablePortalGolemVoid() { return crafting.isEnablePortalGolemVoid(); }
-    public void setEnablePortalGolemVoid(boolean e) { crafting.setEnablePortalGolemVoid(e); }
-
     // --- OrbisGuard ---
     public boolean isOrbisGuardEnabled() { return misc.isOrbisGuardEnabled(); }
     public void setOrbisGuardEnabled(boolean e) { misc.setOrbisGuardEnabled(e); }

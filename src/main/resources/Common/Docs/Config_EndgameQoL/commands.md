@@ -9,25 +9,25 @@ sort-index: 1
 
 ---
 
-## <#55ffff>/egconfig</#55ffff>
+All EndgameQoL commands are under <#55ffff>/eg</#55ffff>.
 
-Opens the EndgameQoL configuration UI. Alias: <#55ffff>/egcfg</#55ffff>
+---
+
+## <#55ffff>/eg config</#55ffff>
+
+Opens the EndgameQoL configuration UI with 7 tabs (Difficulty, Scaling, Weapons, Armor, Crafting, Misc, Integration), global search, and full recipe override editor.
 
 **Permission** — <#aaaaaa>endgameqol.config</#aaaaaa>
-
-The config UI has tabs for Difficulty, Scaling (with Bosses/Mobs/Zone4 sub-tabs), RPG Leveling, Weapons, Armor, Crafting, and Misc. Every change saves immediately and syncs to all connected players.
 
 See the Configuration page for a full list of all settings.
 
 ---
 
-## <#55ffff>/eg</#55ffff>
-
-Parent command with several subcommands:
+## <#55ffff>/eg</#55ffff> subcommands
 
 **<#55ffff>/eg status</#55ffff>** — Live diagnostics dashboard showing difficulty, database health, active encounters, feature toggles, player count, recipe/locale stats. Permission: <#aaaaaa>endgameqol.admin</#aaaaaa>
 
-**<#55ffff>/eg achievements</#55ffff>** — View your achievement progress across all 5 categories. Claim item rewards for completed achievements. Alias: <#55ffff>/eg ach</#55ffff>. Permission: <#aaaaaa>endgameqol.achievements</#aaaaaa>
+**<#55ffff>/eg achievements</#55ffff>** — View your achievement progress across all categories. Claim item rewards for completed achievements. Alias: <#55ffff>/eg ach</#55ffff>. Permission: <#aaaaaa>endgameqol.achievements</#aaaaaa>
 
 **<#55ffff>/eg lang <code></#55ffff>** — Change your display language. Supported: <#aaaaaa>EN</#aaaaaa>, <#aaaaaa>FR</#aaaaaa>, <#aaaaaa>ES</#aaaaaa>, <#aaaaaa>PT-BR</#aaaaaa>, <#aaaaaa>RU</#aaaaaa>. Per-player setting, persists across sessions. No permission required.
 
@@ -39,17 +39,17 @@ Parent command with several subcommands:
 
 ---
 
-## <#ff5555>/egadmin</#ff5555>
+## <#ff5555>/eg admin</#ff5555>
 
-Admin command collection for server operators.
+Admin subcommands for server operators.
 
-**<#55ffff>/egadmin debug boss</#55ffff>** — Debug active boss state
+**<#55ffff>/eg admin debug boss</#55ffff>** — Debug active boss state
 
-**<#55ffff>/egadmin reset leaderboard</#55ffff>** — Reset the Gauntlet leaderboard
+**<#55ffff>/eg admin reset leaderboard</#55ffff>** — Reset the Gauntlet leaderboard
 
-**<#55ffff>/egadmin reset bounties</#55ffff>** — Reset all player bounty progress
+**<#55ffff>/eg admin reset bounties</#55ffff>** — Reset all player bounty progress
 
-**<#55ffff>/egadmin reload</#55ffff>** — Hot-reload config without restart
+**<#55ffff>/eg admin reload</#55ffff>** — Hot-reload config without restart
 
 **Permission** — <#aaaaaa>endgameqol.admin</#aaaaaa>
 
@@ -65,8 +65,8 @@ Opens the Voile documentation browser (requires the Voile mod). Browse this wiki
 
 | Command | Permission |
 |:--------|:-----------|
-| /egconfig | endgameqol.config |
-| /eg status, /egadmin | endgameqol.admin |
+| /eg config | endgameqol.config |
+| /eg status, /eg admin | endgameqol.admin |
 | /eg bestiary | endgameqol.bestiary |
 | /eg achievements | endgameqol.achievements |
 | /eg bounty | endgameqol.bounty |

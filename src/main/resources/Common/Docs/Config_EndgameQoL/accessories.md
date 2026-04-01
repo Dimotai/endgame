@@ -41,7 +41,7 @@ Cheat death once — prevents fatal damage, then the amulet is consumed.
 
 ### <#ff6600>Blazefist</#ff6600>
 
-AOE burn effect on melee hits. 50 Fire DPS for 3 seconds. Damage and duration are configurable in /egconfig.
+AOE burn effect on melee hits. 50 Fire DPS for 3 seconds. Damage and duration are configurable in /eg config.
 
 **Source** — Rare drop from Fire Dragons (15%).
 
