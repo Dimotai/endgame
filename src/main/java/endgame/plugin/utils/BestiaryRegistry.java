@@ -130,17 +130,17 @@ public final class BestiaryRegistry {
             new String[]{"Ice Essence", "Sapphire", "Cobalt Bar", "Flocon"},
             "Frozen Dungeon", "Golem_Crystal_Frost.png");
 
-        reg("Spirit_Frost", "Spirit Frost", Category.ELEMENTAL, 200,
+        reg("Endgame_Spirit_Frost", "Spirit Frost", Category.ELEMENTAL, 200,
             "Ice",
             "An ethereal frost spirit drifting through frozen caves. Its touch chills to the bone.",
             new String[]{"Ice Essence", "Flocon"},
-            "Frozen Dungeon", "Spirit_Frost.png");
+            "Frozen Dungeon", "Endgame_Spirit_Frost.png");
 
-        reg("Spirit_Root", "Spirit Root", Category.ELEMENTAL, 200,
+        reg("Endgame_Spirit_Root", "Spirit Root", Category.ELEMENTAL, 200,
             "Nature",
             "A restless nature spirit haunting the swamp. Entangles prey with spectral roots.",
             new String[]{"Forest Essence"},
-            "Swamp Dungeon", "Spirit_Root.png");
+            "Swamp Dungeon", "Endgame_Spirit_Root.png");
 
         reg("Spectre_Void", "Spectre Void", Category.ELEMENTAL, 120,
             "50 Physical",

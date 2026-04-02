@@ -1,0 +1,10 @@
+{
+  "Type": "Serial",
+  "Interactions": [
+    {
+      "Type": "TriggerSpawnMarkers",
+      "MarkerType": "Endgame_Spirit_Frost_Manual",
+      "Range": 30
+    }
+  ]
+}

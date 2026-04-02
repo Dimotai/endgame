@@ -102,7 +102,7 @@ public class RPGLevelingConfigPatcher {
                 entityOverride("Skeleton_Frost_Archer", 88),
                 entityOverride("Skeleton_Frost_Mage", 88),
                 entityOverride("Endgame_Rat_Frost", 85),
-                entityOverride("Spirit_Frost", 85)
+                entityOverride("Endgame_Spirit_Frost", 85)
         ));
         return inst;
     }
@@ -119,7 +119,7 @@ public class RPGLevelingConfigPatcher {
                 entityOverride("Endgame_Bramble_Elite", 115),
                 entityOverride("Endgame_Grooble", 110),
                 entityOverride("Endgame_Fen_Stalker", 108),
-                entityOverride("Spirit_Root", 115),
+                entityOverride("Endgame_Spirit_Root", 115),
                 entityOverride("Crocodile", 0),
                 entityOverride("Deco_Raven_Fly", 0),
                 entityOverride("Deco_Raven_NoFly", 0)

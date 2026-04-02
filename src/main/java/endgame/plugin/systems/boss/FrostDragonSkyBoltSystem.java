@@ -74,7 +74,7 @@ public class FrostDragonSkyBoltSystem extends EntityTickingSystem<EntityStore> {
     private static final String NOVA_LAUNCH_PARTICLE_2 = "Hedera_Scream";
 
     // Spirit spawning (replaces NPC role EnableSpawn)
-    private static final String SPIRIT_NPC_ID = "Spirit_Frost";
+    private static final String SPIRIT_NPC_ID = "Endgame_Spirit_Frost";
     private static final long SPIRIT_SPAWN_MIN_MS = 20000;
     private static final long SPIRIT_SPAWN_MAX_MS = 30000;
     private static final int SPIRIT_SPAWN_MIN_COUNT = 2;

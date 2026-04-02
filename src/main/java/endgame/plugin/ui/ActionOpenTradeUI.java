@@ -24,7 +24,7 @@ public class ActionOpenTradeUI extends ActionBase {
     public ActionOpenTradeUI(@Nonnull BuilderActionOpenTradeUI builder, @Nonnull BuilderSupport support) {
         super(builder);
         this.shopId = builder.getShopId(support);
-        this.merchantName = builder.getMerchantName();
+        this.merchantName = builder.getMerchantName(support);
     }
 
     @Override

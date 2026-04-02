@@ -1,6 +1,6 @@
 {
-  "Model": "NPC/Swamp_Dungeon/Endgame_Bramble_Elite.blockymodel",
-  "Texture": "NPC/Swamp_Dungeon/Endgame_Bramble_Elite_Texture.png",
+  "Model": "NPC/Swamp_Dungeon/Endgame_Bramble_Elite/Endgame_Bramble_Elite.blockymodel",
+  "Texture": "NPC/Swamp_Dungeon/Endgame_Bramble_Elite/Endgame_Bramble_Elite_Texture.png",
   "EyeHeight": 1.4,
   "HitBox": {
     "Max": {

@@ -184,8 +184,6 @@ public class GenericBossManager {
     public void registerBoss(Ref<EntityStore> bossRef, String npcTypeId, Store<EntityStore> store) {
         if (bossRef == null || !bossRef.isValid())
             return;
-        if (activeBosses.containsKey(bossRef))
-            return;
 
         BossType bossType = BossType.fromTypeId(npcTypeId);
         if (bossType == null)
@@ -209,16 +207,16 @@ public class GenericBossManager {
                     float healthPercent = maxHealth > 0 ? currentHealth / maxHealth : 1.0f;
                     state.currentPhase = calculatePhase(config, healthPercent);
                     state.lastHealthPercent = healthPercent;
-
-                    plugin.getLogger().atFine().log(
-                            "[GenericBoss] Registered %s: %s (HP: %.0f/%.0f = %.0f%%, Phase %d)",
-                            config.displayName, npcTypeId, currentHealth, maxHealth,
-                            healthPercent * 100, state.currentPhase);
                 }
             }
         }
 
-        activeBosses.put(bossRef, state);
+        // Atomic check-and-put — prevents race condition with concurrent registration
+        GenericBossState existing = activeBosses.putIfAbsent(bossRef, state);
+        if (existing != null) return;
+
+        plugin.getLogger().atFine().log("[GenericBoss] Registered %s: %s (Phase %d)",
+                config.displayName, npcTypeId, state.currentPhase);
     }
 
     public void unregisterBoss(Ref<EntityStore> bossRef) {
@@ -279,8 +277,8 @@ public class GenericBossManager {
 
     private void onFrostDragonPhaseChange(GenericBossState state, int newPhase, Store<EntityStore> store) {
         int spiritCount = newPhase == 2 ? 2 : 3;
-        spawnMinionsAroundBoss(state, store, "Spirit_Frost", spiritCount, 10.0);
-        plugin.getLogger().atFine().log("[GenericBoss] Frost Dragon phase %d — spawned %d Spirit_Frost",
+        spawnMinionsAroundBoss(state, store, "Endgame_Spirit_Frost", spiritCount, 10.0);
+        plugin.getLogger().atFine().log("[GenericBoss] Frost Dragon phase %d — spawned %d Endgame_Spirit_Frost",
                 newPhase, spiritCount);
     }
 

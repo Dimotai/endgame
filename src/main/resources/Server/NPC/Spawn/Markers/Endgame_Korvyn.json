@@ -2,7 +2,7 @@
     "Model": "NPC_Spawn_Marker",
     "NPCs": [
         {
-            "Name": "Korvyn",
+            "Name": "Endgame_Korvyn",
             "Weight": 100,
             "SpawnAfterGameTime": "PT1H"
         }

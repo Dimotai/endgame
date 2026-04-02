@@ -82,11 +82,6 @@ public class GolemVoidBossManager {
     public void registerBoss(Ref<EntityStore> bossRef, String npcTypeId, Store<EntityStore> store) {
         if (bossRef == null || !bossRef.isValid()) return;
 
-        if (activeBosses.containsKey(bossRef)) {
-            plugin.getLogger().atFine().log("[GolemVoidBoss] Boss already registered: %s", npcTypeId);
-            return;
-        }
-
         GolemVoidState state = new GolemVoidState(bossRef, npcTypeId);
 
         ComponentType<EntityStore, EntityStatMap> statType = EntityStatMap.getComponentType();
@@ -99,25 +94,21 @@ public class GolemVoidBossManager {
                     float maxHealth = healthValue.getMax();
                     float healthPercent = maxHealth > 0 ? currentHealth / maxHealth : 1.0f;
 
-                    // Calculate correct phase based on actual health percentage
                     int actualPhase = calculatePhase(healthPercent);
                     state.currentPhase = actualPhase;
                     state.lastHealthPercent = healthPercent;
-
-                    plugin.getLogger().atFine().log(
-                        "[GolemVoidBoss] Boss registered: %s (HP: %.0f/%.0f = %.0f%%, Phase %d)",
-                        npcTypeId, currentHealth, maxHealth, healthPercent * 100, actualPhase);
-                } else {
-                    plugin.getLogger().atFine().log("[GolemVoidBoss] Boss registered: %s (Phase 1, no health data)", npcTypeId);
                 }
-            } else {
-                plugin.getLogger().atFine().log("[GolemVoidBoss] Boss registered: %s (Phase 1, no stat map)", npcTypeId);
             }
-        } else {
-            plugin.getLogger().atFine().log("[GolemVoidBoss] Boss registered: %s (Phase 1)", npcTypeId);
         }
 
-        activeBosses.put(bossRef, state);
+        // Atomic check-and-put — prevents race condition with concurrent registration
+        GolemVoidState existing = activeBosses.putIfAbsent(bossRef, state);
+        if (existing != null) {
+            plugin.getLogger().atFine().log("[GolemVoidBoss] Boss already registered: %s", npcTypeId);
+            return;
+        }
+
+        plugin.getLogger().atFine().log("[GolemVoidBoss] Boss registered: %s (Phase %d)", npcTypeId, state.currentPhase);
 
         plugin.getLogger().atFine().log("[GolemVoidBoss] Boss ready - use showBossBarToPlayer() to display bar");
     }

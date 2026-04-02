@@ -12,7 +12,7 @@ import endgame.plugin.EndgameQoL;
  */
 public class VorthakSpawner {
 
-    private static final String VORTHAK_NPC_ID = "Vorthak";
+    private static final String VORTHAK_NPC_ID = "Endgame_Vorthak";
 
     // Position in Forgotten Temple
     private static final double SPAWN_X = 4983.0;

@@ -5,6 +5,7 @@ import com.hypixel.hytale.server.npc.asset.builder.BuilderDescriptorState;
 import com.hypixel.hytale.server.npc.asset.builder.BuilderSupport;
 import com.hypixel.hytale.server.npc.asset.builder.InstructionType;
 import com.hypixel.hytale.server.npc.asset.builder.holder.AssetHolder;
+import com.hypixel.hytale.server.npc.asset.builder.holder.StringHolder;
 import com.hypixel.hytale.server.npc.corecomponents.builders.BuilderActionBase;
 import com.hypixel.hytale.server.npc.instructions.Action;
 
@@ -21,7 +22,8 @@ public class BuilderActionOpenTradeUI extends BuilderActionBase {
 
     @Nonnull
     protected final AssetHolder shopId = new AssetHolder();
-    protected String merchantName;
+    @Nonnull
+    protected final StringHolder merchantNameHolder = new StringHolder();
 
     @Nonnull
     public String getShortDescription() {
@@ -47,12 +49,10 @@ public class BuilderActionOpenTradeUI extends BuilderActionBase {
     public BuilderActionOpenTradeUI readConfig(@Nonnull JsonElement data) {
         this.requireAsset(data, "Shop", this.shopId, null, BuilderDescriptorState.Stable,
                 "The barter shop asset to display", null);
+        this.getString(data, "MerchantName", this.merchantNameHolder, "",
+                null, BuilderDescriptorState.Stable,
+                "Display name for the merchant in the trade UI", null);
         this.requireInstructionType(EnumSet.of(InstructionType.Interaction));
-
-        // MerchantName is optional — read manually from JSON
-        if (data.isJsonObject() && data.getAsJsonObject().has("MerchantName")) {
-            this.merchantName = data.getAsJsonObject().get("MerchantName").getAsString();
-        }
         return this;
     }
 
@@ -60,7 +60,8 @@ public class BuilderActionOpenTradeUI extends BuilderActionBase {
         return this.shopId.get(support.getExecutionContext());
     }
 
-    public String getMerchantName() {
-        return merchantName;
+    public String getMerchantName(@Nonnull BuilderSupport support) {
+        String name = this.merchantNameHolder.get(support.getExecutionContext());
+        return name != null && !name.isEmpty() ? name : null;
     }
 }

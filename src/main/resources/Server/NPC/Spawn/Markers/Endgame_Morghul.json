@@ -2,7 +2,7 @@
   "Model": "NPC_Spawn_Marker",
   "NPCs": [
     {
-      "Name": "Morghul",
+      "Name": "Endgame_Morghul",
       "Weight": 100,
       "SpawnAfterGameTime": "PT2H"
     }
