@@ -9,7 +9,7 @@ sort-index: 1
 
 The Bounty System offers daily quests with tiered rewards, streak bonuses, and a reputation rank progression.
 
-**Command** — Use <#55ffff>/eg bounty</#55ffff> to open the Bounty Board.
+**Command** — Use <#55ffff>/eg journal</#55ffff> to open the Bounty Board.
 
 ---
 

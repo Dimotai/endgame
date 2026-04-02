@@ -15,7 +15,7 @@ The Bounty Board provides repeatable objectives that refresh on a schedule. Each
 
 Bounties are **deterministic per player per day** — the same player always gets the same bounties on the same day, ensuring fairness.
 
-**Command:** `/eg bounty` — Permission: `endgameqol.bounty` (default: allow)
+**Command:** `/eg journal` — Permission: `endgameqol.journal` (default: allow)
 
 ## Bounty Types
 

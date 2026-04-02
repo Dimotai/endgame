@@ -1,0 +1,807 @@
+$C = "../Common.ui";
+
+// ========== STYLES ==========
+
+@TabStyle = TextButtonStyle(
+  Default: (Background: #0a1119, LabelStyle: (FontSize: 13, TextColor: #96a9be, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Hovered: (Background: #141c26, LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Pressed: (Background: #0a1119, LabelStyle: (FontSize: 13, TextColor: #96a9be, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Sounds: $C.@ButtonSounds
+);
+@TabActiveStyle = TextButtonStyle(
+  Default: (Background: #1a2633, LabelStyle: (FontSize: 13, TextColor: #ffffff, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Hovered: (Background: #1a2633, LabelStyle: (FontSize: 13, TextColor: #ffffff, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Pressed: (Background: #1a2633, LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Sounds: $C.@ButtonSounds
+);
+
+@ClaimBtnStyle = TextButtonStyle(
+  Default: (Background: #1a3d2e, LabelStyle: (FontSize: 11, TextColor: #4aff7f, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Hovered: (Background: #2a5a3e, LabelStyle: (FontSize: 11, TextColor: #6aff9f, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Pressed: (Background: #0a2d1e, LabelStyle: (FontSize: 11, TextColor: #4aff7f, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Sounds: $C.@ButtonSounds
+);
+
+@FilterBtnStyle = TextButtonStyle(
+  Default: (Background: #1e1e2e, LabelStyle: (FontSize: 10, TextColor: #999999, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Hovered: (Background: #2e2e3e, LabelStyle: (FontSize: 10, TextColor: #ffffff, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Pressed: (Background: #4a4a6a, LabelStyle: (FontSize: 10, TextColor: #ffffff, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Sounds: $C.@ButtonSounds
+);
+@FilterActiveBtnStyle = TextButtonStyle(
+  Default: (Background: #3a3a5a, LabelStyle: (FontSize: 10, TextColor: #ffffff, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Hovered: (Background: #4a4a6a, LabelStyle: (FontSize: 10, TextColor: #ffffff, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Pressed: (Background: #4a4a6a, LabelStyle: (FontSize: 10, TextColor: #ffffff, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Sounds: $C.@ButtonSounds
+);
+
+@DiffBadgeStyle = (FontSize: 9, TextColor: #55ff55, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center);
+
+@NavBtnStyle = TextButtonStyle(
+  Default: (Background: #2b3542, LabelStyle: (FontSize: 13, TextColor: #96a9be, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Hovered: (Background: #3b4552, LabelStyle: (FontSize: 13, TextColor: #ffffff, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Pressed: (Background: #1b2532, LabelStyle: (FontSize: 13, TextColor: #96a9be, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Sounds: $C.@ButtonSounds
+);
+
+// Reusable label styles
+@LabelStyle = (FontSize: 14, TextColor: #ffffff, RenderBold: true, VerticalAlignment: Center);
+@SubLabelStyle = (FontSize: 12, TextColor: #c0cee5, VerticalAlignment: Center);
+@SmallLabel = (FontSize: 11, TextColor: #888888, VerticalAlignment: Center);
+
+$C.@PageOverlay {
+  $C.@DecoratedContainer {
+    Anchor: (Width: 920, Height: 700);
+
+    #Title {
+      Group {
+        $C.@Title {
+          @Text = "Journal";
+        }
+      }
+    }
+
+    #Content {
+      LayoutMode: Top;
+      Padding: (Full: 0);
+
+      // ======== TAB BAR ========
+      Group #TabBar {
+        LayoutMode: Left;
+        Anchor: (Height: 36);
+
+        $C.@TextButton #TabBounty { FlexWeight: 1; Anchor: (Height: 32); Text: "Bounty Board"; Style: @TabActiveStyle; }
+        Group { Anchor: (Width: 2); }
+        $C.@TextButton #TabBestiary { FlexWeight: 1; Anchor: (Height: 32); Text: "Bestiary"; Style: @TabStyle; }
+        Group { Anchor: (Width: 2); }
+        $C.@TextButton #TabAchievements { FlexWeight: 1; Anchor: (Height: 32); Text: "Achievements"; Style: @TabStyle; }
+      }
+      Group { Anchor: (Height: 1); Background: #2b3542; }
+
+      // ==================== BOUNTY TAB ====================
+      Group #ContentBounty {
+        FlexWeight: 1;
+        LayoutMode: TopScrolling;
+        ScrollbarStyle: $C.@DefaultScrollbarStyle;
+        Padding: (Full: 12);
+        Visible: true;
+
+        // Header row: Rank + Rep bar + Timer
+        Group #BountyHeader {
+          LayoutMode: Left;
+          Anchor: (Height: 26);
+          Padding: (Horizontal: 4);
+
+          Label #BountyRank { Style: (FontSize: 12, TextColor: #888888, RenderBold: true, VerticalAlignment: Center); Anchor: (Width: 100); Text: "NOVICE"; }
+          Group #BountyRepBg { Anchor: (Width: 380, Height: 10); Background: #1a1a2a;
+            Group #BountyRepFill { Anchor: (Width: 0, Height: 10, Left: 0, Top: 0); Background: #888888; }
+          }
+          Label #BountyRepText { Style: (FontSize: 9, TextColor: #666666, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 70); Text: "0/500"; }
+          Label #BountyRefresh { Style: (FontSize: 10, TextColor: #666666, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 120); Text: "Refresh: --"; }
+        }
+        Group { Anchor: (Height: 2); Background: #FFD700; }
+        Group { Anchor: (Height: 6); }
+
+        // Bounty Card 0
+        Group #Bounty0 { LayoutMode: Top; Anchor: (Bottom: 4); Background: #141f14; Padding: (Full: 8); Visible: false;
+          Group { LayoutMode: Left; Anchor: (Height: 22);
+            Label #Bounty0Diff { Style: @DiffBadgeStyle; Anchor: (Width: 55, Height: 18); Background: #2d5a2d; Text: "EASY"; }
+            Group { Anchor: (Width: 8); }
+            Label #Bounty0Desc { Style: (FontSize: 13, TextColor: #dddddd, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+          }
+          Group { LayoutMode: Left; Anchor: (Height: 18); Padding: (Top: 4);
+            Group #Bounty0BarBg { Anchor: (Width: 600, Height: 10); Background: #0a150a;
+              Group #Bounty0BarFill { Anchor: (Width: 0, Height: 10, Left: 0, Top: 0); Background: #55ff55; }
+            }
+            Label #Bounty0Prog { Style: (FontSize: 10, TextColor: #999999, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 90); Text: "0 / 0"; }
+          }
+          Label #Bounty0Reward { Style: (FontSize: 9, TextColor: #8888cc); Anchor: (Height: 14); Text: ""; }
+          Label #Bounty0Bonus { Style: (FontSize: 9, TextColor: #666666); Anchor: (Height: 14); Text: ""; Visible: false; }
+          Group { LayoutMode: Left; Anchor: (Height: 24); Padding: (Top: 2);
+            Label #Bounty0Status { Style: (FontSize: 11, TextColor: #888888, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+            TextButton #Bounty0Claim { Anchor: (Width: 100, Height: 22); Text: "Claim"; Style: @ClaimBtnStyle; Visible: false; }
+          }
+        }
+
+        // Bounty Card 1
+        Group #Bounty1 { LayoutMode: Top; Anchor: (Bottom: 4); Background: #1f1f14; Padding: (Full: 8); Visible: false;
+          Group { LayoutMode: Left; Anchor: (Height: 22);
+            Label #Bounty1Diff { Style: @DiffBadgeStyle; Anchor: (Width: 55, Height: 18); Background: #5a5a2d; Text: "MEDIUM"; }
+            Group { Anchor: (Width: 8); }
+            Label #Bounty1Desc { Style: (FontSize: 13, TextColor: #dddddd, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+          }
+          Group { LayoutMode: Left; Anchor: (Height: 18); Padding: (Top: 4);
+            Group #Bounty1BarBg { Anchor: (Width: 600, Height: 10); Background: #15150a;
+              Group #Bounty1BarFill { Anchor: (Width: 0, Height: 10, Left: 0, Top: 0); Background: #ffff55; }
+            }
+            Label #Bounty1Prog { Style: (FontSize: 10, TextColor: #999999, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 90); Text: "0 / 0"; }
+          }
+          Label #Bounty1Reward { Style: (FontSize: 9, TextColor: #8888cc); Anchor: (Height: 14); Text: ""; }
+          Label #Bounty1Bonus { Style: (FontSize: 9, TextColor: #666666); Anchor: (Height: 14); Text: ""; Visible: false; }
+          Group { LayoutMode: Left; Anchor: (Height: 24); Padding: (Top: 2);
+            Label #Bounty1Status { Style: (FontSize: 11, TextColor: #888888, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+            TextButton #Bounty1Claim { Anchor: (Width: 100, Height: 22); Text: "Claim"; Style: @ClaimBtnStyle; Visible: false; }
+          }
+        }
+
+        // Bounty Card 2
+        Group #Bounty2 { LayoutMode: Top; Anchor: (Bottom: 4); Background: #1f1414; Padding: (Full: 8); Visible: false;
+          Group { LayoutMode: Left; Anchor: (Height: 22);
+            Label #Bounty2Diff { Style: @DiffBadgeStyle; Anchor: (Width: 55, Height: 18); Background: #5a2d2d; Text: "HARD"; }
+            Group { Anchor: (Width: 8); }
+            Label #Bounty2Desc { Style: (FontSize: 13, TextColor: #dddddd, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+          }
+          Group { LayoutMode: Left; Anchor: (Height: 18); Padding: (Top: 4);
+            Group #Bounty2BarBg { Anchor: (Width: 600, Height: 10); Background: #150a0a;
+              Group #Bounty2BarFill { Anchor: (Width: 0, Height: 10, Left: 0, Top: 0); Background: #ff5555; }
+            }
+            Label #Bounty2Prog { Style: (FontSize: 10, TextColor: #999999, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 90); Text: "0 / 0"; }
+          }
+          Label #Bounty2Reward { Style: (FontSize: 9, TextColor: #8888cc); Anchor: (Height: 14); Text: ""; }
+          Label #Bounty2Bonus { Style: (FontSize: 9, TextColor: #666666); Anchor: (Height: 14); Text: ""; Visible: false; }
+          Group { LayoutMode: Left; Anchor: (Height: 24); Padding: (Top: 2);
+            Label #Bounty2Status { Style: (FontSize: 11, TextColor: #888888, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+            TextButton #Bounty2Claim { Anchor: (Width: 100, Height: 22); Text: "Claim"; Style: @ClaimBtnStyle; Visible: false; }
+          }
+        }
+
+        // Streak Section
+        Group #StreakSection { LayoutMode: Top; Background: #141418; Padding: (Full: 8); Anchor: (Bottom: 4); Visible: false;
+          Group { LayoutMode: Left; Anchor: (Height: 18);
+            Group #StreakPip0 { Anchor: (Width: 12, Height: 12); Background: #333333; }
+            Group { Anchor: (Width: 8); }
+            Group #StreakPip1 { Anchor: (Width: 12, Height: 12); Background: #333333; }
+            Group { Anchor: (Width: 8); }
+            Group #StreakPip2 { Anchor: (Width: 12, Height: 12); Background: #333333; }
+          }
+          Label #StreakText { Style: (FontSize: 12, TextColor: #FFD700, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Height: 22); Text: "Complete all 3 bounties for a streak bonus"; }
+          TextButton #StreakClaim { Anchor: (Width: 140, Height: 26); Text: "Claim Streak"; Style: @ClaimBtnStyle; Visible: false; }
+        }
+
+        // Weekly Divider
+        Group #WeeklyDivider { Anchor: (Height: 2); Background: #bb88ff; Visible: false; }
+        Group #WeeklySpacer { Anchor: (Height: 6); Visible: false; }
+
+        // Weekly Bounty Card
+        Group #WeeklyBounty { LayoutMode: Top; Anchor: (Bottom: 4); Background: #1a141f; Padding: (Full: 8); Visible: false;
+          Group { LayoutMode: Left; Anchor: (Height: 22);
+            Label #WeeklyDiff { Style: (FontSize: 9, TextColor: #bb88ff, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 55, Height: 18); Background: #3a2d5a; Text: "WEEKLY"; }
+            Group { Anchor: (Width: 8); }
+            Label #WeeklyDesc { Style: (FontSize: 13, TextColor: #dddddd, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+          }
+          Group { LayoutMode: Left; Anchor: (Height: 18); Padding: (Top: 4);
+            Group #WeeklyBarBg { Anchor: (Width: 600, Height: 10); Background: #0f0a15;
+              Group #WeeklyBarFill { Anchor: (Width: 0, Height: 10, Left: 0, Top: 0); Background: #bb88ff; }
+            }
+            Label #WeeklyProg { Style: (FontSize: 10, TextColor: #999999, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 90); Text: "0 / 0"; }
+          }
+          Label #WeeklyReward { Style: (FontSize: 9, TextColor: #8888cc); Anchor: (Height: 14); Text: ""; }
+          Group { LayoutMode: Left; Anchor: (Height: 24); Padding: (Top: 2);
+            Label #WeeklyStatus { Style: (FontSize: 11, TextColor: #888888, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+            TextButton #WeeklyClaim { Anchor: (Width: 100, Height: 22); Text: "Claim"; Style: @ClaimBtnStyle; Visible: false; }
+          }
+        }
+      }
+
+      // ==================== BESTIARY TAB ====================
+      Group #ContentBestiary {
+        FlexWeight: 1;
+        LayoutMode: Top;
+        Padding: (Full: 12);
+        Visible: false;
+
+        // Stats line
+        Label #BestiaryStats { Style: (FontSize: 11, TextColor: #888888, HorizontalAlignment: Center); Anchor: (Height: 18); Text: "0 / 0 Discovered | 0 Total Kills"; }
+        Group { Anchor: (Height: 4); }
+
+        // Discovery milestone row
+        Group #DiscRow {
+          LayoutMode: Left;
+          Anchor: (Height: 28);
+
+          Label { Style: (FontSize: 10, TextColor: #888888, VerticalAlignment: Center); Anchor: (Width: 70, Height: 24); Text: "Discover:"; }
+          TextButton #Disc0 { Anchor: (Width: 60, Height: 24); Text: "5"; Style: @FilterBtnStyle; }
+          Group { Anchor: (Width: 4); }
+          TextButton #Disc1 { Anchor: (Width: 60, Height: 24); Text: "10"; Style: @FilterBtnStyle; }
+          Group { Anchor: (Width: 4); }
+          TextButton #Disc2 { Anchor: (Width: 60, Height: 24); Text: "15"; Style: @FilterBtnStyle; }
+          Group { Anchor: (Width: 4); }
+          TextButton #Disc3 { Anchor: (Width: 60, Height: 24); Text: "20"; Style: @FilterBtnStyle; }
+          Group { Anchor: (Width: 4); }
+          TextButton #Disc4 { Anchor: (Width: 60, Height: 24); Text: "25"; Style: @FilterBtnStyle; }
+          Group { Anchor: (Width: 4); }
+          TextButton #Disc5 { Anchor: (Width: 60, Height: 24); Text: "ALL"; Style: @FilterBtnStyle; }
+        }
+        Group { Anchor: (Height: 2); Background: #ccb588; }
+        Group { Anchor: (Height: 4); }
+
+        // Category filter row
+        Group #FilterRow {
+          LayoutMode: Left;
+          Anchor: (Height: 28);
+
+          TextButton #FilterAll { Anchor: (Width: 110, Height: 24); Text: "ALL"; Style: @FilterActiveBtnStyle; }
+          Group { Anchor: (Width: 3); }
+          TextButton #FilterBoss { Anchor: (Width: 110, Height: 24); Text: "BOSS"; Style: @FilterBtnStyle; }
+          Group { Anchor: (Width: 3); }
+          TextButton #FilterElite { Anchor: (Width: 110, Height: 24); Text: "ELITE"; Style: @FilterBtnStyle; }
+          Group { Anchor: (Width: 3); }
+          TextButton #FilterElemental { Anchor: (Width: 110, Height: 24); Text: "ELEMENTAL"; Style: @FilterBtnStyle; }
+          Group { Anchor: (Width: 3); }
+          TextButton #FilterCreature { Anchor: (Width: 110, Height: 24); Text: "CREATURE"; Style: @FilterBtnStyle; }
+          Group { Anchor: (Width: 3); }
+          TextButton #FilterEndgame { Anchor: (Width: 110, Height: 24); Text: "ENDGAME"; Style: @FilterBtnStyle; }
+          Group { Anchor: (Width: 3); }
+          TextButton #FilterSpecial { Anchor: (Width: 110, Height: 24); Text: "SPECIAL"; Style: @FilterBtnStyle; }
+        }
+        Group { Anchor: (Height: 4); }
+
+        // Scrollable mob cards area
+        Group #MobList {
+          FlexWeight: 1;
+          LayoutMode: TopScrolling;
+          ScrollbarStyle: $C.@DefaultScrollbarStyle;
+
+          // Mob Card 0
+          Group #Mob0 { LayoutMode: Left; Anchor: (Bottom: 4); Background: #1a1a2a; Padding: (Full: 6); Visible: false;
+            AssetImage #Mob0Portrait { Anchor: (Width: 64, Height: 64); AssetPath: ""; }
+            Group { Anchor: (Width: 8); }
+            Group { LayoutMode: Top; FlexWeight: 1;
+              Group { LayoutMode: Left; Anchor: (Height: 20);
+                Label #Mob0Cat { Style: (FontSize: 9, TextColor: #ff5555, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 70, Height: 16); Background: #ff555522; Text: ""; }
+                Label #Mob0Name { Style: (FontSize: 13, TextColor: #dddddd, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Padding: (Left: 6); Text: "???"; }
+                Label #Mob0HP { Style: (FontSize: 12, TextColor: #ff5555, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 90); Text: ""; }
+              }
+              Group { LayoutMode: Left; Anchor: (Height: 16);
+                Label #Mob0Dmg { Style: (FontSize: 11, TextColor: #ff8800, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+                Label #Mob0Loc { Style: (FontSize: 11, TextColor: #5588bb, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 150); Text: ""; }
+              }
+              Label #Mob0DescText { Style: (FontSize: 11, TextColor: #888888); Anchor: (Height: 16); Text: ""; }
+              Label #Mob0Drops { Style: (FontSize: 11, TextColor: #FFD700); Anchor: (Height: 14); Text: ""; Visible: false; }
+              Label #Mob0Kills { Style: (FontSize: 10, TextColor: #666666); Anchor: (Height: 14); Text: ""; Visible: false; }
+              Group #Mob0Miles { LayoutMode: Left; Anchor: (Height: 22); Visible: false;
+                Label { Style: (FontSize: 9, TextColor: #666666, VerticalAlignment: Center); Anchor: (Width: 60, Height: 20); Text: "Milestones:"; }
+                TextButton #Mob0Ms0 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+                Group { Anchor: (Width: 4); }
+                TextButton #Mob0Ms1 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+                Group { Anchor: (Width: 4); }
+                TextButton #Mob0Ms2 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+                Group { Anchor: (Width: 4); }
+                TextButton #Mob0Ms3 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+              }
+            }
+          }
+
+          // Mob Card 1
+          Group #Mob1 { LayoutMode: Left; Anchor: (Bottom: 4); Background: #1a1a2a; Padding: (Full: 6); Visible: false;
+            AssetImage #Mob1Portrait { Anchor: (Width: 64, Height: 64); AssetPath: ""; }
+            Group { Anchor: (Width: 8); }
+            Group { LayoutMode: Top; FlexWeight: 1;
+              Group { LayoutMode: Left; Anchor: (Height: 20);
+                Label #Mob1Cat { Style: (FontSize: 9, TextColor: #ff5555, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 70, Height: 16); Background: #ff555522; Text: ""; }
+                Label #Mob1Name { Style: (FontSize: 13, TextColor: #dddddd, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Padding: (Left: 6); Text: "???"; }
+                Label #Mob1HP { Style: (FontSize: 12, TextColor: #ff5555, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 90); Text: ""; }
+              }
+              Group { LayoutMode: Left; Anchor: (Height: 16);
+                Label #Mob1Dmg { Style: (FontSize: 11, TextColor: #ff8800, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+                Label #Mob1Loc { Style: (FontSize: 11, TextColor: #5588bb, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 150); Text: ""; }
+              }
+              Label #Mob1DescText { Style: (FontSize: 11, TextColor: #888888); Anchor: (Height: 16); Text: ""; }
+              Label #Mob1Drops { Style: (FontSize: 11, TextColor: #FFD700); Anchor: (Height: 14); Text: ""; Visible: false; }
+              Label #Mob1Kills { Style: (FontSize: 10, TextColor: #666666); Anchor: (Height: 14); Text: ""; Visible: false; }
+              Group #Mob1Miles { LayoutMode: Left; Anchor: (Height: 22); Visible: false;
+                Label { Style: (FontSize: 9, TextColor: #666666, VerticalAlignment: Center); Anchor: (Width: 60, Height: 20); Text: "Milestones:"; }
+                TextButton #Mob1Ms0 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+                Group { Anchor: (Width: 4); }
+                TextButton #Mob1Ms1 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+                Group { Anchor: (Width: 4); }
+                TextButton #Mob1Ms2 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+                Group { Anchor: (Width: 4); }
+                TextButton #Mob1Ms3 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+              }
+            }
+          }
+
+          // Mob Card 2
+          Group #Mob2 { LayoutMode: Left; Anchor: (Bottom: 4); Background: #1a1a2a; Padding: (Full: 6); Visible: false;
+            AssetImage #Mob2Portrait { Anchor: (Width: 64, Height: 64); AssetPath: ""; }
+            Group { Anchor: (Width: 8); }
+            Group { LayoutMode: Top; FlexWeight: 1;
+              Group { LayoutMode: Left; Anchor: (Height: 20);
+                Label #Mob2Cat { Style: (FontSize: 9, TextColor: #ff5555, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 70, Height: 16); Background: #ff555522; Text: ""; }
+                Label #Mob2Name { Style: (FontSize: 13, TextColor: #dddddd, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Padding: (Left: 6); Text: "???"; }
+                Label #Mob2HP { Style: (FontSize: 12, TextColor: #ff5555, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 90); Text: ""; }
+              }
+              Group { LayoutMode: Left; Anchor: (Height: 16);
+                Label #Mob2Dmg { Style: (FontSize: 11, TextColor: #ff8800, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+                Label #Mob2Loc { Style: (FontSize: 11, TextColor: #5588bb, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 150); Text: ""; }
+              }
+              Label #Mob2DescText { Style: (FontSize: 11, TextColor: #888888); Anchor: (Height: 16); Text: ""; }
+              Label #Mob2Drops { Style: (FontSize: 11, TextColor: #FFD700); Anchor: (Height: 14); Text: ""; Visible: false; }
+              Label #Mob2Kills { Style: (FontSize: 10, TextColor: #666666); Anchor: (Height: 14); Text: ""; Visible: false; }
+              Group #Mob2Miles { LayoutMode: Left; Anchor: (Height: 22); Visible: false;
+                Label { Style: (FontSize: 9, TextColor: #666666, VerticalAlignment: Center); Anchor: (Width: 60, Height: 20); Text: "Milestones:"; }
+                TextButton #Mob2Ms0 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+                Group { Anchor: (Width: 4); }
+                TextButton #Mob2Ms1 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+                Group { Anchor: (Width: 4); }
+                TextButton #Mob2Ms2 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+                Group { Anchor: (Width: 4); }
+                TextButton #Mob2Ms3 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+              }
+            }
+          }
+
+          // Mob Card 3
+          Group #Mob3 { LayoutMode: Left; Anchor: (Bottom: 4); Background: #1a1a2a; Padding: (Full: 6); Visible: false;
+            AssetImage #Mob3Portrait { Anchor: (Width: 64, Height: 64); AssetPath: ""; }
+            Group { Anchor: (Width: 8); }
+            Group { LayoutMode: Top; FlexWeight: 1;
+              Group { LayoutMode: Left; Anchor: (Height: 20);
+                Label #Mob3Cat { Style: (FontSize: 9, TextColor: #ff5555, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 70, Height: 16); Background: #ff555522; Text: ""; }
+                Label #Mob3Name { Style: (FontSize: 13, TextColor: #dddddd, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Padding: (Left: 6); Text: "???"; }
+                Label #Mob3HP { Style: (FontSize: 12, TextColor: #ff5555, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 90); Text: ""; }
+              }
+              Group { LayoutMode: Left; Anchor: (Height: 16);
+                Label #Mob3Dmg { Style: (FontSize: 11, TextColor: #ff8800, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+                Label #Mob3Loc { Style: (FontSize: 11, TextColor: #5588bb, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 150); Text: ""; }
+              }
+              Label #Mob3DescText { Style: (FontSize: 11, TextColor: #888888); Anchor: (Height: 16); Text: ""; }
+              Label #Mob3Drops { Style: (FontSize: 11, TextColor: #FFD700); Anchor: (Height: 14); Text: ""; Visible: false; }
+              Label #Mob3Kills { Style: (FontSize: 10, TextColor: #666666); Anchor: (Height: 14); Text: ""; Visible: false; }
+              Group #Mob3Miles { LayoutMode: Left; Anchor: (Height: 22); Visible: false;
+                Label { Style: (FontSize: 9, TextColor: #666666, VerticalAlignment: Center); Anchor: (Width: 60, Height: 20); Text: "Milestones:"; }
+                TextButton #Mob3Ms0 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+                Group { Anchor: (Width: 4); }
+                TextButton #Mob3Ms1 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+                Group { Anchor: (Width: 4); }
+                TextButton #Mob3Ms2 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+                Group { Anchor: (Width: 4); }
+                TextButton #Mob3Ms3 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+              }
+            }
+          }
+
+          // Mob Card 4
+          Group #Mob4 { LayoutMode: Left; Anchor: (Bottom: 4); Background: #1a1a2a; Padding: (Full: 6); Visible: false;
+            AssetImage #Mob4Portrait { Anchor: (Width: 64, Height: 64); AssetPath: ""; }
+            Group { Anchor: (Width: 8); }
+            Group { LayoutMode: Top; FlexWeight: 1;
+              Group { LayoutMode: Left; Anchor: (Height: 20);
+                Label #Mob4Cat { Style: (FontSize: 9, TextColor: #ff5555, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 70, Height: 16); Background: #ff555522; Text: ""; }
+                Label #Mob4Name { Style: (FontSize: 13, TextColor: #dddddd, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Padding: (Left: 6); Text: "???"; }
+                Label #Mob4HP { Style: (FontSize: 12, TextColor: #ff5555, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 90); Text: ""; }
+              }
+              Group { LayoutMode: Left; Anchor: (Height: 16);
+                Label #Mob4Dmg { Style: (FontSize: 11, TextColor: #ff8800, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+                Label #Mob4Loc { Style: (FontSize: 11, TextColor: #5588bb, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 150); Text: ""; }
+              }
+              Label #Mob4DescText { Style: (FontSize: 11, TextColor: #888888); Anchor: (Height: 16); Text: ""; }
+              Label #Mob4Drops { Style: (FontSize: 11, TextColor: #FFD700); Anchor: (Height: 14); Text: ""; Visible: false; }
+              Label #Mob4Kills { Style: (FontSize: 10, TextColor: #666666); Anchor: (Height: 14); Text: ""; Visible: false; }
+              Group #Mob4Miles { LayoutMode: Left; Anchor: (Height: 22); Visible: false;
+                Label { Style: (FontSize: 9, TextColor: #666666, VerticalAlignment: Center); Anchor: (Width: 60, Height: 20); Text: "Milestones:"; }
+                TextButton #Mob4Ms0 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+                Group { Anchor: (Width: 4); }
+                TextButton #Mob4Ms1 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+                Group { Anchor: (Width: 4); }
+                TextButton #Mob4Ms2 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+                Group { Anchor: (Width: 4); }
+                TextButton #Mob4Ms3 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+              }
+            }
+          }
+
+          // Mob Card 5
+          Group #Mob5 { LayoutMode: Left; Anchor: (Bottom: 4); Background: #1a1a2a; Padding: (Full: 6); Visible: false;
+            AssetImage #Mob5Portrait { Anchor: (Width: 64, Height: 64); AssetPath: ""; }
+            Group { Anchor: (Width: 8); }
+            Group { LayoutMode: Top; FlexWeight: 1;
+              Group { LayoutMode: Left; Anchor: (Height: 20);
+                Label #Mob5Cat { Style: (FontSize: 9, TextColor: #ff5555, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 70, Height: 16); Background: #ff555522; Text: ""; }
+                Label #Mob5Name { Style: (FontSize: 13, TextColor: #dddddd, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Padding: (Left: 6); Text: "???"; }
+                Label #Mob5HP { Style: (FontSize: 12, TextColor: #ff5555, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 90); Text: ""; }
+              }
+              Group { LayoutMode: Left; Anchor: (Height: 16);
+                Label #Mob5Dmg { Style: (FontSize: 11, TextColor: #ff8800, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+                Label #Mob5Loc { Style: (FontSize: 11, TextColor: #5588bb, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 150); Text: ""; }
+              }
+              Label #Mob5DescText { Style: (FontSize: 11, TextColor: #888888); Anchor: (Height: 16); Text: ""; }
+              Label #Mob5Drops { Style: (FontSize: 11, TextColor: #FFD700); Anchor: (Height: 14); Text: ""; Visible: false; }
+              Label #Mob5Kills { Style: (FontSize: 10, TextColor: #666666); Anchor: (Height: 14); Text: ""; Visible: false; }
+              Group #Mob5Miles { LayoutMode: Left; Anchor: (Height: 22); Visible: false;
+                Label { Style: (FontSize: 9, TextColor: #666666, VerticalAlignment: Center); Anchor: (Width: 60, Height: 20); Text: "Milestones:"; }
+                TextButton #Mob5Ms0 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+                Group { Anchor: (Width: 4); }
+                TextButton #Mob5Ms1 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+                Group { Anchor: (Width: 4); }
+                TextButton #Mob5Ms2 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+                Group { Anchor: (Width: 4); }
+                TextButton #Mob5Ms3 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+              }
+            }
+          }
+
+          // Mob Card 6
+          Group #Mob6 { LayoutMode: Left; Anchor: (Bottom: 4); Background: #1a1a2a; Padding: (Full: 6); Visible: false;
+            AssetImage #Mob6Portrait { Anchor: (Width: 64, Height: 64); AssetPath: ""; }
+            Group { Anchor: (Width: 8); }
+            Group { LayoutMode: Top; FlexWeight: 1;
+              Group { LayoutMode: Left; Anchor: (Height: 20);
+                Label #Mob6Cat { Style: (FontSize: 9, TextColor: #ff5555, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 70, Height: 16); Background: #ff555522; Text: ""; }
+                Label #Mob6Name { Style: (FontSize: 13, TextColor: #dddddd, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Padding: (Left: 6); Text: "???"; }
+                Label #Mob6HP { Style: (FontSize: 12, TextColor: #ff5555, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 90); Text: ""; }
+              }
+              Group { LayoutMode: Left; Anchor: (Height: 16);
+                Label #Mob6Dmg { Style: (FontSize: 11, TextColor: #ff8800, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+                Label #Mob6Loc { Style: (FontSize: 11, TextColor: #5588bb, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 150); Text: ""; }
+              }
+              Label #Mob6DescText { Style: (FontSize: 11, TextColor: #888888); Anchor: (Height: 16); Text: ""; }
+              Label #Mob6Drops { Style: (FontSize: 11, TextColor: #FFD700); Anchor: (Height: 14); Text: ""; Visible: false; }
+              Label #Mob6Kills { Style: (FontSize: 10, TextColor: #666666); Anchor: (Height: 14); Text: ""; Visible: false; }
+              Group #Mob6Miles { LayoutMode: Left; Anchor: (Height: 22); Visible: false;
+                Label { Style: (FontSize: 9, TextColor: #666666, VerticalAlignment: Center); Anchor: (Width: 60, Height: 20); Text: "Milestones:"; }
+                TextButton #Mob6Ms0 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+                Group { Anchor: (Width: 4); }
+                TextButton #Mob6Ms1 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+                Group { Anchor: (Width: 4); }
+                TextButton #Mob6Ms2 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+                Group { Anchor: (Width: 4); }
+                TextButton #Mob6Ms3 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+              }
+            }
+          }
+
+          // Mob Card 7
+          Group #Mob7 { LayoutMode: Left; Anchor: (Bottom: 4); Background: #1a1a2a; Padding: (Full: 6); Visible: false;
+            AssetImage #Mob7Portrait { Anchor: (Width: 64, Height: 64); AssetPath: ""; }
+            Group { Anchor: (Width: 8); }
+            Group { LayoutMode: Top; FlexWeight: 1;
+              Group { LayoutMode: Left; Anchor: (Height: 20);
+                Label #Mob7Cat { Style: (FontSize: 9, TextColor: #ff5555, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 70, Height: 16); Background: #ff555522; Text: ""; }
+                Label #Mob7Name { Style: (FontSize: 13, TextColor: #dddddd, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Padding: (Left: 6); Text: "???"; }
+                Label #Mob7HP { Style: (FontSize: 12, TextColor: #ff5555, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 90); Text: ""; }
+              }
+              Group { LayoutMode: Left; Anchor: (Height: 16);
+                Label #Mob7Dmg { Style: (FontSize: 11, TextColor: #ff8800, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+                Label #Mob7Loc { Style: (FontSize: 11, TextColor: #5588bb, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 150); Text: ""; }
+              }
+              Label #Mob7DescText { Style: (FontSize: 11, TextColor: #888888); Anchor: (Height: 16); Text: ""; }
+              Label #Mob7Drops { Style: (FontSize: 11, TextColor: #FFD700); Anchor: (Height: 14); Text: ""; Visible: false; }
+              Label #Mob7Kills { Style: (FontSize: 10, TextColor: #666666); Anchor: (Height: 14); Text: ""; Visible: false; }
+              Group #Mob7Miles { LayoutMode: Left; Anchor: (Height: 22); Visible: false;
+                Label { Style: (FontSize: 9, TextColor: #666666, VerticalAlignment: Center); Anchor: (Width: 60, Height: 20); Text: "Milestones:"; }
+                TextButton #Mob7Ms0 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+                Group { Anchor: (Width: 4); }
+                TextButton #Mob7Ms1 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+                Group { Anchor: (Width: 4); }
+                TextButton #Mob7Ms2 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+                Group { Anchor: (Width: 4); }
+                TextButton #Mob7Ms3 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+              }
+            }
+          }
+
+          // Mob Card 8
+          Group #Mob8 { LayoutMode: Left; Anchor: (Bottom: 4); Background: #1a1a2a; Padding: (Full: 6); Visible: false;
+            AssetImage #Mob8Portrait { Anchor: (Width: 64, Height: 64); AssetPath: ""; }
+            Group { Anchor: (Width: 8); }
+            Group { LayoutMode: Top; FlexWeight: 1;
+              Group { LayoutMode: Left; Anchor: (Height: 20);
+                Label #Mob8Cat { Style: (FontSize: 9, TextColor: #ff5555, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 70, Height: 16); Background: #ff555522; Text: ""; }
+                Label #Mob8Name { Style: (FontSize: 13, TextColor: #dddddd, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Padding: (Left: 6); Text: "???"; }
+                Label #Mob8HP { Style: (FontSize: 12, TextColor: #ff5555, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 90); Text: ""; }
+              }
+              Group { LayoutMode: Left; Anchor: (Height: 16);
+                Label #Mob8Dmg { Style: (FontSize: 11, TextColor: #ff8800, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+                Label #Mob8Loc { Style: (FontSize: 11, TextColor: #5588bb, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 150); Text: ""; }
+              }
+              Label #Mob8DescText { Style: (FontSize: 11, TextColor: #888888); Anchor: (Height: 16); Text: ""; }
+              Label #Mob8Drops { Style: (FontSize: 11, TextColor: #FFD700); Anchor: (Height: 14); Text: ""; Visible: false; }
+              Label #Mob8Kills { Style: (FontSize: 10, TextColor: #666666); Anchor: (Height: 14); Text: ""; Visible: false; }
+              Group #Mob8Miles { LayoutMode: Left; Anchor: (Height: 22); Visible: false;
+                Label { Style: (FontSize: 9, TextColor: #666666, VerticalAlignment: Center); Anchor: (Width: 60, Height: 20); Text: "Milestones:"; }
+                TextButton #Mob8Ms0 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+                Group { Anchor: (Width: 4); }
+                TextButton #Mob8Ms1 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+                Group { Anchor: (Width: 4); }
+                TextButton #Mob8Ms2 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+                Group { Anchor: (Width: 4); }
+                TextButton #Mob8Ms3 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+              }
+            }
+          }
+
+          // Mob Card 9
+          Group #Mob9 { LayoutMode: Left; Anchor: (Bottom: 4); Background: #1a1a2a; Padding: (Full: 6); Visible: false;
+            AssetImage #Mob9Portrait { Anchor: (Width: 64, Height: 64); AssetPath: ""; }
+            Group { Anchor: (Width: 8); }
+            Group { LayoutMode: Top; FlexWeight: 1;
+              Group { LayoutMode: Left; Anchor: (Height: 20);
+                Label #Mob9Cat { Style: (FontSize: 9, TextColor: #ff5555, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 70, Height: 16); Background: #ff555522; Text: ""; }
+                Label #Mob9Name { Style: (FontSize: 13, TextColor: #dddddd, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Padding: (Left: 6); Text: "???"; }
+                Label #Mob9HP { Style: (FontSize: 12, TextColor: #ff5555, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 90); Text: ""; }
+              }
+              Group { LayoutMode: Left; Anchor: (Height: 16);
+                Label #Mob9Dmg { Style: (FontSize: 11, TextColor: #ff8800, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+                Label #Mob9Loc { Style: (FontSize: 11, TextColor: #5588bb, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 150); Text: ""; }
+              }
+              Label #Mob9DescText { Style: (FontSize: 11, TextColor: #888888); Anchor: (Height: 16); Text: ""; }
+              Label #Mob9Drops { Style: (FontSize: 11, TextColor: #FFD700); Anchor: (Height: 14); Text: ""; Visible: false; }
+              Label #Mob9Kills { Style: (FontSize: 10, TextColor: #666666); Anchor: (Height: 14); Text: ""; Visible: false; }
+              Group #Mob9Miles { LayoutMode: Left; Anchor: (Height: 22); Visible: false;
+                Label { Style: (FontSize: 9, TextColor: #666666, VerticalAlignment: Center); Anchor: (Width: 60, Height: 20); Text: "Milestones:"; }
+                TextButton #Mob9Ms0 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+                Group { Anchor: (Width: 4); }
+                TextButton #Mob9Ms1 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+                Group { Anchor: (Width: 4); }
+                TextButton #Mob9Ms2 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+                Group { Anchor: (Width: 4); }
+                TextButton #Mob9Ms3 { Anchor: (Width: 44, Height: 20); Text: ""; Style: @FilterBtnStyle; Visible: false; }
+              }
+            }
+          }
+
+          // Empty message
+          Label #BestiaryEmpty { Style: (FontSize: 12, TextColor: #555555, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Height: 40); Text: "No entries in this category."; Visible: false; }
+        }
+
+        // Pagination
+        Group #BestiaryNav {
+          LayoutMode: Left;
+          Anchor: (Height: 32);
+          Padding: (Top: 4);
+
+          TextButton #BestiaryPrev { Anchor: (Width: 80, Height: 28); Text: "Prev"; Style: @NavBtnStyle; }
+          Group { Anchor: (Width: 8); }
+          Label #BestiaryPage { Style: (FontSize: 12, TextColor: #888888, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 80); Text: "1 / 1"; }
+          Group { Anchor: (Width: 8); }
+          TextButton #BestiaryNext { Anchor: (Width: 80, Height: 28); Text: "Next"; Style: @NavBtnStyle; }
+        }
+      }
+
+      // ==================== ACHIEVEMENTS TAB ====================
+      Group #ContentAchievements {
+        FlexWeight: 1;
+        LayoutMode: Top;
+        Padding: (Full: 12);
+        Visible: false;
+
+        // Stats line
+        Label #AchStats { Style: (FontSize: 11, TextColor: #888888, HorizontalAlignment: Center); Anchor: (Height: 18); Text: "0 / 0 completed"; }
+        Group { Anchor: (Height: 2); Background: #FFD700; }
+        Group { Anchor: (Height: 6); }
+
+        // Scrollable achievement cards
+        Group #AchList {
+          FlexWeight: 1;
+          LayoutMode: TopScrolling;
+          ScrollbarStyle: $C.@DefaultScrollbarStyle;
+
+          // Achievement Card 0
+          Group #Ach0 { LayoutMode: Top; Anchor: (Bottom: 4); Background: #1a1a2a; Padding: (Full: 8); Visible: false;
+            Group { LayoutMode: Left; Anchor: (Height: 22);
+              Label #Ach0Name { Style: (FontSize: 13, TextColor: #dddddd, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+              Label #Ach0Cat { Style: (FontSize: 9, TextColor: #ff5555, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 70, Height: 16); Background: #ff555522; Text: ""; }
+            }
+            Label #Ach0DescText { Style: (FontSize: 11, TextColor: #999999); Anchor: (Height: 16); Text: ""; }
+            Group { LayoutMode: Left; Anchor: (Height: 16); Padding: (Top: 4);
+              Group #Ach0BarBg { Anchor: (Width: 640, Height: 8); Background: #0a0a15;
+                Group #Ach0BarFill { Anchor: (Width: 0, Height: 8, Left: 0, Top: 0); Background: #55ff55; }
+              }
+              Label #Ach0Prog { Style: (FontSize: 10, TextColor: #888888, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 80); Text: "0 / 0"; }
+            }
+            Group { LayoutMode: Left; Anchor: (Height: 24); Padding: (Top: 2);
+              Label #Ach0Reward { Style: (FontSize: 10, TextColor: #FFD700, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+              TextButton #Ach0Claim { Anchor: (Width: 80, Height: 22); Text: "Claim"; Style: @ClaimBtnStyle; Visible: false; }
+            }
+          }
+
+          // Achievement Card 1
+          Group #Ach1 { LayoutMode: Top; Anchor: (Bottom: 4); Background: #1a1a2a; Padding: (Full: 8); Visible: false;
+            Group { LayoutMode: Left; Anchor: (Height: 22);
+              Label #Ach1Name { Style: (FontSize: 13, TextColor: #dddddd, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+              Label #Ach1Cat { Style: (FontSize: 9, TextColor: #ff5555, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 70, Height: 16); Background: #ff555522; Text: ""; }
+            }
+            Label #Ach1DescText { Style: (FontSize: 11, TextColor: #999999); Anchor: (Height: 16); Text: ""; }
+            Group { LayoutMode: Left; Anchor: (Height: 16); Padding: (Top: 4);
+              Group #Ach1BarBg { Anchor: (Width: 640, Height: 8); Background: #0a0a15;
+                Group #Ach1BarFill { Anchor: (Width: 0, Height: 8, Left: 0, Top: 0); Background: #55ff55; }
+              }
+              Label #Ach1Prog { Style: (FontSize: 10, TextColor: #888888, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 80); Text: "0 / 0"; }
+            }
+            Group { LayoutMode: Left; Anchor: (Height: 24); Padding: (Top: 2);
+              Label #Ach1Reward { Style: (FontSize: 10, TextColor: #FFD700, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+              TextButton #Ach1Claim { Anchor: (Width: 80, Height: 22); Text: "Claim"; Style: @ClaimBtnStyle; Visible: false; }
+            }
+          }
+
+          // Achievement Card 2
+          Group #Ach2 { LayoutMode: Top; Anchor: (Bottom: 4); Background: #1a1a2a; Padding: (Full: 8); Visible: false;
+            Group { LayoutMode: Left; Anchor: (Height: 22);
+              Label #Ach2Name { Style: (FontSize: 13, TextColor: #dddddd, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+              Label #Ach2Cat { Style: (FontSize: 9, TextColor: #ff5555, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 70, Height: 16); Background: #ff555522; Text: ""; }
+            }
+            Label #Ach2DescText { Style: (FontSize: 11, TextColor: #999999); Anchor: (Height: 16); Text: ""; }
+            Group { LayoutMode: Left; Anchor: (Height: 16); Padding: (Top: 4);
+              Group #Ach2BarBg { Anchor: (Width: 640, Height: 8); Background: #0a0a15;
+                Group #Ach2BarFill { Anchor: (Width: 0, Height: 8, Left: 0, Top: 0); Background: #55ff55; }
+              }
+              Label #Ach2Prog { Style: (FontSize: 10, TextColor: #888888, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 80); Text: "0 / 0"; }
+            }
+            Group { LayoutMode: Left; Anchor: (Height: 24); Padding: (Top: 2);
+              Label #Ach2Reward { Style: (FontSize: 10, TextColor: #FFD700, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+              TextButton #Ach2Claim { Anchor: (Width: 80, Height: 22); Text: "Claim"; Style: @ClaimBtnStyle; Visible: false; }
+            }
+          }
+
+          // Achievement Card 3
+          Group #Ach3 { LayoutMode: Top; Anchor: (Bottom: 4); Background: #1a1a2a; Padding: (Full: 8); Visible: false;
+            Group { LayoutMode: Left; Anchor: (Height: 22);
+              Label #Ach3Name { Style: (FontSize: 13, TextColor: #dddddd, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+              Label #Ach3Cat { Style: (FontSize: 9, TextColor: #ff5555, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 70, Height: 16); Background: #ff555522; Text: ""; }
+            }
+            Label #Ach3DescText { Style: (FontSize: 11, TextColor: #999999); Anchor: (Height: 16); Text: ""; }
+            Group { LayoutMode: Left; Anchor: (Height: 16); Padding: (Top: 4);
+              Group #Ach3BarBg { Anchor: (Width: 640, Height: 8); Background: #0a0a15;
+                Group #Ach3BarFill { Anchor: (Width: 0, Height: 8, Left: 0, Top: 0); Background: #55ff55; }
+              }
+              Label #Ach3Prog { Style: (FontSize: 10, TextColor: #888888, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 80); Text: "0 / 0"; }
+            }
+            Group { LayoutMode: Left; Anchor: (Height: 24); Padding: (Top: 2);
+              Label #Ach3Reward { Style: (FontSize: 10, TextColor: #FFD700, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+              TextButton #Ach3Claim { Anchor: (Width: 80, Height: 22); Text: "Claim"; Style: @ClaimBtnStyle; Visible: false; }
+            }
+          }
+
+          // Achievement Card 4
+          Group #Ach4 { LayoutMode: Top; Anchor: (Bottom: 4); Background: #1a1a2a; Padding: (Full: 8); Visible: false;
+            Group { LayoutMode: Left; Anchor: (Height: 22);
+              Label #Ach4Name { Style: (FontSize: 13, TextColor: #dddddd, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+              Label #Ach4Cat { Style: (FontSize: 9, TextColor: #ff5555, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 70, Height: 16); Background: #ff555522; Text: ""; }
+            }
+            Label #Ach4DescText { Style: (FontSize: 11, TextColor: #999999); Anchor: (Height: 16); Text: ""; }
+            Group { LayoutMode: Left; Anchor: (Height: 16); Padding: (Top: 4);
+              Group #Ach4BarBg { Anchor: (Width: 640, Height: 8); Background: #0a0a15;
+                Group #Ach4BarFill { Anchor: (Width: 0, Height: 8, Left: 0, Top: 0); Background: #55ff55; }
+              }
+              Label #Ach4Prog { Style: (FontSize: 10, TextColor: #888888, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 80); Text: "0 / 0"; }
+            }
+            Group { LayoutMode: Left; Anchor: (Height: 24); Padding: (Top: 2);
+              Label #Ach4Reward { Style: (FontSize: 10, TextColor: #FFD700, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+              TextButton #Ach4Claim { Anchor: (Width: 80, Height: 22); Text: "Claim"; Style: @ClaimBtnStyle; Visible: false; }
+            }
+          }
+
+          // Achievement Card 5
+          Group #Ach5 { LayoutMode: Top; Anchor: (Bottom: 4); Background: #1a1a2a; Padding: (Full: 8); Visible: false;
+            Group { LayoutMode: Left; Anchor: (Height: 22);
+              Label #Ach5Name { Style: (FontSize: 13, TextColor: #dddddd, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+              Label #Ach5Cat { Style: (FontSize: 9, TextColor: #ff5555, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 70, Height: 16); Background: #ff555522; Text: ""; }
+            }
+            Label #Ach5DescText { Style: (FontSize: 11, TextColor: #999999); Anchor: (Height: 16); Text: ""; }
+            Group { LayoutMode: Left; Anchor: (Height: 16); Padding: (Top: 4);
+              Group #Ach5BarBg { Anchor: (Width: 640, Height: 8); Background: #0a0a15;
+                Group #Ach5BarFill { Anchor: (Width: 0, Height: 8, Left: 0, Top: 0); Background: #55ff55; }
+              }
+              Label #Ach5Prog { Style: (FontSize: 10, TextColor: #888888, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 80); Text: "0 / 0"; }
+            }
+            Group { LayoutMode: Left; Anchor: (Height: 24); Padding: (Top: 2);
+              Label #Ach5Reward { Style: (FontSize: 10, TextColor: #FFD700, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+              TextButton #Ach5Claim { Anchor: (Width: 80, Height: 22); Text: "Claim"; Style: @ClaimBtnStyle; Visible: false; }
+            }
+          }
+
+          // Achievement Card 6
+          Group #Ach6 { LayoutMode: Top; Anchor: (Bottom: 4); Background: #1a1a2a; Padding: (Full: 8); Visible: false;
+            Group { LayoutMode: Left; Anchor: (Height: 22);
+              Label #Ach6Name { Style: (FontSize: 13, TextColor: #dddddd, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+              Label #Ach6Cat { Style: (FontSize: 9, TextColor: #ff5555, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 70, Height: 16); Background: #ff555522; Text: ""; }
+            }
+            Label #Ach6DescText { Style: (FontSize: 11, TextColor: #999999); Anchor: (Height: 16); Text: ""; }
+            Group { LayoutMode: Left; Anchor: (Height: 16); Padding: (Top: 4);
+              Group #Ach6BarBg { Anchor: (Width: 640, Height: 8); Background: #0a0a15;
+                Group #Ach6BarFill { Anchor: (Width: 0, Height: 8, Left: 0, Top: 0); Background: #55ff55; }
+              }
+              Label #Ach6Prog { Style: (FontSize: 10, TextColor: #888888, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 80); Text: "0 / 0"; }
+            }
+            Group { LayoutMode: Left; Anchor: (Height: 24); Padding: (Top: 2);
+              Label #Ach6Reward { Style: (FontSize: 10, TextColor: #FFD700, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+              TextButton #Ach6Claim { Anchor: (Width: 80, Height: 22); Text: "Claim"; Style: @ClaimBtnStyle; Visible: false; }
+            }
+          }
+
+          // Achievement Card 7
+          Group #Ach7 { LayoutMode: Top; Anchor: (Bottom: 4); Background: #1a1a2a; Padding: (Full: 8); Visible: false;
+            Group { LayoutMode: Left; Anchor: (Height: 22);
+              Label #Ach7Name { Style: (FontSize: 13, TextColor: #dddddd, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+              Label #Ach7Cat { Style: (FontSize: 9, TextColor: #ff5555, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 70, Height: 16); Background: #ff555522; Text: ""; }
+            }
+            Label #Ach7DescText { Style: (FontSize: 11, TextColor: #999999); Anchor: (Height: 16); Text: ""; }
+            Group { LayoutMode: Left; Anchor: (Height: 16); Padding: (Top: 4);
+              Group #Ach7BarBg { Anchor: (Width: 640, Height: 8); Background: #0a0a15;
+                Group #Ach7BarFill { Anchor: (Width: 0, Height: 8, Left: 0, Top: 0); Background: #55ff55; }
+              }
+              Label #Ach7Prog { Style: (FontSize: 10, TextColor: #888888, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 80); Text: "0 / 0"; }
+            }
+            Group { LayoutMode: Left; Anchor: (Height: 24); Padding: (Top: 2);
+              Label #Ach7Reward { Style: (FontSize: 10, TextColor: #FFD700, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+              TextButton #Ach7Claim { Anchor: (Width: 80, Height: 22); Text: "Claim"; Style: @ClaimBtnStyle; Visible: false; }
+            }
+          }
+
+          // Achievement Card 8
+          Group #Ach8 { LayoutMode: Top; Anchor: (Bottom: 4); Background: #1a1a2a; Padding: (Full: 8); Visible: false;
+            Group { LayoutMode: Left; Anchor: (Height: 22);
+              Label #Ach8Name { Style: (FontSize: 13, TextColor: #dddddd, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+              Label #Ach8Cat { Style: (FontSize: 9, TextColor: #ff5555, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 70, Height: 16); Background: #ff555522; Text: ""; }
+            }
+            Label #Ach8DescText { Style: (FontSize: 11, TextColor: #999999); Anchor: (Height: 16); Text: ""; }
+            Group { LayoutMode: Left; Anchor: (Height: 16); Padding: (Top: 4);
+              Group #Ach8BarBg { Anchor: (Width: 640, Height: 8); Background: #0a0a15;
+                Group #Ach8BarFill { Anchor: (Width: 0, Height: 8, Left: 0, Top: 0); Background: #55ff55; }
+              }
+              Label #Ach8Prog { Style: (FontSize: 10, TextColor: #888888, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 80); Text: "0 / 0"; }
+            }
+            Group { LayoutMode: Left; Anchor: (Height: 24); Padding: (Top: 2);
+              Label #Ach8Reward { Style: (FontSize: 10, TextColor: #FFD700, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+              TextButton #Ach8Claim { Anchor: (Width: 80, Height: 22); Text: "Claim"; Style: @ClaimBtnStyle; Visible: false; }
+            }
+          }
+
+          // Achievement Card 9
+          Group #Ach9 { LayoutMode: Top; Anchor: (Bottom: 4); Background: #1a1a2a; Padding: (Full: 8); Visible: false;
+            Group { LayoutMode: Left; Anchor: (Height: 22);
+              Label #Ach9Name { Style: (FontSize: 13, TextColor: #dddddd, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+              Label #Ach9Cat { Style: (FontSize: 9, TextColor: #ff5555, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 70, Height: 16); Background: #ff555522; Text: ""; }
+            }
+            Label #Ach9DescText { Style: (FontSize: 11, TextColor: #999999); Anchor: (Height: 16); Text: ""; }
+            Group { LayoutMode: Left; Anchor: (Height: 16); Padding: (Top: 4);
+              Group #Ach9BarBg { Anchor: (Width: 640, Height: 8); Background: #0a0a15;
+                Group #Ach9BarFill { Anchor: (Width: 0, Height: 8, Left: 0, Top: 0); Background: #55ff55; }
+              }
+              Label #Ach9Prog { Style: (FontSize: 10, TextColor: #888888, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 80); Text: "0 / 0"; }
+            }
+            Group { LayoutMode: Left; Anchor: (Height: 24); Padding: (Top: 2);
+              Label #Ach9Reward { Style: (FontSize: 10, TextColor: #FFD700, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+              TextButton #Ach9Claim { Anchor: (Width: 80, Height: 22); Text: "Claim"; Style: @ClaimBtnStyle; Visible: false; }
+            }
+          }
+        }
+
+        // Pagination
+        Group #AchNav {
+          LayoutMode: Left;
+          Anchor: (Height: 32);
+          Padding: (Top: 4);
+
+          TextButton #AchPrev { Anchor: (Width: 80, Height: 28); Text: "Prev"; Style: @NavBtnStyle; }
+          Group { Anchor: (Width: 8); }
+          Label #AchPage { Style: (FontSize: 12, TextColor: #888888, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 80); Text: "1 / 1"; }
+          Group { Anchor: (Width: 8); }
+          TextButton #AchNext { Anchor: (Width: 80, Height: 28); Text: "Next"; Style: @NavBtnStyle; }
+        }
+      }
+    }
+  }
+}

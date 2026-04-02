@@ -58,7 +58,7 @@ Open the config UI with <#55ffff>/eg config</#55ffff> (requires <#aaaaaa>endgame
 
 ## <#ff6600>Permissions</#ff6600>
 
-Player commands (<#55ffff>/eg bounty</#55ffff>, <#55ffff>/eg bestiary</#55ffff>, etc.) are **allowed by default** — all players can use them. To restrict a command, add the negated permission (e.g. <#ff5555>-endgameqol.bounty</#ff5555>).
+Player commands (<#55ffff>/eg journal</#55ffff>, <#55ffff>/eg journal</#55ffff>, etc.) are **allowed by default** — all players can use them. To restrict a command, add the negated permission (e.g. <#ff5555>-endgameqol.journal</#ff5555>).
 
 Admin commands (<#55ffff>/eg config</#55ffff>, <#55ffff>/eg admin</#55ffff>) are **denied by default** — grant <#aaaaaa>endgameqol.config</#aaaaaa> and <#aaaaaa>endgameqol.admin</#aaaaaa> explicitly. Server operators have them automatically.
 
@@ -66,9 +66,7 @@ Admin commands (<#55ffff>/eg config</#55ffff>, <#55ffff>/eg admin</#55ffff>) are
 |:--------|:-----------|
 | /eg config | endgameqol.config |
 | /eg status, /eg admin | endgameqol.admin |
-| /eg bestiary | endgameqol.bestiary |
-| /eg achievements | endgameqol.achievements |
-| /eg bounty | endgameqol.bounty |
+| /eg journal | endgameqol.journal |
 | /eg lang, /voile | None (all players) |
 
 ---

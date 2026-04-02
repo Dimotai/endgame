@@ -107,7 +107,7 @@ Difficulty scaling applies to elite HP and damage. No player-count scaling. Comp
 
 ## Difficulty Presets
 
-Server-wide difficulty affects all boss and elite HP/damage multipliers. Configurable via `/egconfig`.
+Server-wide difficulty affects all boss and elite HP/damage multipliers. Configurable via `/eg config`.
 
 | Preset | HP Multiplier | Damage Multiplier |
 | :--- | :---: | :---: |

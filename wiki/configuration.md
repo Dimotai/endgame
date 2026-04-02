@@ -11,9 +11,9 @@ Every config key, default value, and range — organized by section.
 
 ## How to Configure
 
-- **In-game UI** — `/egconfig` (requires `endgameqol.config` permission)
+- **In-game UI** — `/eg config` (requires `endgameqol.config` permission)
 - **JSON file** — `Config_Endgame&QoL/EndgameConfig.json`
-- **Hot reload** — `/egadmin reload`
+- **Hot reload** — `/eg admin reload`
 
 ## Difficulty
 
@@ -94,7 +94,7 @@ Presets: **Easy** 60%/50% | **Medium** 100%/100% | **Hard** 150%/150% | **Extrem
 
 ## Integration
 
-Optional mod integrations are **auto-detected** on first boot. Enable/disable in `/egconfig` Integration tab.
+Optional mod integrations are **auto-detected** on first boot. Enable/disable in `/eg config` Integration tab.
 
 | Mod | Key | Default | Features |
 |:----|:----|:--------|:---------|
@@ -112,4 +112,4 @@ Optional mod integrations are **auto-detected** on first boot. Enable/disable in
 | `EnablePortalGolemVoid` | true | Golem Void portal key recipe |
 
 > [!NOTE]
-> Individual recipe visibility is managed via `RecipeOverrides.json` (separate file, toggled in /egconfig Crafting tab).
+> Individual recipe visibility is managed via `RecipeOverrides.json` (separate file, toggled in /eg config Crafting tab).

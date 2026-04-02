@@ -7,43 +7,41 @@ published: true
 
 # Commands & Permissions
 
-All commands, permission nodes, and the config UI.
+All EndgameQoL commands are under `/eg`.
 
 ## /eg
 
 | Subcommand | Description | Permission |
 |:-----------|:------------|:-----------|
+| `/eg journal` | Open the Journal (Bounty Board, Bestiary, Achievements) | endgameqol.journal |
+| `/eg config` | Open the configuration UI (7 tabs, search, recipe editor) | endgameqol.config |
 | `/eg status` | Diagnostics dashboard | endgameqol.admin |
-| `/eg bestiary` | Open the Bestiary | endgameqol.bestiary |
-| `/eg achievements` | Open Achievements page | endgameqol.achievements |
-| `/eg ach` | Shortcut for achievements | endgameqol.achievements |
-| `/eg lang <locale|auto>` | Set display language | None |
-| `/eg bounty` | View daily bounties | endgameqol.bounty |
-| `/eg gauntlet` | Gauntlet leaderboard | endgameqol.gauntlet |
+| `/eg gauntlet` | Gauntlet leaderboard (currently disabled) | endgameqol.gauntlet |
+| `/eg lang <locale|auto>` | Set display language (EN, FR, ES, PT-BR, RU) | None |
 
-## /egconfig
+## /eg config
 
-**Opens the configuration UI** — alias: `/egcfg`
+**Opens the native configuration UI** with 7 tabs: Difficulty, Scaling, Weapons, Armor, Crafting, Misc, Integration.
+
+Features: global search bar, editable value fields, recipe override editor with per-recipe editing.
 
 Permission: **endgameqol.config** (op-only by default)
 
-Tabs: **Difficulty**, **Combat**, **Weapons**, **Crafting**, **Misc**, **Integration**
-
-## /egadmin
+## /eg admin
 
 Permission: **endgameqol.admin** (op-only)
 
 | Subcommand | Description |
 |:-----------|:------------|
-| `/egadmin debug boss <type>` | Dump active boss state |
-| `/egadmin reset leaderboard` | Clear gauntlet leaderboard (10s confirmation) |
-| `/egadmin reset bounties <player|all>` | Force refresh bounties |
-| `/egadmin reload` | Reload config from disk (async) |
+| `/eg admin debug boss <type>` | Dump active boss state |
+| `/eg admin reset leaderboard` | Clear gauntlet leaderboard (10s confirmation) |
+| `/eg admin reset bounties <player|all>` | Force refresh bounties |
+| `/eg admin reload` | Reload config from disk (async) |
 
 ## Permission Model
 
-**Default-allow** — all players can use /eg subcommands by default.
+**Default-allow** — `/eg journal`, `/eg gauntlet`, `/eg lang` work for all players by default.
 
 **Op-only** — `endgameqol.admin` and `endgameqol.config` require operator.
 
-**Deny** — use negation: `-endgameqol.bounty`
+**Deny** — use negation: `-endgameqol.journal` or `-endgameqol.*`

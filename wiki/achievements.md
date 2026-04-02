@@ -11,9 +11,9 @@ published: true
 
 ## Accessing Achievements
 
-**Commands:** `/eg achievements` or `/eg ach`
+**Commands:** `/eg journal` (Achievements tab)
 
-**Permission:** `endgameqol.achievements`
+**Permission:** `endgameqol.journal`
 
 ## Combat — 5 achievements
 

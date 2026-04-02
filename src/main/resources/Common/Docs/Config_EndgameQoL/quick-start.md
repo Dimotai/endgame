@@ -102,11 +102,11 @@ The ultimate tier. Craft Prisma gear at the Endgame Bench Tier 5 using Prisma Ba
 
 Don't forget to explore these systems along the way:
 
-**<#FFD700>Bounty System</#FFD700>** — Daily quests with rewards and reputation. Use <#55ffff>/eg bounty</#55ffff>.
+**<#FFD700>Bounty System</#FFD700>** — Daily quests with rewards and reputation. Use <#55ffff>/eg journal</#55ffff>.
 
-**<#FFD700>Achievements</#FFD700>** — 24 achievements across 5 categories. Use <#55ffff>/eg achievements</#55ffff>.
+**<#FFD700>Achievements</#FFD700>** — 24 achievements across 5 categories. Use <#55ffff>/eg journal</#55ffff>.
 
-**<#55ff55>Bestiary</#55ff55>** — Discover all 32 NPCs and earn kill milestone rewards. Use <#55ffff>/eg bestiary</#55ffff>.
+**<#55ff55>Bestiary</#55ff55>** — Discover all 32 NPCs and earn kill milestone rewards. Use <#55ffff>/eg journal</#55ffff>.
 
 **<#ff5555>Combo Meter</#ff5555>** — Kill streaks grant up to x4 damage + special effects.
 
@@ -120,9 +120,7 @@ Don't forget to explore these systems along the way:
 
 | Command | What it does |
 |:--------|:-------------|
-| <#55ffff>/eg bounty</#55ffff> | Open Bounty Board |
-| <#55ffff>/eg achievements</#55ffff> | View achievements |
-| <#55ffff>/eg bestiary</#55ffff> | Open NPC bestiary |
+| <#55ffff>/eg journal</#55ffff> | Open Journal (Bounty, Bestiary, Achievements) |
 | <#55ffff>/eg lang FR</#55ffff> | Change language (EN/FR/ES/PT-BR/RU) |
 | <#55ffff>/voile</#55ffff> | Open this documentation |
 

@@ -284,7 +284,7 @@ public class AchievementManager {
         if (!state.isCompleted(achievementId) || state.isClaimed(achievementId)) return null;
 
         AchievementTemplate template = AchievementTemplate.findById(achievementId);
-        if (template == null || template.getRewardDropTable() == null) return null;
+        if (template == null) return null;
 
         state.markClaimed(achievementId);
 

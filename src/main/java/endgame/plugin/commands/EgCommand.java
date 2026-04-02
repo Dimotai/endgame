@@ -13,10 +13,9 @@ import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.core.Message;
 import endgame.plugin.EndgameQoL;
-import endgame.plugin.ui.BestiaryUI;
-import endgame.plugin.ui.BountyUI;
-import endgame.plugin.ui.GauntletUI;
-import endgame.plugin.ui.StatusUI;
+import endgame.plugin.ui.NativeGauntletPage;
+import endgame.plugin.ui.NativeJournalPage;
+import endgame.plugin.ui.NativeStatusPage;
 import endgame.plugin.ui.nativeconfig.NativeConfigPage;
 import endgame.plugin.utils.CommandRateLimit;
 import endgame.plugin.utils.EntityUtils;
@@ -49,10 +48,7 @@ public class EgCommand extends AbstractCommandCollection {
         this.addSubCommand(new EgAdminCommand(plugin));
         this.addSubCommand(new StatusSubCommand(plugin));
         this.addSubCommand(new LangSubCommand());
-        this.addSubCommand(new BestiarySubCommand(plugin));
-        this.addSubCommand(new AchievementsSubCommand(plugin));
-        this.addSubCommand(new AchShortcutSubCommand(plugin));
-        this.addSubCommand(new BountySubCommand(plugin));
+        this.addSubCommand(new JournalSubCommand(plugin));
         this.addSubCommand(new GauntletSubCommand(plugin));
     }
 
@@ -105,16 +101,16 @@ public class EgCommand extends AbstractCommandCollection {
         @Override
         protected void execute(@Nonnull CommandContext context, @Nonnull Store<EntityStore> store,
                                @Nonnull Ref<EntityStore> ref, @Nonnull PlayerRef playerRef, @Nonnull World world) {
-            StatusUI.open(plugin, playerRef, store);
+            NativeStatusPage.open(plugin, playerRef, store);
         }
     }
 
-    // /eg bestiary
-    private static class BestiarySubCommand extends AbstractPlayerCommand {
+    // /eg journal — unified page with 3 tabs (Bounty, Bestiary, Achievements)
+    private static class JournalSubCommand extends AbstractPlayerCommand {
         private final EndgameQoL plugin;
 
-        BestiarySubCommand(EndgameQoL plugin) {
-            super("bestiary", "Open the Bestiary & Achievements");
+        JournalSubCommand(EndgameQoL plugin) {
+            super("journal", "Open the Journal (Bounty, Bestiary, Achievements)");
             this.plugin = plugin;
         }
 
@@ -126,58 +122,9 @@ public class EgCommand extends AbstractCommandCollection {
         @Override
         protected void execute(@Nonnull CommandContext context, @Nonnull Store<EntityStore> store,
                                @Nonnull Ref<EntityStore> ref, @Nonnull PlayerRef playerRef, @Nonnull World world) {
-            if (!hasPermissionDefaultAllow(playerRef, "endgameqol.bestiary")) { sendNoPermission(playerRef); return; }
             java.util.UUID uuid = EntityUtils.getUuid(playerRef);
             if (uuid == null) return;
-            BestiaryUI.open(plugin, playerRef, store, uuid, "bestiary");
-        }
-    }
-
-    // /eg achievements
-    private static class AchievementsSubCommand extends AbstractPlayerCommand {
-        private final EndgameQoL plugin;
-
-        AchievementsSubCommand(EndgameQoL plugin) {
-            super("achievements", "Open the Achievements page");
-            this.plugin = plugin;
-        }
-
-        @Override
-        protected boolean canGeneratePermission() {
-            return false;
-        }
-
-        @Override
-        protected void execute(@Nonnull CommandContext context, @Nonnull Store<EntityStore> store,
-                               @Nonnull Ref<EntityStore> ref, @Nonnull PlayerRef playerRef, @Nonnull World world) {
-            if (!hasPermissionDefaultAllow(playerRef, "endgameqol.achievements")) { sendNoPermission(playerRef); return; }
-            java.util.UUID uuid = EntityUtils.getUuid(playerRef);
-            if (uuid == null) return;
-            BestiaryUI.open(plugin, playerRef, store, uuid, "achievements");
-        }
-    }
-
-    // /eg ach (shortcut for /eg achievements)
-    private static class AchShortcutSubCommand extends AbstractPlayerCommand {
-        private final EndgameQoL plugin;
-
-        AchShortcutSubCommand(EndgameQoL plugin) {
-            super("ach", "Shortcut for /eg achievements");
-            this.plugin = plugin;
-        }
-
-        @Override
-        protected boolean canGeneratePermission() {
-            return false;
-        }
-
-        @Override
-        protected void execute(@Nonnull CommandContext context, @Nonnull Store<EntityStore> store,
-                               @Nonnull Ref<EntityStore> ref, @Nonnull PlayerRef playerRef, @Nonnull World world) {
-            if (!hasPermissionDefaultAllow(playerRef, "endgameqol.achievements")) { sendNoPermission(playerRef); return; }
-            java.util.UUID uuid = EntityUtils.getUuid(playerRef);
-            if (uuid == null) return;
-            BestiaryUI.open(plugin, playerRef, store, uuid, "achievements");
+            NativeJournalPage.open(plugin, playerRef, store, uuid, "Bounty");
         }
     }
 
@@ -227,37 +174,6 @@ public class EgCommand extends AbstractCommandCollection {
         }
     }
 
-    // /eg bounty
-    private static class BountySubCommand extends AbstractPlayerCommand {
-        private final EndgameQoL plugin;
-
-        BountySubCommand(EndgameQoL plugin) {
-            super("bounty", "View your daily bounties");
-            this.plugin = plugin;
-        }
-
-        @Override
-        protected boolean canGeneratePermission() {
-            return false;
-        }
-
-        @Override
-        protected void execute(@Nonnull CommandContext context, @Nonnull Store<EntityStore> store,
-                               @Nonnull Ref<EntityStore> ref, @Nonnull PlayerRef playerRef, @Nonnull World world) {
-            if (!hasPermissionDefaultAllow(playerRef, "endgameqol.bounty")) { sendNoPermission(playerRef); return; }
-            if (CommandRateLimit.isRateLimited(playerRef.getUuid())) return;
-
-            if (!plugin.getConfig().get().isBountyEnabled()) {
-                playerRef.sendMessage(Message.raw("[Bounty] " + I18n.getForPlayer(playerRef, "commands.bounty.disabled")).color("#ff5555"));
-                return;
-            }
-
-            UUID playerUuid = playerRef.getUuid();
-            if (playerUuid == null) return;
-
-            BountyUI.open(plugin, playerRef, store, playerUuid);
-        }
-    }
 
     // /eg gauntlet
     private static class GauntletSubCommand extends AbstractPlayerCommand {
@@ -284,7 +200,7 @@ public class EgCommand extends AbstractCommandCollection {
                 return;
             }
 
-            GauntletUI.open(plugin, playerRef, store);
+            NativeGauntletPage.open(plugin, playerRef, store);
         }
     }
 }

@@ -46,7 +46,7 @@ Taking fatal damage also resets the combo to zero, regardless of the remaining d
 
 ## Configuration
 
-All values are in the `Combo` section of `EndgameConfig.json`, or adjust via `/egconfig` Combat tab.
+All values are in the `Combo` section of `EndgameConfig.json`, or adjust via `/eg config` Combat tab.
 
 | Key | Default | Description |
 |:----|:--------|:------------|

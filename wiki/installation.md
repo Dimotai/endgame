@@ -30,7 +30,7 @@ On first launch, EndgameQoL automatically generates its configuration file at:
 Config_Endgame&QoL/EndgameConfig.json
 ```
 
-This file controls all plugin behavior — boss health, damage multipliers, feature toggles, and more. You can also edit it in-game using `/egconfig`.
+This file controls all plugin behavior — boss health, damage multipliers, feature toggles, and more. You can also edit it in-game using `/eg config`.
 
 **Player data** is stored via Hytale's built-in ECS system and auto-persisted to `universe/players/{UUID}.bson`. No manual JSON files are needed.
 
@@ -74,6 +74,6 @@ This displays the plugin version, loaded content counts, active integrations, an
 | **Plugin not loading** | Wrong folder or outdated server | Confirm JAR is in `Mods/` (not a subfolder). Verify server version is 2026.03.26 or later. |
 | **Config not generating** | File permission issue | Ensure the server process has write permissions to its own directory. Check console for errors during startup. |
 | **Commands not found** | Plugin failed to initialize | Check server console for stack traces during startup. The most common cause is a version mismatch — update to the latest server build. |
-| **NPCs not spawning** | Spawns disabled in config | Run `/egconfig` and check that the relevant spawn toggles are enabled. |
+| **NPCs not spawning** | Spawns disabled in config | Run `/eg config` and check that the relevant spawn toggles are enabled. |
 | **CodecValidationException on startup** | Instance loads before plugin assets | This is a known non-blocking warning. The instance still loads correctly — safe to ignore. |
 | **Boss bar not showing** | Player too far from boss | Boss bars appear within 75m and hide beyond 80m. Move closer to the boss encounter. |

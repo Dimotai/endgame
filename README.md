@@ -11,13 +11,11 @@ Hytale server plugin adding endgame content: bosses, weapons, dungeons, NPCs, cr
 - **3 Dungeons** — Frozen Dungeon, Swamp Dungeon, and Void Realm with unique enemies, traders, and loot
 - **3 Armor sets** — Mithril, Onyxium, Prisma (helmet, chestplate, leggings, boots)
 - **6 Accessories** — Trinket Pouch with Frostwalkers, Ocean Striders, Void Amulet, Blazefist, Pocket Garden, Hedera Seed
-- **Achievement System** — 42 achievements across 8 categories (Combat, Boss, Bounty, Discovery, Crafting, Exploration, Speedrun, Mining)
-- **Bounty Board** — 54 bounty templates with daily/weekly quests, mining and exploration bounties, reputation ranks
+- **Journal** — `/eg journal` with 3 tabs: Bounty Board (daily/weekly quests, reputation), Bestiary (32 NPCs with kill milestones), Achievements (42 across 8 categories)
 - **Combo Meter** — Kill streak tracker with tier effects (Adrenaline, Precision, Bloodlust)
 - **Custom Trade UI** — Merchant interface with item icons, stock display, and purchase notifications
 - **Native Config UI** — `/eg config` with global search, 7 setting tabs, and full recipe override editor
 - **Warden Trials** — 4-tier wave survival challenge
-- **Bestiary** — 32 NPC entries with kill milestones
 - **Multi-language** — EN, PT-BR, RU, FR, ES (FR/ES active via "Use System Language" setting)
 - **Database support** — Optional SQL persistence (SQLite, MySQL, MariaDB, PostgreSQL)
 

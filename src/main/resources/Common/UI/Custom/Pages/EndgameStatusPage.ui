@@ -1,0 +1,149 @@
+$C = "../Common.ui";
+
+$C.@PageOverlay {
+  $C.@DecoratedContainer {
+    Anchor: (Width: 580, Height: 520);
+
+    #Title {
+      Group {
+        $C.@Title {
+          @Text = "EndgameQoL Status";
+        }
+      }
+    }
+
+    #Content {
+      LayoutMode: Top;
+      Padding: (Full: 10);
+
+      // Header
+      Group { LayoutMode: Left; Anchor: (Height: 28);
+        Label { Style: (FontSize: 16, TextColor: #bb44ff, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Text: "ENDGAMEQOL"; }
+        Label #Version { Style: (FontSize: 11, TextColor: #8855cc, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 50, Height: 22); Background: #1a1a28; Text: ""; }
+      }
+      Group { Anchor: (Height: 2); Background: #bb44ff; }
+      Group { Anchor: (Height: 6); }
+
+      // Two columns
+      Group { LayoutMode: Left; FlexWeight: 1;
+
+        // ======== LEFT COLUMN ========
+        Group { LayoutMode: Top; Anchor: (Width: 270); Padding: (Right: 4);
+
+          // Card: System
+          Group { Background: #0b141f(0.84); LayoutMode: Top; Padding: (Full: 10); Anchor: (Bottom: 6);
+            Label { Style: (FontSize: 13, TextColor: #FFD700, RenderBold: true); Anchor: (Height: 20); Text: "System"; }
+            Group { LayoutMode: Left; Anchor: (Height: 22);
+              Label { Style: (FontSize: 11, TextColor: #777777, VerticalAlignment: Center); Anchor: (Width: 100); Text: "Difficulty"; }
+              Label #Difficulty { Style: (FontSize: 11, TextColor: #FFD700, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Text: ""; }
+            }
+            Group { LayoutMode: Left; Anchor: (Height: 22);
+              Label { Style: (FontSize: 11, TextColor: #777777, VerticalAlignment: Center); Anchor: (Width: 100); Text: "Database"; }
+              Label #Database { Style: (FontSize: 11, TextColor: #555555, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Text: "Disabled"; }
+            }
+            Group { LayoutMode: Left; Anchor: (Height: 22);
+              Label { Style: (FontSize: 11, TextColor: #777777, VerticalAlignment: Center); Anchor: (Width: 100); Text: "RPG Leveling"; }
+              Label #RPGLeveling { Style: (FontSize: 11, TextColor: #555555, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Text: "Missing"; }
+            }
+            Group { LayoutMode: Left; Anchor: (Height: 22);
+              Label { Style: (FontSize: 11, TextColor: #777777, VerticalAlignment: Center); Anchor: (Width: 100); Text: "Endless Leveling"; }
+              Label #EndlessLeveling { Style: (FontSize: 11, TextColor: #555555, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Text: "Missing"; }
+            }
+            Group { LayoutMode: Left; Anchor: (Height: 22);
+              Label { Style: (FontSize: 11, TextColor: #777777, VerticalAlignment: Center); Anchor: (Width: 100); Text: "Players Online"; }
+              Label #OnlinePlayers { Style: (FontSize: 11, TextColor: #c0c0c0, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Text: "0"; }
+            }
+          }
+
+          // Card: Encounters
+          Group { Background: #0b141f(0.84); LayoutMode: Top; Padding: (Full: 10); Anchor: (Bottom: 6);
+            Label { Style: (FontSize: 13, TextColor: #ff8866, RenderBold: true); Anchor: (Height: 20); Text: "Encounters"; }
+            Group { LayoutMode: Left; Anchor: (Height: 22);
+              Label { Style: (FontSize: 11, TextColor: #777777, VerticalAlignment: Center); Anchor: (Width: 100); Text: "Bosses"; }
+              Label #Bosses { Style: (FontSize: 11, TextColor: #4ade80, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Text: "None"; }
+            }
+            Group { LayoutMode: Left; Anchor: (Height: 22);
+              Label { Style: (FontSize: 11, TextColor: #777777, VerticalAlignment: Center); Anchor: (Width: 100); Text: "Gauntlets"; }
+              Label #Gauntlets { Style: (FontSize: 11, TextColor: #4ade80, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Text: "None"; }
+            }
+            Group { LayoutMode: Left; Anchor: (Height: 22);
+              Label { Style: (FontSize: 11, TextColor: #777777, VerticalAlignment: Center); Anchor: (Width: 100); Text: "Warden Trials"; }
+              Label #Trials { Style: (FontSize: 11, TextColor: #4ade80, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Text: "None"; }
+            }
+          }
+
+          // Card: Stats
+          Group { Background: #0b141f(0.84); LayoutMode: Top; Padding: (Full: 10);
+            Label { Style: (FontSize: 13, TextColor: #88aaff, RenderBold: true); Anchor: (Height: 20); Text: "Stats"; }
+            Group { LayoutMode: Left; Anchor: (Height: 22);
+              Label { Style: (FontSize: 11, TextColor: #777777, VerticalAlignment: Center); Anchor: (Width: 100); Text: "Bounty Players"; }
+              Label #BountyPlayers { Style: (FontSize: 11, TextColor: #c0c0c0, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Text: "0"; }
+            }
+            Group { LayoutMode: Left; Anchor: (Height: 22);
+              Label { Style: (FontSize: 11, TextColor: #777777, VerticalAlignment: Center); Anchor: (Width: 100); Text: "Leaderboard"; }
+              Label #Leaderboard { Style: (FontSize: 11, TextColor: #c0c0c0, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Text: "0 entries"; }
+            }
+          }
+        }
+
+        // ======== RIGHT COLUMN ========
+        Group { LayoutMode: Top; FlexWeight: 1; Padding: (Left: 4);
+
+          // Card: Features
+          Group { Background: #0b141f(0.84); LayoutMode: Top; Padding: (Full: 10); Anchor: (Bottom: 6);
+            Label { Style: (FontSize: 13, TextColor: #4ade80, RenderBold: true); Anchor: (Height: 20); Text: "Features"; }
+            Group { LayoutMode: Left; Anchor: (Height: 24);
+              Group #DotCombo { Anchor: (Width: 8, Height: 8); Background: #4ade80; }
+              Group { Anchor: (Width: 6); }
+              Label { Style: (FontSize: 11, TextColor: #bbbbbb, VerticalAlignment: Center); FlexWeight: 1; Text: "Combo Meter"; }
+              Label #FeatCombo { Style: (FontSize: 11, TextColor: #4ade80, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 30); Text: "ON"; }
+            }
+            Group { LayoutMode: Left; Anchor: (Height: 24);
+              Group #DotGauntlet { Anchor: (Width: 8, Height: 8); Background: #ff4444; }
+              Group { Anchor: (Width: 6); }
+              Label { Style: (FontSize: 11, TextColor: #bbbbbb, VerticalAlignment: Center); FlexWeight: 1; Text: "Gauntlet"; }
+              Label #FeatGauntlet { Style: (FontSize: 11, TextColor: #ff4444, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 30); Text: "OFF"; }
+            }
+            Group { LayoutMode: Left; Anchor: (Height: 24);
+              Group #DotBounty { Anchor: (Width: 8, Height: 8); Background: #4ade80; }
+              Group { Anchor: (Width: 6); }
+              Label { Style: (FontSize: 11, TextColor: #bbbbbb, VerticalAlignment: Center); FlexWeight: 1; Text: "Bounty Board"; }
+              Label #FeatBounty { Style: (FontSize: 11, TextColor: #4ade80, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 30); Text: "ON"; }
+            }
+            Group { LayoutMode: Left; Anchor: (Height: 24);
+              Group #DotWarden { Anchor: (Width: 8, Height: 8); Background: #4ade80; }
+              Group { Anchor: (Width: 6); }
+              Label { Style: (FontSize: 11, TextColor: #bbbbbb, VerticalAlignment: Center); FlexWeight: 1; Text: "Warden Trial"; }
+              Label #FeatWarden { Style: (FontSize: 11, TextColor: #4ade80, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 30); Text: "ON"; }
+            }
+            Group { LayoutMode: Left; Anchor: (Height: 24);
+              Group #DotPvp { Anchor: (Width: 8, Height: 8); Background: #ff4444; }
+              Group { Anchor: (Width: 6); }
+              Label { Style: (FontSize: 11, TextColor: #bbbbbb, VerticalAlignment: Center); FlexWeight: 1; Text: "PvP"; }
+              Label #FeatPvp { Style: (FontSize: 11, TextColor: #ff4444, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Width: 30); Text: "OFF"; }
+            }
+          }
+
+          // Card: Metrics
+          Group { Background: #0b141f(0.84); LayoutMode: Top; Padding: (Full: 10);
+            Label { Style: (FontSize: 13, TextColor: #c084fc, RenderBold: true); Anchor: (Height: 20); Text: "Metrics"; }
+            Group { LayoutMode: Left; Anchor: (Height: 22);
+              Label { Style: (FontSize: 11, TextColor: #777777, VerticalAlignment: Center); Anchor: (Width: 110); Text: "Recipes Loaded"; }
+              Label #RecipesLoaded { Style: (FontSize: 11, TextColor: #c0c0c0, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Text: "0"; }
+            }
+            Group { LayoutMode: Left; Anchor: (Height: 22);
+              Label { Style: (FontSize: 11, TextColor: #777777, VerticalAlignment: Center); Anchor: (Width: 110); Text: "Recipes Disabled"; }
+              Label #RecipesDisabled { Style: (FontSize: 11, TextColor: #c0c0c0, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Text: "0"; }
+            }
+            Group { LayoutMode: Left; Anchor: (Height: 22);
+              Label { Style: (FontSize: 11, TextColor: #777777, VerticalAlignment: Center); Anchor: (Width: 110); Text: "Locales Loaded"; }
+              Label #LocalesLoaded { Style: (FontSize: 11, TextColor: #c0c0c0, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Text: "0/5"; }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+$C.@BackButton {}

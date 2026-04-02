@@ -9,7 +9,7 @@ published: true
 
 32 NPC entries across 6 categories with kill milestones and discovery rewards.
 
-Access via `/eg bestiary` — Permission: `endgameqol.bestiary`
+Access via `/eg journal` — Permission: `endgameqol.journal`
 
 ## Categories Overview
 

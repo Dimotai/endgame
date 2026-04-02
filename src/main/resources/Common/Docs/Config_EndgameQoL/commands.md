@@ -23,19 +23,36 @@ See the Configuration page for a full list of all settings.
 
 ---
 
-## <#55ffff>/eg</#55ffff> subcommands
+## <#55ffff>/eg journal</#55ffff>
 
-**<#55ffff>/eg status</#55ffff>** — Live diagnostics dashboard showing difficulty, database health, active encounters, feature toggles, player count, recipe/locale stats. Permission: <#aaaaaa>endgameqol.admin</#aaaaaa>
+Opens the Journal — a unified page with 3 tabs:
+- **Bounty Board** — Daily bounties with progress tracking, streak bonuses, weekly bounty, and reputation ranks
+- **Bestiary** — NPC entries with kill counts, discovery milestones, category filters, and mob portraits
+- **Achievements** — Progress bars, category badges, and claimable rewards
 
-**<#55ffff>/eg achievements</#55ffff>** — View your achievement progress across all categories. Claim item rewards for completed achievements. Alias: <#55ffff>/eg ach</#55ffff>. Permission: <#aaaaaa>endgameqol.achievements</#aaaaaa>
+**Permission** — <#aaaaaa>endgameqol.journal</#aaaaaa> (default-allow)
 
-**<#55ffff>/eg lang <code></#55ffff>** — Change your display language. Supported: <#aaaaaa>EN</#aaaaaa>, <#aaaaaa>FR</#aaaaaa>, <#aaaaaa>ES</#aaaaaa>, <#aaaaaa>PT-BR</#aaaaaa>, <#aaaaaa>RU</#aaaaaa>. Per-player setting, persists across sessions. No permission required.
+---
 
-**<#55ffff>/eg bestiary</#55ffff>** — View the NPC bestiary with kill counts and discovery milestones. Permission: <#aaaaaa>endgameqol.bestiary</#aaaaaa>
+## <#55ffff>/eg status</#55ffff>
 
-**<#55ffff>/eg bounty</#55ffff>** — Opens the Bounty Board. View available daily bounties, claim completed rewards, track streaks, and check your reputation rank progress. Permission: <#aaaaaa>endgameqol.bounty</#aaaaaa>
+Live diagnostics dashboard showing difficulty, database health, active encounters, feature toggles, player count, recipe/locale stats.
 
-**<#55ffff>/eg gauntlet</#55ffff>** — Starts a Gauntlet run (wave survival mode). <#ff5555>Currently disabled</#ff5555> — the feature is still in development. Permission: <#aaaaaa>endgameqol.gauntlet</#aaaaaa>
+**Permission** — <#aaaaaa>endgameqol.admin</#aaaaaa>
+
+---
+
+## <#55ffff>/eg lang <code></#55ffff>
+
+Change your display language. Supported: <#aaaaaa>EN</#aaaaaa>, <#aaaaaa>FR</#aaaaaa>, <#aaaaaa>ES</#aaaaaa>, <#aaaaaa>PT-BR</#aaaaaa>, <#aaaaaa>RU</#aaaaaa>. Per-player setting, persists across sessions. No permission required.
+
+---
+
+## <#55ffff>/eg gauntlet</#55ffff>
+
+The Gauntlet leaderboard (wave survival mode). <#ff5555>Currently disabled</#ff5555> — the feature is still in development.
+
+**Permission** — <#aaaaaa>endgameqol.gauntlet</#aaaaaa>
 
 ---
 
@@ -66,16 +83,14 @@ Opens the Voile documentation browser (requires the Voile mod). Browse this wiki
 | Command | Permission |
 |:--------|:-----------|
 | /eg config | endgameqol.config |
+| /eg journal | endgameqol.journal (default-allow) |
 | /eg status, /eg admin | endgameqol.admin |
-| /eg bestiary | endgameqol.bestiary |
-| /eg achievements | endgameqol.achievements |
-| /eg bounty | endgameqol.bounty |
 | /eg gauntlet | endgameqol.gauntlet |
 | /eg lang, /voile | None (all players) |
 
 ! All commands have a 1-second per-player rate limit.
 
-!v **Player commands use default-allow.** Bestiary, achievements, bounty, and gauntlet commands work for all players by default. To restrict a command, add the negated permission to the player or group (e.g. <#ff5555>-endgameqol.bounty</#ff5555>). Use <#ff5555>-endgameqol.*</#ff5555> to deny all at once.
+!v **Player commands use default-allow.** Journal and gauntlet commands work for all players by default. To restrict a command, add the negated permission to the player or group (e.g. <#ff5555>-endgameqol.journal</#ff5555>). Use <#ff5555>-endgameqol.*</#ff5555> to deny all at once.
 
 !v NPC-triggered UIs (Bounty Board, Bestiary NPCs) bypass command permissions — players can always interact with NPCs regardless of command permissions.
 
