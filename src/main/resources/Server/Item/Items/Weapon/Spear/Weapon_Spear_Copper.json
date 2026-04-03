@@ -105,7 +105,6 @@
   },
   "MaxDurability": 100,
   "DurabilityLossOnHit": 0.21,
-  "BrokenItem": "Weapon_Spear_Copper",
   "Weapon": {},
   "ItemSoundSetId": "ISS_Weapons_Wood"
 }

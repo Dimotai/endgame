@@ -22,16 +22,7 @@
         "CostType": "Damage"
     },
     "CancelOnOtherClick": false,
-    "Failed": {
-        "Type": "Simple",
-        "Effects": {
-            "Particles": [
-                {
-                    "SystemId": "Shield_Shatter"
-                }
-            ]
-        }
-    },
+    "Failed": "Longsword_Block_Damage_Failed",
     "BlockedEffects": {
         "WorldSoundEventId": "SFX_Shield_T2_Impact",
         "WorldParticles": [

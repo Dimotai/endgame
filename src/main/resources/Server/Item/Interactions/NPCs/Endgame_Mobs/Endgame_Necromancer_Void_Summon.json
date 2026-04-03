@@ -31,7 +31,7 @@
         "RunTime": 0,
         "Effects": {
           "WorldSoundEventId": "SFX_Skeleton_Mage_Spellbook_Impact",
-          "WorldParticles": [
+          "Particles": [
             {
               "SystemId": "Praetorian_Summon_Spawn",
               "Scale": 2.5

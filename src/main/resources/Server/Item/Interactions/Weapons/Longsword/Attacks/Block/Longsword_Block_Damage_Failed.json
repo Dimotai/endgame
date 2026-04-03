@@ -1,0 +1,10 @@
+{
+    "Type": "Simple",
+    "Effects": {
+        "Particles": [
+            {
+                "SystemId": "Shield_Shatter"
+            }
+        ]
+    }
+}

@@ -3,7 +3,7 @@
   "Reference": "Template_Intelligent",
   "Modify": {
     "Appearance": "Endgame_Golem_Void",
-    "DropList": "Drop_Golem_Void",
+    "DropList": "Drop_Endgame_Golem_Void",
     "ViewRange": 60,
     "HearingRange": 40,
     "AbsoluteDetectionRange": 25,

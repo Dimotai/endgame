@@ -8,7 +8,7 @@
         "ViewRange": 15,
         "FleeRange": 15,
         "HearingRange": 20,
-        "DropList": "Drop_Alpha_Rex",
+        "DropList": "Drop_Endgame_Alpha_Rex",
         "MaxSpeed": 9,
         "Attack": "Root_NPC_Attack_Melee",
         "AttackDistance": 4.8,

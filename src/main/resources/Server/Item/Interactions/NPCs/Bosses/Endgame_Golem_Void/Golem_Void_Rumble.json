@@ -28,8 +28,7 @@
             "RunTime": 1.8,
             "Selector": {
               "Id": "AOECircle",
-              "Range": 6,
-              "TestLineOfSight": true
+              "Range": 6
             },
             "HitEntity": {
               "Interactions": [

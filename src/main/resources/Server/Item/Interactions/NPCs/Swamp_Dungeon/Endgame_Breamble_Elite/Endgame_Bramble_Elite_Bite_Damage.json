@@ -23,22 +23,5 @@
       }
     ]
   },
-  "Next": {
-    "Type": "EffectCondition",
-    "Entity": "Target",
-    "EntityEffectIds": [
-      "Antidote"
-    ],
-    "Match": "None",
-    "Next": {
-      "Type": "ClearEntityEffect",
-      "Entity": "Target",
-      "EntityEffectId": "Poison_T3",
-      "Next": {
-        "Type": "ApplyEffect",
-        "Entity": "Target",
-        "EffectId": "Poison_T3"
-      }
-    }
-  }
+  "Next": "Endgame_Bramble_Elite_Poison_Apply"
 }

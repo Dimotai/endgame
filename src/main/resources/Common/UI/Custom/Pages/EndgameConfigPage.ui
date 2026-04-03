@@ -965,35 +965,41 @@ $C.@PageOverlay {
             Label { Style: @LabelStyle; FlexWeight: 1; Text: "Vorthak Merchant"; }
             TextButton #ToggleVorthak { Anchor: (Width: 80, Height: 28); Text: "ON"; Style: @ToggleOnStyle; }
           }
+        }
+        Group { Anchor: (Height: 8); }
 
-          // --- Temporal Portals ---
-          Group { Anchor: (Height: 8); }
-          Label { Style: @LabelStyle; Text: "--- Temporal Portals ---"; }
-          Group { Anchor: (Height: 4); }
-
+        // Temporal Portals
+        Group { Background: #0b141f(0.84); LayoutMode: Top; Padding: (Full: 12);
+          Label { Style: (FontSize: 14, TextColor: #8b5cf6, RenderBold: true); Anchor: (Height: 20); Text: "Temporal Portals"; }
           Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
-            Label { Style: @LabelStyle; FlexWeight: 1; Text: "Temporal Portals"; }
+            Label { Style: @LabelStyle; FlexWeight: 1; Text: "Enabled"; }
             TextButton #ToggleTemporalPortal { Anchor: (Width: 80, Height: 28); Text: "ON"; Style: @ToggleOnStyle; }
           }
           Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
-            Label { Style: @LabelStyle; FlexWeight: 1; Text: "Portal Duration"; }
-            TextButton #PortalDurationDown { Anchor: (Width: 28, Height: 28); Text: "-"; Style: @AdjustBtnStyle; }
-            $C.@TextField #PortalDuration { Anchor: (Width: 60, Height: 28); Style: @InputFieldStyle; Background: #061420; Padding: (Horizontal: 4); }
+            Label { Style: @SubLabelStyle; FlexWeight: 1; Text: "Portal Duration"; }
+            $C.@TextField #PortalDuration { Anchor: (Width: 70, Height: 24); Style: @InputFieldStyle; Background: #061420; Padding: (Horizontal: 4); }
             Label { Style: (FontSize: 10, TextColor: #6a7a8e, VerticalAlignment: Center); Anchor: (Width: 30); Text: "sec"; }
-            TextButton #PortalDurationUp { Anchor: (Width: 28, Height: 28); Text: "+"; Style: @AdjustBtnStyle; }
+            Group { Anchor: (Width: 6); }
+            TextButton #PortalDurationDown { Anchor: (Width: 40, Height: 28); Text: "-"; Style: @AdjustBtnStyle; }
+            Group { Anchor: (Width: 4); }
+            TextButton #PortalDurationUp { Anchor: (Width: 40, Height: 28); Text: "+"; Style: @AdjustBtnStyle; }
           }
           Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
-            Label { Style: @LabelStyle; FlexWeight: 1; Text: "Max Concurrent"; }
-            TextButton #MaxPortalsDown { Anchor: (Width: 28, Height: 28); Text: "-"; Style: @AdjustBtnStyle; }
-            $C.@TextField #MaxPortals { Anchor: (Width: 60, Height: 28); Style: @InputFieldStyle; Background: #061420; Padding: (Horizontal: 4); }
-            TextButton #MaxPortalsUp { Anchor: (Width: 28, Height: 28); Text: "+"; Style: @AdjustBtnStyle; }
+            Label { Style: @SubLabelStyle; FlexWeight: 1; Text: "Max Concurrent"; }
+            $C.@TextField #MaxPortals { Anchor: (Width: 70, Height: 24); Style: @InputFieldStyle; Background: #061420; Padding: (Horizontal: 4); }
+            Group { Anchor: (Width: 36); }
+            TextButton #MaxPortalsDown { Anchor: (Width: 40, Height: 28); Text: "-"; Style: @AdjustBtnStyle; }
+            Group { Anchor: (Width: 4); }
+            TextButton #MaxPortalsUp { Anchor: (Width: 40, Height: 28); Text: "+"; Style: @AdjustBtnStyle; }
           }
           Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
-            Label { Style: @LabelStyle; FlexWeight: 1; Text: "Instance Time Limit"; }
-            TextButton #InstanceTimeLimitDown { Anchor: (Width: 28, Height: 28); Text: "-"; Style: @AdjustBtnStyle; }
-            $C.@TextField #InstanceTimeLimit { Anchor: (Width: 60, Height: 28); Style: @InputFieldStyle; Background: #061420; Padding: (Horizontal: 4); }
+            Label { Style: @SubLabelStyle; FlexWeight: 1; Text: "Instance Time Limit"; }
+            $C.@TextField #InstanceTimeLimit { Anchor: (Width: 70, Height: 24); Style: @InputFieldStyle; Background: #061420; Padding: (Horizontal: 4); }
             Label { Style: (FontSize: 10, TextColor: #6a7a8e, VerticalAlignment: Center); Anchor: (Width: 30); Text: "sec"; }
-            TextButton #InstanceTimeLimitUp { Anchor: (Width: 28, Height: 28); Text: "+"; Style: @AdjustBtnStyle; }
+            Group { Anchor: (Width: 6); }
+            TextButton #InstanceTimeLimitDown { Anchor: (Width: 40, Height: 28); Text: "-"; Style: @AdjustBtnStyle; }
+            Group { Anchor: (Width: 4); }
+            TextButton #InstanceTimeLimitUp { Anchor: (Width: 40, Height: 28); Text: "+"; Style: @AdjustBtnStyle; }
           }
         }
       }

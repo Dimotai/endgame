@@ -6,7 +6,6 @@
       "Description": "Temporal portal cannot be damaged."
     }
   },
-  "StartState": "Idle",
   "DisplayNames": [
     "Temporal Portal"
   ],
@@ -22,11 +21,11 @@
   "MotionControllerList": [
     {
       "Type": "Walk",
-      "MaxWalkSpeed": 0,
+      "MaxWalkSpeed": 1,
       "Gravity": 10,
       "MaxFallSpeed": 15,
-      "MaxRotationSpeed": 0,
-      "Acceleration": 0
+      "MaxRotationSpeed": 1,
+      "Acceleration": 1
     }
   ],
   "Instructions": [

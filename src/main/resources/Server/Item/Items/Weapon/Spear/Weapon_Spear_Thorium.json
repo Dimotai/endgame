@@ -106,7 +106,6 @@
   },
   "MaxDurability": 150,
   "DurabilityLossOnHit": 0.21,
-  "BrokenItem": "Weapon_Spear_Thorium",
   "Weapon": {},
   "ItemSoundSetId": "ISS_Weapons_Wood"
 }

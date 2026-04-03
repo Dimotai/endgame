@@ -127,7 +127,6 @@
   },
   "MaxDurability": 260,
   "DurabilityLossOnHit": 0.21,
-  "BrokenItem": "Weapon_Spear_Onyxium",
   "Weapon": {
     "StatModifiers": {
       "Stamina": [

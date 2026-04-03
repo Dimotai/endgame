@@ -61,15 +61,15 @@
                       "PositionOffset": { "X": 0, "Y": -0.1, "Z": 0.25 }
                     }
                   ]
+                },
+                "Next": {
+                  "Type": "Simple",
+                  "RunTime": 0.8
                 }
               }
             ]
           }
-        ],
-        "Next": {
-          "Type": "Simple",
-          "RunTime": 0.8
-        }
+        ]
       }
     }
   }

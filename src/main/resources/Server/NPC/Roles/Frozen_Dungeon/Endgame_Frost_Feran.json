@@ -4,7 +4,7 @@
   "Modify": {
     "Appearance": "Endgame_Frost_Feran",
     "AttitudeGroup": "Feran",
-    "DropList": "Drop_Frost_Feran",
+    "DropList": "Drop_Endgame_Frost_Feran",
     "Weapons": ["Weapon_Sword_Bone_Frost"],
     "MaxHealth": 150,
     "MaxSpeed": 10,

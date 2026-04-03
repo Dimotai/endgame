@@ -3,7 +3,7 @@
   "Reference": "Template_Spirit_Frost",
   "Modify": {
     "Appearance": "Spirit_Frost",
-    "DropList": "Drop_Spirit_Frost",
+    "DropList": "Drop_Endgame_Spirit_Frost",
     "MaxHealth": 200,
     "IsMemory": true,
     "MemoriesCategory": "Elemental",

@@ -9,7 +9,7 @@
   "DefaultPlayerAttitude": "Hostile",
   "IsMemory": true,
   "MemoriesCategory": "Mythic",
-  "DropList": "Drop_Dragon_Frost",
+  "DropList": "Drop_Endgame_Dragon_Frost",
   "AttitudeGroup": "Dragon",
   "DisableDamageGroups": ["Self"],
   "KnockbackScale": 0.0,

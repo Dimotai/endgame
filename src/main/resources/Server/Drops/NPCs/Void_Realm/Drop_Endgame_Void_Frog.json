@@ -10,15 +10,15 @@
             "Type": "Single",
             "Item": {
               "ItemId": "Ingredient_Void_Essence",
-              "QuantityMin": 5,
-              "QuantityMax": 8
+              "QuantityMin": 4,
+              "QuantityMax": 6
             }
           }
         ]
       },
       {
         "Type": "Choice",
-        "Weight": 10,
+        "Weight": 15,
         "Containers": [
           {
             "Type": "Single",

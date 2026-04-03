@@ -7,7 +7,7 @@
         "IsMemory": true,
         "MemoriesCategory": "Mythic",
         "MemoriesNameOverride": "Dragon_Fire",
-        "DropList": "Drop_Dragon_Fire",
+        "DropList": "Drop_Endgame_Dragon_Fire",
         "AttitudeGroup": "Dragon",
         "MaxSpeed": 12,
         "ClimbHeight": 3,

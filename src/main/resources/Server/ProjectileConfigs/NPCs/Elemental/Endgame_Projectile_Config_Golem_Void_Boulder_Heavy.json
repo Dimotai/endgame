@@ -69,7 +69,7 @@
           "Type": "Simple",
           "RunTime": 0,
           "Effects": {
-            "WorldParticles": [
+            "Particles": [
               {
                 "SystemId": "Golem_Void_Slam"
               }

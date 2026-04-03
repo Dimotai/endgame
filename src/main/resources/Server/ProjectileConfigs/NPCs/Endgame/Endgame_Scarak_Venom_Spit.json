@@ -23,7 +23,6 @@
       "Interactions": [
         {
           "Type": "DamageEntity",
-          "Entity": "Target",
           "DamageCalculator": {
             "Type": "Absolute",
             "BaseDamage": {
@@ -41,8 +40,7 @@
           },
           "Next": {
             "Type": "ApplyEffect",
-            "Entity": "Target",
-            "EffectId": "Endgame_Scarak_Venom"
+              "EffectId": "Endgame_Scarak_Venom"
           }
         },
         {
@@ -61,7 +59,7 @@
           "RunTime": 0,
           "Effects": {
             "WorldSoundEventId": "SFX_Rubble_Hit",
-            "WorldParticles": [
+            "Particles": [
               {
                 "SystemId": "Stone_Death"
               }

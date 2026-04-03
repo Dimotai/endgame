@@ -116,7 +116,6 @@
   },
   "MaxDurability": 220,
   "DurabilityLossOnHit": 0.21,
-  "BrokenItem": "Weapon_Spear_Mithril",
   "Weapon": {
     "StatModifiers": {
       "Stamina": [

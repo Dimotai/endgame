@@ -3,7 +3,7 @@
   "Reference": "Template_Beasts_Passive_Critter",
   "Modify": {
     "Appearance": "Void_Frog",
-    "DropList": "Drop_Frog_Blue",
+    "DropList": "Drop_Endgame_Void_Frog",
     "MaxHealth": 15,
     "IsMemory": true,
     "MemoriesCategory": "Critter",
