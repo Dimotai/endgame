@@ -85,12 +85,8 @@ public class BuilderActionEnterTemporalPortal extends BuilderActionBase {
 
             UUID playerUuid = uuidComp.getUuid();
 
-            // Delegate to the manager
-            EndgameQoL plugin = EndgameQoL.getInstance();
-            if (plugin != null && plugin.getTemporalPortalManager() != null) {
-                plugin.getTemporalPortalManager().onPlayerInteract(playerUuid, npcRef);
-            }
-
+            // Portal entry is now handled by the engine's PortalKey block system.
+            // This NPC action builder is kept for backward compatibility but is no longer used.
             return true;
         }
     }

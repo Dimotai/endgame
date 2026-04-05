@@ -159,6 +159,20 @@ public class OrbisGuardBridge {
         return api != null;
     }
 
+    /**
+     * Check if a position is inside any OrbisGuard region (i.e. protected).
+     */
+    public boolean isPositionProtected(String worldName, int x, int y, int z) {
+        if (api == null) return false;
+        try {
+            IRegionManager manager = api.getRegionContainer().getRegionManager(worldName);
+            if (manager == null) return false;
+            return !manager.getRegionsAt(x, y, z).isEmpty();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public void shutdown() {
         protectedWorlds.clear();
         scheduler.shutdown();

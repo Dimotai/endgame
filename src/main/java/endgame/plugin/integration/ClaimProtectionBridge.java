@@ -19,6 +19,7 @@ public class ClaimProtectionBridge {
     private volatile boolean available = false;
     private Object claimManagerInstance;
     private Method isAllowedToInteractMethod;
+    private Method getChunkRawCoordsMethod;
     private Object breakBlockPermission; // PartyOverrides.PARTY_PROTECTION_BREAK_BLOCKS
     private Predicate<?> breakBlockPredicate; // PartyInfo::isBlockBreakEnabled
 
@@ -86,6 +87,25 @@ public class ClaimProtectionBridge {
         } catch (Exception e) {
             LOGGER.atWarning().log("[ClaimBridge] Permission check failed, denying break: %s", e.getMessage());
             return false; // fail-closed: deny break if API call fails
+        }
+    }
+
+    /**
+     * Check if a position is inside any claimed chunk (regardless of player).
+     * Returns true if the chunk is claimed by any party.
+     * Returns false if SimpleClaims is not installed or if the chunk is unclaimed.
+     */
+    public boolean isPositionClaimed(String worldName, int blockX, int blockZ) {
+        if (!available || claimManagerInstance == null) return false;
+        try {
+            if (getChunkRawCoordsMethod == null) {
+                getChunkRawCoordsMethod = claimManagerInstance.getClass()
+                        .getMethod("getChunkRawCoords", String.class, int.class, int.class);
+            }
+            Object chunkInfo = getChunkRawCoordsMethod.invoke(claimManagerInstance, worldName, blockX, blockZ);
+            return chunkInfo != null;
+        } catch (Exception e) {
+            return false;
         }
     }
 

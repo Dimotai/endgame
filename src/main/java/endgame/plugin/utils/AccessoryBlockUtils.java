@@ -80,6 +80,8 @@ public final class AccessoryBlockUtils {
         int localZ = z & 31;
         BlockAccessor accessor = world.getChunk(ChunkUtil.indexChunkFromBlock(x, z));
         if (accessor != null) {
+            // Skip if there's already a solid block (e.g. waterlogged stairs/slabs)
+            if (accessor.getBlock(localX, y, localZ) != 0) return;
             accessor.setBlock(localX, y, localZ, blockTypeKey);
             accessor.setTicking(localX, y, localZ, true);
         }

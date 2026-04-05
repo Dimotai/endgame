@@ -1,18 +1,26 @@
 package endgame.plugin.systems.portal;
 
+import com.hypixel.hytale.builtin.instances.InstancesPlugin;
+import com.hypixel.hytale.builtin.portals.resources.PortalWorld;
+import com.hypixel.hytale.builtin.portals.integrations.PortalRemovalCondition;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.math.vector.Transform;
 import com.hypixel.hytale.math.vector.Vector3d;
-import com.hypixel.hytale.math.vector.Vector3f;
+import com.hypixel.hytale.server.core.asset.type.portalworld.PortalSpawnConfig;
+import com.hypixel.hytale.server.core.asset.type.portalworld.PortalType;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
+import com.hypixel.hytale.server.core.universe.world.spawn.ISpawnProvider;
+import com.hypixel.hytale.server.core.universe.world.spawn.IndividualSpawnProvider;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.Universe;
 import com.hypixel.hytale.server.core.universe.world.World;
+import com.hypixel.hytale.server.core.universe.world.WorldConfig;
 import com.hypixel.hytale.server.core.universe.world.ParticleUtil;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.core.Message;
-import com.hypixel.hytale.server.npc.NPCPlugin;
 import endgame.plugin.EndgameQoL;
+import endgame.plugin.utils.EntityUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -26,30 +34,40 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Manages the Temporal Portal system: spawns temporary portals near players,
- * creates dungeon instances, handles teleportation and cleanup.
+ * Manages the Temporal Portal system using the HyRifts pattern:
+ * - Places Portal_Return blocks in overworld (visual + particles + ambient sound)
+ * - Proximity detection teleports players via InstancesPlugin
+ * - Portal_Return block in instance handles native return teleportation
  *
- * Thread-safe: uses ConcurrentHashMap, volatile fields, and world.execute().
- * Pattern: ScheduledExecutor (same as ForgottenTempleWatcher).
+ * Thread-safe: ConcurrentHashMap, volatile fields, world.execute().
  */
 public class TemporalPortalManager {
 
     private final EndgameQoL plugin;
     private final ScheduledExecutorService scheduler;
     private final ConcurrentHashMap<String, TemporalPortalSession> activeSessions = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<UUID, Long> entryCooldowns = new ConcurrentHashMap<>();
 
     private volatile long lastSpawnTimeMs;
     private volatile long nextSpawnIntervalMs;
 
-    private static final String PORTAL_NPC_ID = "Endgame_Temporal_Portal";
+    private static final String PORTAL_BLOCK_ID = "Endgame_Temporal_Portal";
     private static final String PARTICLE_SPAWN = "Praetorian_Summon_Spawn";
-    private static final long SPAWN_CHECK_INTERVAL_MS = 30_000; // Check every 30s
-    private static final long MAINTENANCE_INTERVAL_MS = 60_000; // Cleanup every 60s
-    private static final long INITIAL_DELAY_MS = 60_000; // 60s warmup
+    private static final long SPAWN_CHECK_INTERVAL_MS = 30_000;
+    private static final long PROXIMITY_TICK_MS = 500;
+    private static final long MAINTENANCE_INTERVAL_MS = 60_000;
+    private static final long INITIAL_DELAY_MS = 60_000;
+    private static final double ENTER_RADIUS_SQ = 4.0; // 2 blocks
+    private static final double ENTER_RADIUS_Y = 3.0;
+    private static final long ENTRY_COOLDOWN_MS = 5_000;
 
     public TemporalPortalManager(@Nonnull EndgameQoL plugin) {
         this.plugin = plugin;
-        this.scheduler = Executors.newSingleThreadScheduledExecutor();
+        this.scheduler = Executors.newSingleThreadScheduledExecutor(r -> {
+            Thread t = new Thread(r, "EndgameQoL-TemporalPortal");
+            t.setDaemon(true);
+            return t;
+        });
     }
 
     // =========================================================================
@@ -60,29 +78,19 @@ public class TemporalPortalManager {
         lastSpawnTimeMs = System.currentTimeMillis();
         nextSpawnIntervalMs = randomInterval();
 
-        scheduler.scheduleAtFixedRate(() -> {
-            try { trySpawnPortal(); } catch (Exception e) {
-                plugin.getLogger().atWarning().log("[TemporalPortal] Spawn error: %s", e.getMessage());
-            }
-        }, INITIAL_DELAY_MS, SPAWN_CHECK_INTERVAL_MS, TimeUnit.MILLISECONDS);
-
-        scheduler.scheduleAtFixedRate(() -> {
-            try { maintenanceTick(); } catch (Exception e) {
-                plugin.getLogger().atWarning().log("[TemporalPortal] Maintenance error: %s", e.getMessage());
-            }
-        }, MAINTENANCE_INTERVAL_MS, MAINTENANCE_INTERVAL_MS, TimeUnit.MILLISECONDS);
+        scheduler.scheduleAtFixedRate(this::safeSpawnTick, INITIAL_DELAY_MS, SPAWN_CHECK_INTERVAL_MS, TimeUnit.MILLISECONDS);
+        scheduler.scheduleAtFixedRate(this::safeProximityTick, 2_000, PROXIMITY_TICK_MS, TimeUnit.MILLISECONDS);
+        scheduler.scheduleAtFixedRate(this::safeMaintenanceTick, MAINTENANCE_INTERVAL_MS, MAINTENANCE_INTERVAL_MS, TimeUnit.MILLISECONDS);
 
         plugin.getLogger().atInfo().log("[TemporalPortal] System started");
     }
 
     public void stop() {
-        // Cleanup all portal entities
         for (TemporalPortalSession session : activeSessions.values()) {
-            removePortalEntity(session);
-            removeReturnPortal(session);
-            teleportAllPlayersOut(session);
+            closePortal(session);
         }
         activeSessions.clear();
+        entryCooldowns.clear();
 
         scheduler.shutdown();
         try {
@@ -98,6 +106,29 @@ public class TemporalPortalManager {
 
     public void forceClear() {
         activeSessions.clear();
+        entryCooldowns.clear();
+    }
+
+    // =========================================================================
+    // Safe wrappers (prevent scheduler death)
+    // =========================================================================
+
+    private void safeSpawnTick() {
+        try { trySpawnPortal(); } catch (Exception e) {
+            plugin.getLogger().atWarning().log("[TemporalPortal] Spawn error: %s", e.getMessage());
+        }
+    }
+
+    private void safeProximityTick() {
+        try { proximityTick(); } catch (Exception e) {
+            plugin.getLogger().atWarning().log("[TemporalPortal] Proximity error: %s", e.getMessage());
+        }
+    }
+
+    private void safeMaintenanceTick() {
+        try { maintenanceTick(); } catch (Exception e) {
+            plugin.getLogger().atWarning().log("[TemporalPortal] Maintenance error: %s", e.getMessage());
+        }
     }
 
     // =========================================================================
@@ -112,15 +143,12 @@ public class TemporalPortalManager {
         long now = System.currentTimeMillis();
         if (now - lastSpawnTimeMs < nextSpawnIntervalMs) return;
 
-        // Pick a random enabled dungeon type
         TemporalPortalSession.DungeonType dungeonType = pickRandomEnabledDungeon(config);
         if (dungeonType == null) return;
 
-        // Pick a random overworld player
         PlayerRef targetPlayer = pickRandomOverworldPlayer();
         if (targetPlayer == null) return;
 
-        // Get player position
         Ref<EntityStore> playerRef = targetPlayer.getReference();
         if (playerRef == null || !playerRef.isValid()) return;
 
@@ -131,301 +159,336 @@ public class TemporalPortalManager {
         World world = playerRef.getStore().getExternalData().getWorld();
         if (world == null || !world.isAlive()) return;
 
-        // Compute spawn position (offset from player)
+        // Try up to 3 positions, skip protected zones
         float radius = config.getSpawnOffsetRadius();
-        double angle = ThreadLocalRandom.current().nextDouble() * Math.PI * 2;
-        double offsetX = Math.cos(angle) * (3 + ThreadLocalRandom.current().nextDouble() * (radius - 3));
-        double offsetZ = Math.sin(angle) * (3 + ThreadLocalRandom.current().nextDouble() * (radius - 3));
-        Vector3d spawnPos = new Vector3d(
-                playerPos.x + offsetX,
-                playerPos.y + 1,
-                playerPos.z + offsetZ);
+        Vector3d spawnPos = null;
+        for (int attempt = 0; attempt < 3; attempt++) {
+            double angle = ThreadLocalRandom.current().nextDouble() * Math.PI * 2;
+            double offsetX = Math.cos(angle) * (3 + ThreadLocalRandom.current().nextDouble() * (radius - 3));
+            double offsetZ = Math.sin(angle) * (3 + ThreadLocalRandom.current().nextDouble() * (radius - 3));
+            int bx = (int) Math.floor(playerPos.x + offsetX);
+            int bz = (int) Math.floor(playerPos.z + offsetZ);
+            if (!isPositionProtected(world.getName(), bx, (int) playerPos.y, bz)) {
+                spawnPos = new Vector3d(bx, playerPos.y, bz);
+                break;
+            }
+        }
+        if (spawnPos == null) return;
 
-        // Create session
         String sessionId = UUID.randomUUID().toString().substring(0, 8);
         TemporalPortalSession session = new TemporalPortalSession(sessionId, dungeonType);
-
-        // Spawn on world thread
-        spawnPortalEntity(session, world, spawnPos, config);
+        placePortalBlock(session, world, spawnPos, config);
 
         lastSpawnTimeMs = now;
         nextSpawnIntervalMs = randomInterval();
     }
 
-    private void spawnPortalEntity(TemporalPortalSession session, World world,
-                                    Vector3d position, TemporalPortalConfig config) {
+    // =========================================================================
+    // Portal Block Placement & Removal
+    // =========================================================================
+
+    private void placePortalBlock(TemporalPortalSession session, World world,
+                                   Vector3d position, TemporalPortalConfig config) {
+        int bx = (int) Math.floor(position.x);
+        int by = (int) Math.floor(position.y);
+        int bz = (int) Math.floor(position.z);
+
         world.execute(() -> {
             try {
-                Store<EntityStore> store = world.getEntityStore().getStore();
-                Vector3f rotation = new Vector3f(0, 0, 0);
+                // Clear 3x3x3 area above ground + place portal block
+                for (int dy = 0; dy < 3; dy++) {
+                    for (int dx = -1; dx <= 1; dx++) {
+                        for (int dz = -1; dz <= 1; dz++) {
+                            world.setBlock(bx + dx, by + dy, bz + dz, "Empty");
+                        }
+                    }
+                }
+                world.setBlock(bx, by, bz, PORTAL_BLOCK_ID);
 
-                NPCPlugin.get().spawnNPC(store, PORTAL_NPC_ID, null, position, rotation);
-
-                // We can't easily get the Ref from spawnNPC return, so we track by session
                 session.setSpawnWorldName(world.getName());
-                session.setPortalPosition(position);
+                session.setPortalPosition(new Vector3d(bx + 0.5, by, bz + 0.5));
                 activeSessions.put(session.getId(), session);
 
-                plugin.getLogger().atInfo().log("[TemporalPortal] Spawned %s portal at (%.0f, %.0f, %.0f) in %s [session=%s]",
-                        session.getDungeonType().getDisplayName(),
-                        position.x, position.y, position.z,
-                        world.getName(), session.getId());
+                plugin.getLogger().atInfo().log("[TemporalPortal] Placed %s portal at (%d, %d, %d) in %s [session=%s]",
+                        session.getDungeonType().getDisplayName(), bx, by, bz, world.getName(), session.getId());
 
-                // Announce to nearby players
-                announcePortalSpawn(world, position, session.getDungeonType(), config.getAnnounceRadius());
-
-                // Spawn particles
-                spawnPortalParticles(world, position);
-
+                announcePortalSpawn(world, session.getPortalPosition(), session.getDungeonType(), config.getAnnounceRadius());
+                spawnPortalParticles(world, session.getPortalPosition());
             } catch (Exception e) {
-                plugin.getLogger().atWarning().log("[TemporalPortal] Failed to spawn portal: %s", e.getMessage());
+                plugin.getLogger().atWarning().log("[TemporalPortal] Failed to place portal block: %s", e.getMessage());
+            }
+        });
+    }
+
+    private void removePortalBlock(@Nonnull TemporalPortalSession session) {
+        Vector3d pos = session.getPortalPosition();
+        String worldName = session.getSpawnWorldName();
+        if (pos == null || worldName == null) return;
+
+        World world = Universe.get().getWorld(worldName);
+        if (world == null || !world.isAlive()) return;
+
+        int bx = (int) Math.floor(pos.x);
+        int by = (int) Math.floor(pos.y);
+        int bz = (int) Math.floor(pos.z);
+        world.execute(() -> world.setBlock(bx, by, bz, "Empty"));
+    }
+
+    // =========================================================================
+    // Proximity Detection (HyRifts pattern: tick every 500ms)
+    // =========================================================================
+
+    private void proximityTick() {
+        long now = System.currentTimeMillis();
+        entryCooldowns.entrySet().removeIf(e -> now - e.getValue() > ENTRY_COOLDOWN_MS * 3);
+
+        for (TemporalPortalSession session : activeSessions.values()) {
+            Vector3d portalPos = session.getPortalPosition();
+            String portalWorldName = session.getSpawnWorldName();
+            if (portalPos == null || portalWorldName == null) continue;
+            if (session.isPortalExpired(plugin.getConfig().get().getTemporalPortalConfig().getPortalDurationSeconds())) continue;
+
+            // Find the portal's world and run ECS access on its thread
+            World portalWorld = Universe.get().getWorld(portalWorldName);
+            if (portalWorld == null || !portalWorld.isAlive()) continue;
+
+            portalWorld.execute(() -> {
+                long tick = System.currentTimeMillis();
+                for (PlayerRef player : Universe.get().getPlayers()) {
+                    if (player == null) continue;
+                    Ref<EntityStore> ref = player.getReference();
+                    if (ref == null || !ref.isValid()) continue;
+
+                    World playerWorld = ref.getStore().getExternalData().getWorld();
+                    if (playerWorld == null || !playerWorld.getName().equals(portalWorldName)) continue;
+
+                    TransformComponent tc = ref.getStore().getComponent(ref, TransformComponent.getComponentType());
+                    if (tc == null) continue;
+
+                    Vector3d playerPos = tc.getPosition();
+                    double dx = playerPos.x - portalPos.x;
+                    double dz = playerPos.z - portalPos.z;
+                    double hDistSq = dx * dx + dz * dz;
+                    double dy = Math.abs(playerPos.y - portalPos.y);
+
+                    if (hDistSq <= ENTER_RADIUS_SQ && dy <= ENTER_RADIUS_Y) {
+                        UUID playerUuid = EntityUtils.getUuid(player);
+                        if (playerUuid == null) continue;
+
+                        Long lastEntry = entryCooldowns.get(playerUuid);
+                        if (lastEntry != null && (tick - lastEntry) < ENTRY_COOLDOWN_MS) continue;
+
+                        if (session.getInstanceState() == TemporalPortalSession.InstanceState.NONE) {
+                            startInstanceGeneration(portalWorld, session, player);
+                            entryCooldowns.put(playerUuid, tick);
+                        } else if (session.getInstanceState() == TemporalPortalSession.InstanceState.READY) {
+                            World instanceWorld = session.getInstanceWorld();
+                            if (instanceWorld != null && instanceWorld.isAlive()) {
+                                teleportToInstance(player, portalWorld, instanceWorld);
+                                entryCooldowns.put(playerUuid, tick);
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    // =========================================================================
+    // Instance Creation (InstancesPlugin pattern from HyRifts)
+    // =========================================================================
+
+    private void startInstanceGeneration(World originWorld, TemporalPortalSession session, @Nullable PlayerRef initiatingPlayer) {
+        String portalTypeId = session.getDungeonType().getPortalTypeId();
+        PortalType portalType = (PortalType) PortalType.getAssetMap().getAsset(portalTypeId);
+        if (portalType == null || !InstancesPlugin.doesInstanceAssetExist(portalType.getInstanceId())) {
+            plugin.getLogger().atWarning().log("[TemporalPortal] PortalType '%s' or instance not found", portalTypeId);
+            session.setInstanceState(TemporalPortalSession.InstanceState.FAILED);
+            return;
+        }
+
+        session.setInstanceState(TemporalPortalSession.InstanceState.SPAWNING);
+        Vector3d pos = session.getPortalPosition();
+        Transform returnTransform = new Transform(pos.x, pos.y + 0.5, pos.z);
+
+        InstancesPlugin.get().spawnInstance(portalType.getInstanceId(), originWorld, returnTransform)
+                .thenAcceptAsync(spawnedWorld -> {
+                    WorldConfig worldConfig = spawnedWorld.getWorldConfig();
+                    worldConfig.setDeleteOnUniverseStart(true);
+                    worldConfig.setDeleteOnRemove(true);
+
+                    // Init PortalWorld resource (enables Portal_Return interaction in instance)
+                    PortalWorld portalWorld = (PortalWorld) spawnedWorld.getEntityStore().getStore()
+                            .getResource(PortalWorld.getResourceType());
+                    if (portalWorld != null) {
+                        int timeLimitSec = plugin.getConfig().get().getTemporalPortalConfig().getInstanceTimeLimitSeconds();
+                        portalWorld.init(portalType, timeLimitSec,
+                                new PortalRemovalCondition((double) timeLimitSec), null);
+                    }
+
+                    // Place return portal at instance spawn point
+                    placeReturnPortal(spawnedWorld, portalType);
+
+                    session.setInstanceWorld(spawnedWorld);
+                    plugin.getLogger().atInfo().log("[TemporalPortal] Instance ready: %s [session=%s]",
+                            spawnedWorld.getName(), session.getId());
+
+                    // Teleport the initiating player immediately
+                    if (initiatingPlayer != null) {
+                        teleportToInstance(initiatingPlayer, originWorld, spawnedWorld);
+                    }
+                }, originWorld)
+                .exceptionally(t -> {
+                    plugin.getLogger().atWarning().log("[TemporalPortal] Instance spawn failed: %s", t.getMessage());
+                    session.setInstanceState(TemporalPortalSession.InstanceState.FAILED);
+                    return null;
+                });
+    }
+
+    // =========================================================================
+    // Return Portal (placed inside instance at spawn point)
+    // =========================================================================
+
+    private void placeReturnPortal(World instanceWorld, PortalType portalType) {
+        PortalSpawnConfig spawnConfig = portalType.getSpawn();
+        ISpawnProvider spawnOverride = spawnConfig.getSpawnProviderOverride();
+        if (spawnOverride == null) {
+            plugin.getLogger().atWarning().log("[TemporalPortal] No SpawnProviderOverride on PortalType");
+            return;
+        }
+
+        Transform spawnTransform = spawnOverride.getSpawnPoint(instanceWorld, null);
+        if (spawnTransform == null) {
+            plugin.getLogger().atWarning().log("[TemporalPortal] SpawnProvider returned null transform");
+            return;
+        }
+
+        // Set spawn point on PortalWorld resource (required for Portal_Return interaction)
+        PortalWorld portalWorld = (PortalWorld) instanceWorld.getEntityStore().getStore()
+                .getResource(PortalWorld.getResourceType());
+        if (portalWorld != null) {
+            portalWorld.setSpawnPoint(spawnTransform);
+        }
+
+        // Set world spawn provider (so players respawn at portal)
+        instanceWorld.getWorldConfig().setSpawnProvider(new IndividualSpawnProvider(spawnTransform));
+
+        Vector3d spawnPos = spawnTransform.getPosition();
+        int px = (int) Math.floor(spawnPos.x);
+        int py = (int) Math.floor(spawnPos.y);
+        int pz = (int) Math.floor(spawnPos.z);
+
+        // Delay block placement to ensure chunk is loaded
+        scheduler.schedule(() -> {
+            instanceWorld.execute(() -> {
+                try {
+                    for (int dy = 0; dy < 3; dy++) {
+                        for (int dx = -1; dx <= 1; dx++) {
+                            for (int dz = -1; dz <= 1; dz++) {
+                                instanceWorld.setBlock(px + dx, py + dy, pz + dz, "Empty");
+                            }
+                        }
+                    }
+                    instanceWorld.setBlock(px, py, pz, "Portal_Return");
+                    plugin.getLogger().atInfo().log("[TemporalPortal] Placed return portal at (%d, %d, %d)", px, py, pz);
+                } catch (Exception e) {
+                    plugin.getLogger().atWarning().log("[TemporalPortal] Failed to place return portal: %s", e.getMessage());
+                }
+            });
+        }, 3, TimeUnit.SECONDS);
+    }
+
+    // =========================================================================
+    // Teleportation (InstancesPlugin.teleportPlayerToInstance)
+    // =========================================================================
+
+    private void teleportToInstance(PlayerRef playerRef, World fromWorld, World targetWorld) {
+        fromWorld.execute(() -> {
+            try {
+                Ref<EntityStore> ref = playerRef.getReference();
+                if (ref == null || !ref.isValid()) return;
+                InstancesPlugin.teleportPlayerToInstance(ref, ref.getStore(), targetWorld, null);
+                plugin.getLogger().atFine().log("[TemporalPortal] Teleported %s to instance %s",
+                        playerRef.getUsername(), targetWorld.getName());
+            } catch (Exception e) {
+                plugin.getLogger().atWarning().log("[TemporalPortal] Teleport failed: %s", e.getMessage());
             }
         });
     }
 
     // =========================================================================
-    // Player Interaction (called from BuilderActionEnterTemporalPortal)
-    // =========================================================================
-
-    public void onPlayerInteract(@Nonnull UUID playerUuid, @Nonnull Ref<EntityStore> portalNpcRef) {
-        // Find session by portal position (NPC ref matching)
-        TemporalPortalSession session = findSessionNearPortal(portalNpcRef);
-        if (session == null) {
-            plugin.getLogger().atFine().log("[TemporalPortal] No session found for portal interaction");
-            return;
-        }
-
-        PlayerRef playerRef = findPlayerRef(playerUuid);
-        if (playerRef == null) return;
-
-        session.recordPlayerActivity();
-
-        if (!session.isInstanceReady()) {
-            createInstanceWorld(session, () -> teleportPlayerIn(playerRef, session));
-        } else {
-            teleportPlayerIn(playerRef, session);
-        }
-    }
-
-    // =========================================================================
-    // Instance Management
-    // =========================================================================
-
-    private void createInstanceWorld(TemporalPortalSession session, Runnable onReady) {
-        String instanceId = session.getDungeonType().getInstanceId();
-        String worldName = "temporal-portal-" + instanceId.toLowerCase() + "-" + session.getId();
-
-        try {
-            var future = Universe.get().addWorld(worldName, null, instanceId);
-            future.whenComplete((world, error) -> {
-                if (error != null) {
-                    plugin.getLogger().atWarning().log("[TemporalPortal] Failed to create instance %s: %s",
-                            worldName, error.getMessage());
-                    return;
-                }
-                if (world != null) {
-                    world.getWorldConfig().setDeleteOnRemove(true);
-                    world.getWorldConfig().markChanged();
-                    session.setInstanceWorldName(worldName);
-                    session.setInstanceReady(true);
-
-                    plugin.getLogger().atInfo().log("[TemporalPortal] Instance created: %s", worldName);
-                    onReady.run();
-                }
-            });
-        } catch (Exception e) {
-            plugin.getLogger().atWarning().log("[TemporalPortal] Error creating instance: %s", e.getMessage());
-        }
-    }
-
-    private void teleportPlayerIn(@Nonnull PlayerRef playerRef, @Nonnull TemporalPortalSession session) {
-        String worldName = session.getInstanceWorldName();
-        if (worldName == null) return;
-
-        World instanceWorld = Universe.get().getWorld(worldName);
-        if (instanceWorld == null || !instanceWorld.isAlive()) return;
-
-        Ref<EntityStore> ref = playerRef.getReference();
-        if (ref == null || !ref.isValid()) return;
-
-        // Teleport to instance spawn point (center of world)
-        Vector3d spawnPos = new Vector3d(0, 80, 0); // TODO: read from instance config
-        try {
-            var teleportType = com.hypixel.hytale.server.core.modules.entity.teleport.Teleport.getComponentType();
-            var teleport = com.hypixel.hytale.server.core.modules.entity.teleport.Teleport.createForPlayer(
-                    instanceWorld, spawnPos, new Vector3f(0, 0, 0));
-            ref.getStore().addComponent(ref, teleportType, teleport);
-
-            UUID uuid = endgame.plugin.utils.EntityUtils.getUuid(playerRef);
-            if (uuid != null) {
-                session.getPlayersInside().add(uuid);
-                session.recordPlayerActivity();
-            }
-
-            plugin.getLogger().atInfo().log("[TemporalPortal] Teleported player into %s [session=%s]",
-                    worldName, session.getId());
-        } catch (Exception e) {
-            plugin.getLogger().atWarning().log("[TemporalPortal] Teleport failed: %s", e.getMessage());
-        }
-    }
-
-    private void teleportPlayerOut(@Nonnull PlayerRef playerRef, @Nonnull TemporalPortalSession session) {
-        Ref<EntityStore> ref = playerRef.getReference();
-        if (ref == null || !ref.isValid()) return;
-
-        // Return to portal spawn position in overworld
-        String overworldName = session.getSpawnWorldName();
-        Vector3d returnPos = session.getPortalPosition();
-        if (overworldName == null || returnPos == null) return;
-
-        World overworld = Universe.get().getWorld(overworldName);
-        if (overworld == null || !overworld.isAlive()) {
-            // Fallback: first available world
-            overworld = new ArrayList<>(Universe.get().getWorlds().values()).getFirst();
-        }
-
-        try {
-            var teleportType = com.hypixel.hytale.server.core.modules.entity.teleport.Teleport.getComponentType();
-            var teleport = com.hypixel.hytale.server.core.modules.entity.teleport.Teleport.createForPlayer(
-                    overworld, returnPos, new Vector3f(0, 0, 0));
-            ref.getStore().addComponent(ref, teleportType, teleport);
-
-            UUID uuid = endgame.plugin.utils.EntityUtils.getUuid(playerRef);
-            if (uuid != null) {
-                session.getPlayersInside().remove(uuid);
-            }
-        } catch (Exception e) {
-            plugin.getLogger().atWarning().log("[TemporalPortal] Return teleport failed: %s", e.getMessage());
-        }
-    }
-
-    private void teleportAllPlayersOut(@Nonnull TemporalPortalSession session) {
-        for (UUID uuid : new ArrayList<>(session.getPlayersInside())) {
-            PlayerRef playerRef = findPlayerRef(uuid);
-            if (playerRef != null) {
-                teleportPlayerOut(playerRef, session);
-            }
-        }
-        session.getPlayersInside().clear();
-    }
-
-    // =========================================================================
-    // Cleanup
+    // Maintenance (expiry, cleanup)
     // =========================================================================
 
     private void maintenanceTick() {
         TemporalPortalConfig config = plugin.getConfig().get().getTemporalPortalConfig();
-        long now = System.currentTimeMillis();
 
         for (var entry : new ArrayList<>(activeSessions.entrySet())) {
             TemporalPortalSession session = entry.getValue();
 
-            // 0. Warnings (30s before expiry)
-            if (!session.hasWarnedPortalExpiry() &&
-                    session.isPortalAboutToExpire(config.getPortalDurationSeconds())) {
-                session.setWarnedPortalExpiry(true);
-                plugin.getLogger().atFine().log("[TemporalPortal] Portal expiring soon [session=%s]", session.getId());
-            }
-            if (!session.hasWarnedInstanceExpiry() && session.isInstanceReady() &&
-                    session.isInstanceAboutToExpire(config.getInstanceTimeLimitSeconds())) {
-                session.setWarnedInstanceExpiry(true);
-                plugin.getLogger().atInfo().log("[TemporalPortal] Instance closing in 30s [session=%s]", session.getId());
-                sendMessageToPlayersInside(session,
-                        Message.raw("[Temporal Portal] The dungeon is closing in 30 seconds!").color("#ff5555"));
-            }
-
-            // 1. Instance time limit reached → eject all players
-            if (session.isInstanceReady() &&
-                    session.isInstanceTimeLimitReached(config.getInstanceTimeLimitSeconds())) {
-                plugin.getLogger().atInfo().log("[TemporalPortal] Instance time limit reached [session=%s]", session.getId());
-                sendMessageToPlayersInside(session,
-                        Message.raw("[Temporal Portal] The dungeon has collapsed! Returning to overworld...").color("#ff5555"));
-                teleportAllPlayersOut(session);
-                destroyInstance(session);
-                removePortalEntity(session);
-                activeSessions.remove(entry.getKey());
-                continue;
-            }
-
-            // 2. Portal NPC expired (overworld, visual only)
-            if (session.isPortalExpired(config.getPortalDurationSeconds()) && session.getPortalPosition() != null) {
-                removePortalEntity(session);
-                // Don't remove session — instance may still have players
-            }
-
-            // 3. Instance idle (no players for too long)
-            if (session.isInstanceReady() && session.getPlayersInside().isEmpty() &&
-                    session.isInstanceIdle(config.getInstanceIdleTimeoutMinutes())) {
-                plugin.getLogger().atInfo().log("[TemporalPortal] Instance idle timeout [session=%s]", session.getId());
-                destroyInstance(session);
-                activeSessions.remove(entry.getKey());
-                continue;
-            }
-
-            // 4. No instance + portal expired → fully cleanup
-            if (!session.isInstanceReady() &&
-                    session.isPortalExpired(config.getPortalDurationSeconds())) {
-                removePortalEntity(session);
+            if (session.isPortalExpired(config.getPortalDurationSeconds())) {
+                plugin.getLogger().atFine().log("[TemporalPortal] Portal expired [session=%s]", session.getId());
+                closePortal(session);
                 activeSessions.remove(entry.getKey());
             }
         }
     }
 
-    private void removePortalEntity(@Nonnull TemporalPortalSession session) {
-        // Portal NPC will naturally despawn when its chunk is unloaded or via kill
-        // For now we just clear the tracking — the NPC is stationary and invulnerable
-        // TODO: actively remove entity via store.removeEntity() if we track the ref
-        session.setPortalEntityRef(null);
-    }
+    private void closePortal(@Nonnull TemporalPortalSession session) {
+        // Remove overworld portal block
+        removePortalBlock(session);
 
-    private void removeReturnPortal(@Nonnull TemporalPortalSession session) {
-        session.setReturnPortalRef(null);
-    }
-
-    private void destroyInstance(@Nonnull TemporalPortalSession session) {
-        String worldName = session.getInstanceWorldName();
-        if (worldName == null) return;
-
-        try {
-            World world = Universe.get().getWorld(worldName);
-            if (world != null && world.isAlive()) {
-                Universe.get().removeWorld(world.getName());
-                plugin.getLogger().atInfo().log("[TemporalPortal] Destroyed instance: %s", worldName);
-            }
-        } catch (Exception e) {
-            plugin.getLogger().atWarning().log("[TemporalPortal] Failed to destroy instance %s: %s",
-                    worldName, e.getMessage());
-        }
-        session.setInstanceWorldName(null);
-        session.setInstanceReady(false);
-    }
-
-    private void sendMessageToPlayersInside(@Nonnull TemporalPortalSession session, @Nonnull Message message) {
-        for (UUID uuid : session.getPlayersInside()) {
-            PlayerRef p = findPlayerRef(uuid);
-            if (p != null) {
-                p.sendMessage(message);
-            }
+        // Remove instance world (delayed to let players teleport out)
+        World instanceWorld = session.getInstanceWorld();
+        if (instanceWorld != null && instanceWorld.isAlive()) {
+            scheduler.schedule(() -> {
+                try {
+                    if (instanceWorld.isAlive()) {
+                        instanceWorld.execute(() -> InstancesPlugin.safeRemoveInstance(instanceWorld));
+                    }
+                } catch (Exception e) {
+                    plugin.getLogger().atWarning().log("[TemporalPortal] Instance removal failed: %s", e.getMessage());
+                }
+            }, 3, TimeUnit.SECONDS);
         }
     }
 
     // =========================================================================
-    // Player disconnect/leave cleanup
+    // Admin: force spawn
     // =========================================================================
 
-    public void onPlayerDisconnect(@Nonnull UUID playerUuid) {
-        for (TemporalPortalSession session : activeSessions.values()) {
-            session.getPlayersInside().remove(playerUuid);
-        }
+    public void forceSpawnNear(@Nonnull PlayerRef targetPlayer, @Nonnull TemporalPortalSession.DungeonType dungeonType) {
+        Ref<EntityStore> playerRef = targetPlayer.getReference();
+        if (playerRef == null || !playerRef.isValid()) return;
+
+        TransformComponent transform = playerRef.getStore().getComponent(playerRef, TransformComponent.getComponentType());
+        if (transform == null) return;
+
+        Vector3d playerPos = transform.getPosition();
+        World world = playerRef.getStore().getExternalData().getWorld();
+        if (world == null || !world.isAlive()) return;
+
+        TemporalPortalConfig config = plugin.getConfig().get().getTemporalPortalConfig();
+        double angle = ThreadLocalRandom.current().nextDouble() * Math.PI * 2;
+        int bx = (int) Math.floor(playerPos.x + Math.cos(angle) * 4);
+        int bz = (int) Math.floor(playerPos.z + Math.sin(angle) * 4);
+
+        String sessionId = UUID.randomUUID().toString().substring(0, 8);
+        TemporalPortalSession session = new TemporalPortalSession(sessionId, dungeonType);
+        placePortalBlock(session, world, new Vector3d(bx, playerPos.y, bz), config);
     }
 
-    public void onPlayerLeaveInstanceWorld(@Nonnull UUID playerUuid, @Nonnull String worldName) {
-        for (TemporalPortalSession session : activeSessions.values()) {
-            if (worldName.equals(session.getInstanceWorldName())) {
-                session.getPlayersInside().remove(playerUuid);
-                session.recordPlayerActivity(); // Reset idle timer
-            }
+    // =========================================================================
+    // Protection check (OrbisGuard + SimpleClaims)
+    // =========================================================================
+
+    private boolean isPositionProtected(String worldName, int x, int y, int z) {
+        var ogBridge = plugin.getOrbisGuardBridge();
+        if (ogBridge != null && ogBridge.isPositionProtected(worldName, x, y, z)) {
+            return true;
         }
+        var claimBridge = endgame.plugin.integration.ClaimProtectionBridge.get();
+        return claimBridge.isPositionClaimed(worldName, x, z);
     }
 
     // =========================================================================
@@ -456,37 +519,6 @@ public class TemporalPortalManager {
         }
         if (candidates.isEmpty()) return null;
         return candidates.get(ThreadLocalRandom.current().nextInt(candidates.size()));
-    }
-
-    @Nullable
-    private TemporalPortalSession findSessionNearPortal(@Nonnull Ref<EntityStore> portalNpcRef) {
-        // Get portal NPC position
-        Store<EntityStore> store = portalNpcRef.getStore();
-        TransformComponent transform = store.getComponent(portalNpcRef, TransformComponent.getComponentType());
-        if (transform == null) return null;
-        Vector3d npcPos = transform.getPosition();
-
-        // Find session with closest portal position (within 3 blocks)
-        for (TemporalPortalSession session : activeSessions.values()) {
-            Vector3d portalPos = session.getPortalPosition();
-            if (portalPos != null) {
-                double distSq = npcPos.distanceSquaredTo(portalPos);
-                if (distSq < 9.0) { // 3 blocks
-                    return session;
-                }
-            }
-        }
-        return null;
-    }
-
-    @Nullable
-    private PlayerRef findPlayerRef(@Nonnull UUID uuid) {
-        for (PlayerRef p : Universe.get().getPlayers()) {
-            if (p == null) continue;
-            UUID pUuid = endgame.plugin.utils.EntityUtils.getUuid(p);
-            if (uuid.equals(pUuid)) return p;
-        }
-        return null;
     }
 
     private long randomInterval() {
@@ -535,9 +567,7 @@ public class TemporalPortalManager {
         try {
             Store<EntityStore> particleStore = viewers.getFirst().getStore();
             ParticleUtil.spawnParticleEffect(PARTICLE_SPAWN, position, viewers, particleStore);
-        } catch (Exception e) {
-            // Silently ignore particle failures
-        }
+        } catch (Exception ignored) {}
     }
 
     // =========================================================================
@@ -545,6 +575,5 @@ public class TemporalPortalManager {
     // =========================================================================
 
     public int getActiveSessionCount() { return activeSessions.size(); }
-
     public ConcurrentHashMap<String, TemporalPortalSession> getActiveSessions() { return activeSessions; }
 }

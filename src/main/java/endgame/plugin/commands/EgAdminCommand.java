@@ -51,6 +51,9 @@ public class EgAdminCommand extends AbstractCommandCollection {
         // /egadmin reload
         this.addSubCommand(new ReloadConfigCommand(plugin));
 
+        // /egadmin portal
+        this.addSubCommand(new SpawnPortalCommand(plugin));
+
     }
 
     // =========================================================================
@@ -177,6 +180,54 @@ public class EgAdminCommand extends AbstractCommandCollection {
             playerRef.sendMessage(Message.join(
                     Message.raw("[EgAdmin] ").color("#bb44ff"),
                     Message.raw("No active boss of type '" + bossType + "'.").color("#ffaa00")
+            ));
+        }
+    }
+
+    // =========================================================================
+    // /egadmin portal [frozen|swamp]
+    // =========================================================================
+    private static class SpawnPortalCommand extends AbstractPlayerCommand {
+        private final EndgameQoL plugin;
+        private final RequiredArg<String> typeArg;
+
+        SpawnPortalCommand(EndgameQoL plugin) {
+            super("portal", "Force-spawn a temporal portal near you");
+            this.plugin = plugin;
+            this.typeArg = this.withRequiredArg("type", "frozen or swamp", ArgTypes.STRING);
+        }
+
+        @Override
+        protected void execute(@Nonnull CommandContext context, @Nonnull Store<EntityStore> store,
+                               @Nonnull Ref<EntityStore> ref, @Nonnull PlayerRef playerRef, @Nonnull World world) {
+            var portalMgr = plugin.getTemporalPortalManager();
+            if (portalMgr == null) {
+                playerRef.sendMessage(Message.join(
+                        Message.raw("[EgAdmin] ").color("#bb44ff"),
+                        Message.raw("Temporal Portal system is not initialized.").color("#ff4444")
+                ));
+                return;
+            }
+
+            String type = typeArg.get(context).toLowerCase();
+            endgame.plugin.systems.portal.TemporalPortalSession.DungeonType dungeonType = switch (type) {
+                case "frozen" -> endgame.plugin.systems.portal.TemporalPortalSession.DungeonType.FROZEN_DUNGEON;
+                case "swamp" -> endgame.plugin.systems.portal.TemporalPortalSession.DungeonType.SWAMP_DUNGEON;
+                default -> null;
+            };
+
+            if (dungeonType == null) {
+                playerRef.sendMessage(Message.join(
+                        Message.raw("[EgAdmin] ").color("#bb44ff"),
+                        Message.raw("Unknown type. Use: frozen, swamp").color("#ff4444")
+                ));
+                return;
+            }
+
+            portalMgr.forceSpawnNear(playerRef, dungeonType);
+            playerRef.sendMessage(Message.join(
+                    Message.raw("[EgAdmin] ").color("#bb44ff"),
+                    Message.raw("Spawning " + dungeonType.getDisplayName() + " portal near you...").color("#4ade80")
             ));
         }
     }

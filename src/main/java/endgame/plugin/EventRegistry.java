@@ -97,10 +97,6 @@ public class EventRegistry {
             var achievementMgr = plugin.getAchievementManager();
             if (achievementMgr != null) achievementMgr.onPlayerDisconnect(playerUuid);
 
-            // Temporal Portal cleanup
-            var portalMgr = plugin.getTemporalPortalManager();
-            if (portalMgr != null) portalMgr.onPlayerDisconnect(playerUuid);
-
             // Static state cleanup
             endgame.plugin.systems.block.PrismaPickaxeAreaBreakSystem.clearPlayer(playerUuid);
             endgame.plugin.utils.CommandRateLimit.clearPlayer(playerUuid);

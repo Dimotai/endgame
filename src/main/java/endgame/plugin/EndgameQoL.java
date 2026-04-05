@@ -386,6 +386,11 @@ public class EndgameQoL extends JavaPlugin {
     /**
      * Whether the OrbisGuard mod JAR is present on the classpath.
      */
+    @Nullable
+    public endgame.plugin.integration.orbisguard.OrbisGuardBridge getOrbisGuardBridge() {
+        return orbisGuardBridge;
+    }
+
     public boolean isOrbisGuardModPresent() {
         Boolean cached = cachedOrbisGuardPresent;
         if (cached != null) return cached;
