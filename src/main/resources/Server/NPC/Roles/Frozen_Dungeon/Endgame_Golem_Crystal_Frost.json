@@ -27,7 +27,7 @@
     "HardLeashDistance": 25,
     "AttitudeGroup": "Golem",
     "IsMemory": true,
-    "MemoriesCategory": "Elemental",
+    "MemoriesCategory": "Endgame",
     "MemoriesNameOverride": "Golem_Crystal_Frost",
     "NameTranslationKey": {
       "Compute": "NameTranslationKey"

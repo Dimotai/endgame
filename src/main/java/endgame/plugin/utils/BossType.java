@@ -11,7 +11,6 @@ public enum BossType {
     HEDERA("Hedera", 1800, 50, 900, true, "endgame_hedera"),
     GOLEM_VOID("Golem Void", 3500, 50, 3500, true, "endgame_golem_void"),
     ALPHA_REX("Alpha Rex", 700, 0, 350, false, "alpha_rex"),
-    SPECTRE_VOID("Spectre Void", 120, 0, 250, false, "spectre_void", "spectrevoid"),
     DRAGON_FIRE("Dragon Fire", 1000, 0, 500, false, "endgame_dragon_fire", "dragon_fire", "fire_dragon"),
     ZOMBIE_ABERRANT("Zombie Aberrant", 400, 0, 200, false, "zombie_aberrant"),
     SWAMP_CROCODILE("Swamp Crocodile", 900, 0, 500, false, "swamp_crocodile"),

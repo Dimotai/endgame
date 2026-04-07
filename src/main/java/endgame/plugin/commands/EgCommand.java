@@ -50,6 +50,7 @@ public class EgCommand extends AbstractCommandCollection {
         this.addSubCommand(new LangSubCommand());
         this.addSubCommand(new JournalSubCommand(plugin));
         this.addSubCommand(new GauntletSubCommand(plugin));
+        this.addSubCommand(new PetSubCommand(plugin));
     }
 
     @Override
@@ -201,6 +202,36 @@ public class EgCommand extends AbstractCommandCollection {
             }
 
             NativeGauntletPage.open(plugin, playerRef, store);
+        }
+    }
+
+    // /eg pet
+    private static class PetSubCommand extends AbstractPlayerCommand {
+        private final EndgameQoL plugin;
+
+        PetSubCommand(EndgameQoL plugin) {
+            super("pet", "Open the Pets page");
+            this.plugin = plugin;
+        }
+
+        @Override
+        protected boolean canGeneratePermission() { return false; }
+
+        @Override
+        protected void execute(@Nonnull CommandContext context, @Nonnull Store<EntityStore> store,
+                               @Nonnull Ref<EntityStore> ref, @Nonnull PlayerRef playerRef, @Nonnull World world) {
+            if (!hasPermissionDefaultAllow(playerRef, "endgameqol.pet")) { sendNoPermission(playerRef); return; }
+            if (CommandRateLimit.isRateLimited(playerRef.getUuid())) return;
+
+            if (!plugin.getConfig().get().pets().isEnabled()) {
+                playerRef.sendMessage(Message.raw("[EndgameQoL] Pet system is disabled.").color("#ff5555"));
+                return;
+            }
+
+            UUID uuid = endgame.plugin.utils.EntityUtils.getUuid(playerRef);
+            if (uuid == null) return;
+
+            endgame.plugin.ui.NativePetPage.open(plugin, playerRef, store, uuid);
         }
     }
 }

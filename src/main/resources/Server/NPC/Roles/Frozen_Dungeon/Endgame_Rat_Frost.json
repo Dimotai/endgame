@@ -28,7 +28,7 @@
     "DayFlavorAnimation": "IdlePassive",
     "NightFlavorAnimation": "IdlePassive",
     "IsMemory": true,
-    "MemoriesCategory": "Critter",
+    "MemoriesCategory": "Endgame",
     "MemoriesNameOverride": "Rat",
     "NameTranslationKey": {
       "Compute": "NameTranslationKey"

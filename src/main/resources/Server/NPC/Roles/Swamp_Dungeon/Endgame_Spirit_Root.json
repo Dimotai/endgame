@@ -7,7 +7,8 @@
     "DropList": "Drop_Endgame_Spirit_Root",
     "MaxHealth": 200,
     "IsMemory": true,
-    "MemoriesCategory": "Elemental",
+    "MemoriesCategory": "Endgame",
+    "MemoriesNameOverride": "Spirit_Root",
     "NameTranslationKey": {
       "Compute": "NameTranslationKey"
     }

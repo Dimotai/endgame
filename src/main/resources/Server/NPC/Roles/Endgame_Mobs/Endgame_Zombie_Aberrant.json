@@ -15,7 +15,7 @@
     "DropDeathItemsInstantly": false,
     "DeathParticles": "Explosion_Big",
     "IsMemory": true,
-    "MemoriesCategory": "Undead",
+    "MemoriesCategory": "Endgame",
     "MemoriesNameOverride": "Zombie_Aberrant",
     "_InteractionVars": {
       "Melee_Start": {

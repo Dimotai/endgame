@@ -300,7 +300,7 @@ public class TemporalPortalManager {
 
     private void startInstanceGeneration(World originWorld, TemporalPortalSession session, @Nullable PlayerRef initiatingPlayer) {
         String portalTypeId = session.getDungeonType().getPortalTypeId();
-        PortalType portalType = (PortalType) PortalType.getAssetMap().getAsset(portalTypeId);
+        PortalType portalType = PortalType.getAssetMap().getAsset(portalTypeId);
         if (portalType == null || !InstancesPlugin.doesInstanceAssetExist(portalType.getInstanceId())) {
             plugin.getLogger().atWarning().log("[TemporalPortal] PortalType '%s' or instance not found", portalTypeId);
             session.setInstanceState(TemporalPortalSession.InstanceState.FAILED);
@@ -318,7 +318,7 @@ public class TemporalPortalManager {
                     worldConfig.setDeleteOnRemove(true);
 
                     // Init PortalWorld resource (enables Portal_Return interaction in instance)
-                    PortalWorld portalWorld = (PortalWorld) spawnedWorld.getEntityStore().getStore()
+                    PortalWorld portalWorld = spawnedWorld.getEntityStore().getStore()
                             .getResource(PortalWorld.getResourceType());
                     if (portalWorld != null) {
                         int timeLimitSec = plugin.getConfig().get().getTemporalPortalConfig().getInstanceTimeLimitSeconds();
@@ -364,7 +364,7 @@ public class TemporalPortalManager {
         }
 
         // Set spawn point on PortalWorld resource (required for Portal_Return interaction)
-        PortalWorld portalWorld = (PortalWorld) instanceWorld.getEntityStore().getStore()
+        PortalWorld portalWorld = instanceWorld.getEntityStore().getStore()
                 .getResource(PortalWorld.getResourceType());
         if (portalWorld != null) {
             portalWorld.setSpawnPoint(spawnTransform);

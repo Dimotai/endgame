@@ -500,6 +500,9 @@ public class EndgameQoL extends JavaPlugin {
         if (systemRegistry != null && systemRegistry.getComboMeterManager() != null) {
             systemRegistry.getComboMeterManager().onPlayerConnect(uuid, comp);
         }
+        if (systemRegistry != null && systemRegistry.getPetManager() != null) {
+            systemRegistry.getPetManager().onPlayerConnect(uuid, comp);
+        }
     }
 
     /**
@@ -518,6 +521,9 @@ public class EndgameQoL extends JavaPlugin {
         if (systemRegistry != null && systemRegistry.getComboMeterManager() != null) {
             systemRegistry.getComboMeterManager().onPlayerDisconnect(uuid);
         }
+        if (systemRegistry != null && systemRegistry.getPetManager() != null) {
+            systemRegistry.getPetManager().onPlayerDisconnect(uuid);
+        }
     }
 
     /**
@@ -526,6 +532,11 @@ public class EndgameQoL extends JavaPlugin {
     @Nullable
     public PlayerEndgameComponent getPlayerComponent(@Nonnull UUID uuid) {
         return playerComponents.get(uuid);
+    }
+
+    @Nullable
+    public SystemRegistry getSystemRegistry() {
+        return systemRegistry;
     }
 
     /**

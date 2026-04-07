@@ -10,6 +10,7 @@ import endgame.plugin.config.AccessoryPouchData;
 import endgame.plugin.config.AchievementData.PlayerAchievementState;
 import endgame.plugin.config.BestiaryData.PlayerBestiaryState;
 import endgame.plugin.config.BountyData.PlayerBountyState;
+import endgame.plugin.config.PetData;
 import endgame.plugin.config.VoidPocketData;
 
 import javax.annotation.Nonnull;
@@ -41,6 +42,7 @@ public class PlayerEndgameComponent implements Component<EntityStore> {
     private PlayerBestiaryState bestiaryState = new PlayerBestiaryState();
     private VoidPocketData voidPocketData = new VoidPocketData();
     private AccessoryPouchData accessoryPouchData = new AccessoryPouchData();
+    private PetData petData = new PetData();
     private String locale = "";
     private int comboPersonalBest = 0;
     private int dataVersion = 0; // 0 = new/empty, 1 = migrated or first-time populated
@@ -76,6 +78,9 @@ public class PlayerEndgameComponent implements Component<EntityStore> {
             .append(new KeyedCodec<Integer>("ComboPersonalBest", Codec.INTEGER),
                     (c, v) -> c.comboPersonalBest = v != null ? v : 0,
                     c -> c.comboPersonalBest).add()
+            .append(new KeyedCodec<PetData>("PetData", PetData.CODEC),
+                    (c, v) -> { if (v != null) c.petData = v; },
+                    c -> c.petData).add()
             .build();
 
     public PlayerEndgameComponent() {}
@@ -87,6 +92,7 @@ public class PlayerEndgameComponent implements Component<EntityStore> {
         this.bestiaryState = new PlayerBestiaryState(other.bestiaryState);
         this.voidPocketData = new VoidPocketData(other.voidPocketData);
         this.accessoryPouchData = new AccessoryPouchData(other.accessoryPouchData);
+        this.petData = new PetData(other.petData);
         this.locale = other.locale;
         this.comboPersonalBest = other.comboPersonalBest;
         this.dataVersion = other.dataVersion;
@@ -129,4 +135,8 @@ public class PlayerEndgameComponent implements Component<EntityStore> {
 
     public int getComboPersonalBest() { return comboPersonalBest; }
     public void setComboPersonalBest(int best) { this.comboPersonalBest = best; }
+
+    @Nonnull
+    public PetData getPetData() { return petData; }
+    public void setPetData(@Nonnull PetData data) { this.petData = data; }
 }

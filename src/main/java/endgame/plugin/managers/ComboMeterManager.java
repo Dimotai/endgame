@@ -1,10 +1,5 @@
 package endgame.plugin.managers;
 
-import au.ellie.hyui.builders.GroupBuilder;
-import au.ellie.hyui.builders.HudBuilder;
-import au.ellie.hyui.builders.HyUIAnchor;
-import au.ellie.hyui.builders.HyUIHud;
-import au.ellie.hyui.builders.LabelBuilder;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.server.core.entity.entities.Player;
@@ -14,6 +9,7 @@ import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import endgame.plugin.EndgameQoL;
 import endgame.plugin.config.EndgameConfig;
+import endgame.plugin.ui.ComboMeterHud;
 
 import com.hypixel.hytale.server.core.Message;
 import endgame.plugin.utils.I18n;
@@ -41,19 +37,8 @@ public class ComboMeterManager {
     private static final int TIER_X4_KILLS = 10;
     private static final int TIER_FRENZY_KILLS = 15;
 
-    // HUD constants
-    private static final int HUD_WIDTH = 130;
-    private static final int TIMER_BAR_WIDTH = 108;
-    private static final long HUD_REFRESH_MS = 100;
-
-    // Tier colors (text, glow bg, bar fill, bar dim)
-    private static final String[] TIER_COLORS = {"#55ff55", "#ffff55", "#ff8833", "#ff3333"};
+    // Tier names for chat announcements
     private static final String[] TIER_NAMES = {"x2", "x3", "x4", "FRENZY"};
-    private static final String[] TIER_BAR_COLORS = {"#44cc44", "#cccc44", "#cc7733", "#cc3333"};
-    private static final String[] TIER_BG_COLORS = {"#0a1a0a", "#1a1a0a", "#1a100a", "#1a0808"};
-
-    // Tier effect names — only shown for effects that actually work
-    private static final String[] TIER_EFFECT_NAMES = {"", "Adrenaline", "Precision", "Bloodlust"};
 
     public static class ComboState {
         final UUID playerUuid;
@@ -61,9 +46,8 @@ public class ComboMeterManager {
         int comboCount = 0;
         long lastKillTime = 0;
         int comboTier = 0; // 0=none, 1=x2, 2=x3, 3=x4, 4=FRENZY
-        volatile HyUIHud hud = null;
-        volatile boolean hudRemoved = false;
-        volatile boolean pendingHudRemoval = false;
+        volatile ComboMeterHud hud = null;
+        volatile boolean hudActive = false;
         int personalBest = 0;
         boolean newRecord = false;
         float comboTimerBonusSeconds = 0;
@@ -143,7 +127,7 @@ public class ComboMeterManager {
 
             // Show/rebuild HUD
             if (state.comboCount >= TIER_X2_KILLS) {
-                if (state.hud == null || state.hudRemoved || newTier != oldTier) {
+                if (!state.hudActive || newTier != oldTier) {
                     shouldRebuildHud = true;
                 }
             }
@@ -221,15 +205,6 @@ public class ComboMeterManager {
             ComboState state = entry.getValue();
 
             synchronized (state) {
-                if (state.pendingHudRemoval) {
-                    state.pendingHudRemoval = false;
-                    state.hudRemoved = true;
-                    if (state.hud != null) {
-                        try { state.hud.remove(); } catch (Exception | NoClassDefFoundError ignored) {}
-                        state.hud = null;
-                    }
-                }
-
                 long timerMs = getEffectiveTimerMs(state, config);
 
                 if (state.comboCount > 0 && (now - state.lastKillTime) > timerMs) {
@@ -480,7 +455,7 @@ public class ComboMeterManager {
         return 0;
     }
 
-    // === HyUI HUD ===
+    // === Native CustomUIHud ===
 
     private void rebuildHud(ComboState state) {
         hideHud(state);
@@ -488,202 +463,82 @@ public class ComboMeterManager {
     }
 
     private void showHud(ComboState state) {
-        // Guard against double HUD creation (race between onPlayerKill and tick)
         synchronized (state) {
-            if (state.hud != null && !state.hudRemoved) {
-                return;
-            }
+            if (state.hudActive) return;
         }
         try {
             PlayerRef playerRef = findPlayerRef(state.playerUuid);
             if (playerRef == null) return;
 
-            int tierIdx = Math.clamp(state.comboTier - 1, 0, TIER_COLORS.length - 1);
-            String color = TIER_COLORS[tierIdx];
-            String barColor = TIER_BAR_COLORS[tierIdx];
+            Ref<EntityStore> ref = playerRef.getReference();
+            if (ref == null || !ref.isValid()) return;
+            Player player = ref.getStore().getComponent(ref, Player.getComponentType());
+            if (player == null) return;
 
-            String html = buildHudHtml(state, color, barColor);
-            HyUIHud newHud = HudBuilder.hudForPlayer(playerRef)
-                    .fromHtml(html)
-                    .withRefreshRate(HUD_REFRESH_MS)
-                    .onRefresh(h -> {
-                        if (state.hudRemoved) return;
-                        ComboState current = playerStates.get(state.playerUuid);
-                        if (current == null || current.hud != h) {
-                            state.pendingHudRemoval = true;
-                            return;
-                        }
-                        doRefreshHud(current, h);
-                    })
-                    .show();
+            ComboMeterHud hud = new ComboMeterHud(playerRef);
+            player.getHudManager().setCustomHud(playerRef, hud);
+            hud.setTier(state.comboCount, state.comboTier, state.personalBest,
+                    state.newRecord, plugin.getConfig().get().isComboTierEffectsEnabled());
+
             synchronized (state) {
-                state.hudRemoved = false;
-                state.pendingHudRemoval = false;
-                state.hud = newHud;
+                state.hud = hud;
+                state.hudActive = true;
             }
-        } catch (NoClassDefFoundError e) {
-            LOGGER.atFine().log("[Combo] HyUI not available");
         } catch (Exception e) {
             LOGGER.atWarning().log("[Combo] Failed to show HUD: %s", e.getMessage());
         }
     }
 
-    private void doRefreshHud(ComboState state, HyUIHud hud) {
-        try {
-            EndgameConfig config = plugin.getConfig().get();
+    /**
+     * Called periodically to update the timer bar animation.
+     * Should be invoked from a tick system (~100-200ms).
+     */
+    public void refreshHuds() {
+        EndgameConfig config = plugin.getConfig().get();
+        long now = System.currentTimeMillis();
 
-            int comboCount;
-            int comboTier;
-            long lastKillTime;
-            int personalBest;
-            long timerMs;
+        for (ComboState state : playerStates.values()) {
+            ComboMeterHud hud;
+            int comboCount, comboTier, personalBest;
+            boolean newRecord;
+            long lastKillTime, timerMs;
 
             synchronized (state) {
+                hud = state.hud;
+                if (hud == null || !state.hudActive) continue;
                 comboCount = state.comboCount;
                 comboTier = state.comboTier;
-                lastKillTime = state.lastKillTime;
                 personalBest = state.personalBest;
+                newRecord = state.newRecord;
+                lastKillTime = state.lastKillTime;
                 timerMs = getEffectiveTimerMs(state, config);
             }
-            long now = System.currentTimeMillis();
-            long elapsed = now - lastKillTime;
 
-            float timeRemaining = Math.max(0f, 1f - (float) elapsed / timerMs);
-            int barWidth = Math.round(TIMER_BAR_WIDTH * timeRemaining);
-
-            String countText = String.valueOf(comboCount);
-
-            // Tier + effect combined: "FRENZY · Bloodlust" or "x4"
-            String tierText = "";
-            if (comboTier > 0) {
-                String tierName = TIER_NAMES[comboTier - 1];
-                String effectText = config.isComboTierEffectsEnabled()
-                        ? TIER_EFFECT_NAMES[comboTier - 1] : "";
-                tierText = effectText.isEmpty() ? tierName : tierName + " · " + effectText;
-            }
-
-            boolean isNewBest;
-            synchronized (state) {
-                isNewBest = state.newRecord;
-            }
-            final String fBestLine = isNewBest
-                    ? "NEW BEST! " + personalBest
-                    : "Best: " + personalBest;
-            final String fTierText = tierText;
-
-            try { hud.getById("combo-count", LabelBuilder.class)
-                    .ifPresent(l -> l.withText(countText)); } catch (Exception ignored) {}
-            try { hud.getById("combo-tier", LabelBuilder.class)
-                    .ifPresent(l -> l.withText(fTierText)); } catch (Exception ignored) {}
-            try { hud.getById("combo-best", LabelBuilder.class)
-                    .ifPresent(l -> l.withText(fBestLine)); } catch (Exception ignored) {}
-            try { hud.getById("timer-bar-fill", GroupBuilder.class)
-                    .ifPresent(b -> b.withAnchor(new HyUIAnchor()
-                            .setWidth(Math.round(TIMER_BAR_WIDTH * timeRemaining)).setHeight(3).setLeft(0).setTop(0))); } catch (Exception ignored) {}
-        } catch (Exception e) {
-            // Non-fatal
+            float timeRemaining = Math.max(0f, 1f - (float) (now - lastKillTime) / timerMs);
+            hud.refresh(comboCount, comboTier, timeRemaining, personalBest,
+                    newRecord, config.isComboTierEffectsEnabled());
         }
     }
 
     private void hideHud(ComboState state) {
-        state.hudRemoved = true;
-        state.pendingHudRemoval = false;
-        if (state.hud != null) {
-            try { state.hud.remove(); } catch (Exception | NoClassDefFoundError ignored) {}
-            state.hud = null;
+        synchronized (state) {
+            state.hudActive = false;
+            if (state.hud != null) {
+                try {
+                    PlayerRef pr = findPlayerRef(state.playerUuid);
+                    if (pr != null) {
+                        Ref<EntityStore> ref = pr.getReference();
+                        if (ref != null && ref.isValid()) {
+                            Player player = ref.getStore().getComponent(ref, Player.getComponentType());
+                            if (player != null) {
+                                player.getHudManager().setCustomHud(pr, null);
+                            }
+                        }
+                    }
+                } catch (Exception ignored) {}
+                state.hud = null;
+            }
         }
-    }
-
-    private String buildHudHtml(ComboState state, String color, String barColor) {
-        int tierIdx = Math.clamp(state.comboTier - 1, 0, TIER_NAMES.length - 1);
-        String tierName = TIER_NAMES[tierIdx];
-        boolean isFrenzy = state.comboTier == 4;
-        String tierDisplay = isFrenzy ? "FRENZY" : tierName;
-
-        // Combine tier + effect on one line: "FRENZY · Bloodlust" or just "x2"
-        String effectText = (plugin.getConfig().get().isComboTierEffectsEnabled() && state.comboTier > 0)
-                ? TIER_EFFECT_NAMES[state.comboTier - 1] : "";
-        String tierLine = effectText.isEmpty() ? tierDisplay : tierDisplay + " · " + effectText;
-
-        String bestLine = state.newRecord
-                ? "NEW BEST! " + state.personalBest
-                : "Best: " + state.personalBest;
-        String bestColor = state.newRecord ? "#ffd700" : "#777777";
-
-        return String.format("""
-            <style>
-                #combo-container {
-                    anchor-right: 20;
-                    anchor-top: 140;
-                    anchor-width: 130;
-                    anchor-height: 58;
-                    layout-mode: top;
-                    background-color: #000000(0.6);
-                }
-                #combo-accent {
-                    anchor-width: 100%%;
-                    anchor-height: 2;
-                    background-color: %s;
-                }
-                #combo-count {
-                    font-size: 18;
-                    font-weight: bold;
-                    color: %s;
-                    anchor-width: 100%%;
-                    anchor-height: 20;
-                    horizontal-align: center;
-                    margin-top: 4;
-                }
-                #combo-tier {
-                    font-size: 10;
-                    font-weight: bold;
-                    color: %s;
-                    anchor-width: 100%%;
-                    anchor-height: 12;
-                    horizontal-align: center;
-                }
-                #timer-bar-bg {
-                    anchor-width: 108;
-                    anchor-height: 3;
-                    background-color: #ffffff(0.12);
-                    margin-top: 4;
-                    margin-left: 11;
-                }
-                #timer-bar-fill {
-                    anchor-width: 108;
-                    anchor-height: 3;
-                    background-color: %s;
-                    anchor-left: 0;
-                    anchor-top: 0;
-                }
-                #combo-best {
-                    font-size: 9;
-                    color: %s;
-                    anchor-width: 100%%;
-                    anchor-height: 11;
-                    horizontal-align: center;
-                    margin-top: 2;
-                }
-            </style>
-            <div id="combo-container">
-                <div id="combo-accent"></div>
-                <p id="combo-count">%d</p>
-                <p id="combo-tier">%s</p>
-                <div id="timer-bar-bg">
-                    <div id="timer-bar-fill"></div>
-                </div>
-                <p id="combo-best">%s</p>
-            </div>
-            """,
-            color,       // accent
-            color,       // count
-            color,       // tier
-            barColor,    // timer bar
-            bestColor,   // best label color
-            state.comboCount,
-            tierLine,
-            bestLine
-        );
     }
 
     private PlayerRef findPlayerRef(UUID playerUuid) {

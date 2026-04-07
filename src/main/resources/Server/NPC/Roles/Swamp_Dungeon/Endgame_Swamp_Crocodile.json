@@ -39,7 +39,7 @@
     "AlwaysSleepAtNight": false,
     "MaxHealth": 900,
     "IsMemory": true,
-    "MemoriesCategory": "Reptile",
+    "MemoriesCategory": "Endgame",
     "MemoriesNameOverride": "Crocodile",
     "NameTranslationKey": {
       "Compute": "NameTranslationKey"

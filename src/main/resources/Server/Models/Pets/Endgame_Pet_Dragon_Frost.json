@@ -1,0 +1,40 @@
+{
+  "Model": "NPC/Bosses/Endgame_Dragon_Frost/Models/Model.blockymodel",
+  "Texture": "NPC/Bosses/Endgame_Dragon_Frost/Models/Texture.png",
+  "EyeHeight": 1.5,
+  "HitBox": {
+    "Max": { "X": 0.5, "Y": 1.5, "Z": 0.7 },
+    "Min": { "X": -0.5, "Y": 0, "Z": -0.7 }
+  },
+  "MinScale": 0.45,
+  "MaxScale": 0.45,
+  "AnimationSets": {
+    "Idle": {
+      "Animations": [{ "Animation": "NPC/Bosses/Endgame_Dragon_Frost/Animations/Idle.blockyanim" }]
+    },
+    "Walk": {
+      "Animations": [{ "Animation": "NPC/Bosses/Endgame_Dragon_Frost/Animations/Walk.blockyanim" }]
+    },
+    "Run": {
+      "Animations": [{ "Animation": "NPC/Bosses/Endgame_Dragon_Frost/Animations/Run.blockyanim" }]
+    },
+    "FlyIdle": {
+      "Animations": [{ "Animation": "NPC/Bosses/Endgame_Dragon_Frost/Animations/Fly_Idle.blockyanim", "Speed": 1.5 }]
+    },
+    "Fly": {
+      "Animations": [{ "Animation": "NPC/Bosses/Endgame_Dragon_Frost/Animations/Fly.blockyanim" }]
+    },
+    "FlyFast": {
+      "Animations": [{ "Animation": "NPC/Bosses/Endgame_Dragon_Frost/Animations/Glide.blockyanim" }]
+    },
+    "Fall": {
+      "Animations": [{ "Animation": "NPC/Bosses/Endgame_Dragon_Frost/Animations/Fall.blockyanim" }]
+    },
+    "Hurt": {
+      "Animations": [{ "Animation": "NPC/Bosses/Endgame_Dragon_Frost/Animations/Hurt.blockyanim", "Looping": false }]
+    },
+    "Death": {
+      "Animations": [{ "Animation": "NPC/Bosses/Endgame_Dragon_Frost/Animations/Death.blockyanim", "Looping": false }]
+    }
+  }
+}

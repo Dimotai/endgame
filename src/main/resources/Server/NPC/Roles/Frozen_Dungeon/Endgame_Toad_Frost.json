@@ -28,7 +28,7 @@
     "AlwaysSleepAtNight": false,
     "MaxHealth": 124,
     "IsMemory": true,
-    "MemoriesCategory": "Reptile",
+    "MemoriesCategory": "Endgame",
     "MemoriesNameOverride": "Toad_Rhino",
     "_InteractionVars": {
       "Tongue_Damage": {

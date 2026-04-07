@@ -39,7 +39,7 @@
         "DropDeathItemsInstantly": false,
         "DeathParticles": "Explosion_Big",
         "IsMemory": true,
-        "MemoriesCategory": "Reptile",
+        "MemoriesCategory": "Endgame",
         "MemoriesNameOverride": "Rex_Cave",
         "_InteractionVars": {
             "Melee_Start": {

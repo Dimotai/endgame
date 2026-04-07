@@ -14,8 +14,8 @@
     "AbsoluteDetectionRange": 3,
     "AlertedRange": 18,
     "IsMemory": true,
-    "MemoriesCategory": "Reptile",
-    "MemoriesNameOverride": "Fen Stalker",
+    "MemoriesCategory": "Endgame",
+    "MemoriesNameOverride": "Fen_Stalker",
     "AlertedTime": [
       2,
       3

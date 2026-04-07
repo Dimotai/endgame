@@ -72,6 +72,7 @@ public class GauntletTickSystem extends EntityTickingSystem<EntityStore> {
             lastComboTicks.put(store, now);
             try {
                 comboManager.tick();
+                comboManager.refreshHuds();
             } catch (Exception e) {
                 plugin.getLogger().atWarning().log("[ComboTick] Error: %s", e.getMessage());
             }

@@ -34,7 +34,8 @@
     "DropDeathItemsInstantly": false,
     "DeathParticles": "Explosion_Big",
     "IsMemory": true,
-    "MemoriesCategory": "Reptile",
+    "MemoriesCategory": "Endgame",
+    "MemoriesNameOverride": "Bramble_Elite",
     "NameTranslationKey": {
       "Compute": "NameTranslationKey"
     }

@@ -155,7 +155,17 @@ public class HederaPoisonCloudSystem extends EntityTickingSystem<EntityStore> {
         if (viewers.isEmpty()) return;
         try {
             Store<EntityStore> particleStore = viewers.getFirst().getStore();
+            // Spawn ring of particles around cloud center to visualize the zone
             ParticleUtil.spawnParticleEffect(PARTICLE_ID, pos, viewers, particleStore);
+            for (int i = 0; i < 8; i++) {
+                double angle = (Math.PI * 2 / 8) * i;
+                double radius = CLOUD_RADIUS * 0.6;
+                Vector3d ringPos = new Vector3d(
+                        pos.x + Math.cos(angle) * radius,
+                        pos.y + 0.3,
+                        pos.z + Math.sin(angle) * radius);
+                ParticleUtil.spawnParticleEffect(PARTICLE_ID, ringPos, viewers, particleStore);
+            }
         } catch (Exception e) {
             // Silently ignore particle spawn failures
         }
@@ -192,7 +202,10 @@ public class HederaPoisonCloudSystem extends EntityTickingSystem<EntityStore> {
             double dz = playerPos.z - center.z;
             if (dx * dx + dz * dz > CLOUD_RADIUS * CLOUD_RADIUS) continue;
 
-            commandBuffer.run(s -> {
+            // Must use player's own store — commandBuffer belongs to the NPC entity
+            world.execute(() -> {
+                if (!ref.isValid()) return;
+                Store<EntityStore> s = ref.getStore();
                 PoisonComponent existing = s.getComponent(ref, poisonType);
                 if (existing != null) {
                     existing.refresh(CLOUD_POISON_DAMAGE, 1.0f, CLOUD_POISON_TICKS,

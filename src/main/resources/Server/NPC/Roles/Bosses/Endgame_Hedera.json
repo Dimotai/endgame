@@ -1,6 +1,6 @@
 {
   "Type": "Variant",
-  "Reference": "Template_Intelligent",
+  "Reference": "Template_Endgame_Hedera",
   "Modify": {
     "Appearance": "Endgame_Hedera",
     "DropList": "Drop_Endgame_Hedera",
@@ -29,7 +29,7 @@
     "DropDeathItemsInstantly": false,
     "DeathParticles": "Explosion_Big",
     "IsMemory": true,
-    "MemoriesCategory": "Voidtaken",
+    "MemoriesCategory": "Endgame",
     "MemoriesNameOverride": "Hedera",
     "NameTranslationKey": {
       "Compute": "NameTranslationKey"

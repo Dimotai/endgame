@@ -1,11 +1,11 @@
 {
     "Type": "Variant",
-    "Reference": "Template_Dragon",
+    "Reference": "Template_Endgame_Dragon_Frost",
     "Modify": {
         "Appearance": "Endgame_Dragon_Fire",
         "MaxHealth": 1000,
         "IsMemory": true,
-        "MemoriesCategory": "Mythic",
+        "MemoriesCategory": "Endgame",
         "MemoriesNameOverride": "Dragon_Fire",
         "DropList": "Drop_Endgame_Dragon_Fire",
         "AttitudeGroup": "Dragon",

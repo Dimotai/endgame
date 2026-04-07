@@ -1,0 +1,46 @@
+Group #ComboRoot {
+  Anchor: (Width: 140, Height: 58, Right: 20, Top: 240);
+  Background: #0a0a14(0.75);
+  LayoutMode: Top;
+
+  // Top accent line (tier color)
+  Group #ComboAccent {
+    Anchor: (Width: 140, Height: 2);
+    Background: #55ff55;
+  }
+
+  // Spacer
+  Group { Anchor: (Height: 2); }
+
+  // Kill count
+  Label #ComboCount {
+    Style: (FontSize: 20, TextColor: #55ff55, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center);
+    Anchor: (Width: 140, Height: 24);
+    Text: "0";
+  }
+
+  // Tier + effect line
+  Label #ComboTier {
+    Style: (FontSize: 10, TextColor: #55ff55, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center);
+    Anchor: (Width: 140, Height: 13);
+    Text: "x2";
+  }
+
+  // Timer + best on same line
+  Group {
+    Anchor: (Width: 140, Height: 13);
+    LayoutMode: Left;
+
+    Label #ComboTimer {
+      Style: (FontSize: 9, TextColor: #55ff55, HorizontalAlignment: Center, VerticalAlignment: Center);
+      Anchor: (Width: 70, Height: 13);
+      Text: "5.0s";
+    }
+
+    Label #ComboBest {
+      Style: (FontSize: 9, TextColor: #777777, HorizontalAlignment: Center, VerticalAlignment: Center);
+      Anchor: (Width: 70, Height: 13);
+      Text: "Best: 0";
+    }
+  }
+}

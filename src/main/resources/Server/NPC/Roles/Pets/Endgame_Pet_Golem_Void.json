@@ -1,0 +1,28 @@
+{
+  "Type": "Variant",
+  "Reference": "Template_Endgame_Golem_Void",
+  "Modify": {
+    "Appearance": "Endgame_Pet_Golem_Void",
+    "MaxHealth": 200,
+    "IsMemory": false,
+    "DropList": "Empty",
+    "MaxSpeed": 6,
+    "ViewRange": 5,
+    "HearingRange": 5,
+    "AbsoluteDetectionRange": 5,
+    "KnockbackScale": 0,
+    "LeashDistance": 200,
+    "HardLeashDistance": 300,
+    "AttackDistance": 3,
+    "UseCombatActionEvaluator": false,
+    "BreathesInWater": true,
+    "NameTranslationKey": {
+      "Compute": "NameTranslationKey"
+    }
+  },
+  "Parameters": {
+    "NameTranslationKey": {
+      "Value": "server.npcRoles.Endgame_Pet_Golem_Void.name"
+    }
+  }
+}

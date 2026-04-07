@@ -1,0 +1,34 @@
+{
+  "Model": "NPC/Elemental/Dragon_Fire/Models/Model.blockymodel",
+  "Texture": "NPC/Elemental/Dragon_Fire/Models/Texture.png",
+  "EyeHeight": 1.5,
+  "HitBox": {
+    "Max": { "X": 0.4, "Y": 1.3, "Z": 0.5 },
+    "Min": { "X": -0.4, "Y": 0, "Z": -0.5 }
+  },
+  "MinScale": 0.45,
+  "MaxScale": 0.45,
+  "AnimationSets": {
+    "Idle": {
+      "Animations": [{ "Animation": "NPC/Elemental/Dragon_Fire/Animations/Idle.blockyanim" }]
+    },
+    "Walk": {
+      "Animations": [{ "Animation": "NPC/Elemental/Dragon_Fire/Animations/Walk.blockyanim" }]
+    },
+    "Run": {
+      "Animations": [{ "Animation": "NPC/Elemental/Dragon_Fire/Animations/Run.blockyanim" }]
+    },
+    "Fall": {
+      "Animations": [{ "Animation": "NPC/Elemental/Dragon_Fire/Animations/Fall.blockyanim" }]
+    },
+    "Hurt": {
+      "Animations": [{ "Animation": "NPC/Elemental/Dragon_Fire/Animations/Hurt.blockyanim", "Looping": false }]
+    },
+    "Death": {
+      "Animations": [{ "Animation": "NPC/Elemental/Dragon_Fire/Animations/Death.blockyanim", "Looping": false }]
+    },
+    "WalkBackward": {
+      "Animations": [{ "Animation": "NPC/Elemental/Dragon_Fire/Animations/Walk_Backward.blockyanim" }]
+    }
+  }
+}

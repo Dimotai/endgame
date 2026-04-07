@@ -6,7 +6,7 @@
     "DropList": "Drop_Endgame_Void_Frog",
     "MaxHealth": 15,
     "IsMemory": true,
-    "MemoriesCategory": "Critter",
+    "MemoriesCategory": "Endgame",
     "MemoriesNameOverride": "Frog_Green",
     "NameTranslationKey": {
       "Compute": "NameTranslationKey"

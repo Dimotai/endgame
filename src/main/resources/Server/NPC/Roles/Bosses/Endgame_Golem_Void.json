@@ -1,6 +1,6 @@
 {
   "Type": "Variant",
-  "Reference": "Template_Intelligent",
+  "Reference": "Template_Endgame_Golem_Void",
   "Modify": {
     "Appearance": "Endgame_Golem_Void",
     "DropList": "Drop_Endgame_Golem_Void",
@@ -45,7 +45,7 @@
     "DeathParticles": "Explosion_Big",
     "AttitudeGroup": "Endgame_Golem_Void",
     "IsMemory": true,
-    "MemoriesCategory": "Elemental",
+    "MemoriesCategory": "Endgame",
     "MemoriesNameOverride": "Golem_Crystal_Earth",
     "NameTranslationKey": {
       "Compute": "NameTranslationKey"

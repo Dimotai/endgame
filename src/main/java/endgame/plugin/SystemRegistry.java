@@ -75,6 +75,7 @@ public class SystemRegistry {
 
     // Accessory systems
     private AccessoryPassiveSystem accessoryPassiveSystem;
+    private endgame.plugin.managers.PetManager petManager;
     private AccessoryDefenseSystem accessoryDefenseSystem;
 
     // Systems
@@ -111,6 +112,7 @@ public class SystemRegistry {
         registerGauntletSystems(gauntletLeaderboard);
         registerBountySystems();
         registerAccessorySystems();
+        registerPetSystems();
     }
 
     private void registerPlayerDataSystem(ComponentType<EntityStore, PlayerEndgameComponent> playerEndgameComponentType) {
@@ -338,6 +340,34 @@ public class SystemRegistry {
         plugin.getChunkStoreRegistry().registerSystem(new FrostwalkerBlockInitializer());
     }
 
+    private void registerPetSystems() {
+        plugin.getLogger().atInfo().log("[EndgameQoL] Registering pet systems...");
+
+        // Register PetOwnerComponent
+        var petOwnerType = plugin.getEntityStoreRegistry().registerComponent(
+                endgame.plugin.components.PetOwnerComponent.class, "EndgamePetOwner",
+                endgame.plugin.components.PetOwnerComponent.CODEC);
+        endgame.plugin.components.PetOwnerComponent.setComponentType(petOwnerType);
+
+        // PetManager
+        this.petManager = new endgame.plugin.managers.PetManager(plugin);
+
+        // PetFollowSystem
+        plugin.getEntityStoreRegistry().registerSystem(
+                new endgame.plugin.systems.pet.PetFollowSystem(plugin, this.petManager));
+
+        // PetCombatSystem (INSPECT damage group — routes player damage target to pet)
+        plugin.getEntityStoreRegistry().registerSystem(
+                new endgame.plugin.systems.pet.PetCombatSystem(plugin, this.petManager));
+
+        // Subscribe to BossKillEvent for pet unlock
+        plugin.getGameEventBus().subscribe(
+                endgame.plugin.events.domain.GameEvent.BossKillEvent.class,
+                event -> petManager.handleBossKill(event));
+    }
+
+    public endgame.plugin.managers.PetManager getPetManager() { return petManager; }
+
     // --- Shutdown / Cleanup ---
 
     /**
@@ -452,6 +482,11 @@ public class SystemRegistry {
         }
 
         VoidMarkTracker.getInstance().clear();
+
+        if (this.petManager != null) {
+            this.petManager.forceClear();
+            plugin.getLogger().atInfo().log("[EndgameQoL] Cleared PetManager state");
+        }
     }
 
     // --- Getters ---

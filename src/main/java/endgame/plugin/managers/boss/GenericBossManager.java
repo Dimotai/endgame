@@ -139,6 +139,8 @@ public class GenericBossManager {
     private final BossEncounterConfig alphaRexConfig;
     private final BossEncounterConfig swampCrocodileConfig;
     private final BossEncounterConfig brambleEliteConfig;
+    private final BossEncounterConfig dragonFireConfig;
+    private final BossEncounterConfig zombieAberrantConfig;
 
     public GenericBossManager(EndgameQoL plugin) {
         this.plugin = plugin;
@@ -174,7 +176,13 @@ public class GenericBossManager {
         this.brambleEliteConfig = new BossEncounterConfig(
                 BossType.BRAMBLE_ELITE, "BRAMBLE ELITE", "#66aa33", "#66aa33");
 
-        plugin.getLogger().atFine().log("[GenericBoss] Manager initialized (Frost Dragon + Hedera + 3 elites)");
+        this.dragonFireConfig = new BossEncounterConfig(
+                BossType.DRAGON_FIRE, "FIRE DRAGON", "#ff6600", "#ff6600");
+
+        this.zombieAberrantConfig = new BossEncounterConfig(
+                BossType.ZOMBIE_ABERRANT, "ZOMBIE ABERRANT", "#8844aa", "#8844aa");
+
+        plugin.getLogger().atFine().log("[GenericBoss] Manager initialized (Frost Dragon + Hedera + 5 elites)");
     }
 
     // =========================================================================
@@ -709,6 +717,8 @@ public class GenericBossManager {
             case ALPHA_REX -> alphaRexConfig;
             case SWAMP_CROCODILE -> swampCrocodileConfig;
             case BRAMBLE_ELITE -> brambleEliteConfig;
+            case DRAGON_FIRE -> dragonFireConfig;
+            case ZOMBIE_ABERRANT -> zombieAberrantConfig;
             default -> null;
         };
     }

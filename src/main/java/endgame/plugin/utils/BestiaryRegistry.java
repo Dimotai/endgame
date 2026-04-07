@@ -90,27 +90,27 @@ public final class BestiaryRegistry {
         reg("Endgame_Dragon_Frost", "Dragon Frost", Category.BOSS, 1400,
             "27 Physical + 10 Ice",
             "An ancient frost wyrm guarding the frozen depths. Its breath can freeze a warrior solid.",
-            new String[]{"Dragon Heart", "Mithril Bar", "Storm Hide", "Ice Essence", "Frozen Sword"},
+            new String[]{"Dragon Heart", "Mithril Bar", "Storm Hide", "Ice Essence", "Sapphire", "Frozen Sword (rare)"},
             "Frozen Dungeon", "Dragon_Frost.png");
 
         reg("Endgame_Hedera", "Hedera", Category.BOSS, 1800,
             "Poison + Root",
             "A colossal swamp guardian wreathed in toxic vines. Its roots span the entire dungeon floor.",
-            new String[]{"Hedera Gem", "Onyxium Bar", "Forest Essence", "Voidheart"},
+            new String[]{"Forest Essence", "Onyxium Bar", "Hedera Gem", "Void Essence", "Voidheart", "Swamp Currency", "Hedera Seed (rare)"},
             "Swamp Dungeon", "Hedera.png");
 
         reg("Endgame_Golem_Void", "Golem Void", Category.BOSS, 3500,
             "AOE Slam",
             "A towering construct of void energy. Three devastating phases of increasing rage.",
-            new String[]{"Onyxium Bar", "Prisma Bar", "Emerald", "Portal Luminia"},
-            "Void Instance", null);
+            new String[]{"Onyxium Bar", "Prisma Bar", "Emerald", "Portal Luminia", "Void Amulet (rare)"},
+            "Void Instance", "Golem_Void.png");
 
         // === ELITES ===
         reg("Endgame_Dragon_Fire", "Dragon Fire", Category.ELITE, 1000,
             "27 Physical + 10 Fire",
             "A wild fire dragon that roams the overworld. Fiercely territorial and relentless in pursuit.",
-            new String[]{"Storm Hide", "Adamantite Bar", "Voidheart"},
-            "Summoned (Spawner)", null);
+            new String[]{"Storm Hide", "Adamantite Bar", "Voidheart", "Blazefist (rare)"},
+            "Summoned (Spawner)", "Dragon_Fire.png");
         reg("Alpha_Rex", "Alpha Rex", Category.ELITE, 700,
             "80 Physical",
             "The apex predator. Massive jaws and thundering charge make it the most feared beast in the wilds.",
@@ -120,7 +120,7 @@ public final class BestiaryRegistry {
         reg("Endgame_Swamp_Crocodile", "Swamp Crocodile", Category.ELITE, 900,
             "Physical",
             "A massive crocodilian lurking in the murky swamps. Its ambush strikes are nearly unavoidable.",
-            new String[]{"Swamp Crocodile Scale", "Bone Fragment", "Void Essence", "Onyxium Bar"},
+            new String[]{"Swamp Crocodile Scale", "Bone Fragment", "Void Essence", "Swamp Currency", "Onyxium Bar (rare)"},
             "Swamp Dungeon", "Swamp_Crocodile.png");
 
         // === ELEMENTALS ===
@@ -158,7 +158,7 @@ public final class BestiaryRegistry {
         reg("Endgame_Yeti", "Yeti", Category.CREATURE, 400,
             "Physical",
             "A towering snow beast of the frozen wastes. Territorial and surprisingly swift for its size.",
-            new String[]{"Heavy Hide", "Storm Hide", "Ice Essence", "Mithril Bar", "Flocon"},
+            new String[]{"Heavy Hide", "Storm Hide", "Ice Essence", "Flocon", "Sapphire", "Mithril Bar (rare)"},
             "Frozen Dungeon", "Yeti.png");
 
         reg("Endgame_Rat_Frost", "Rat Frost", Category.CREATURE, 35,
@@ -182,7 +182,7 @@ public final class BestiaryRegistry {
         reg("Endgame_Bramble_Elite", "Bramble Elite", Category.ELITE, 550,
             "90 Physical (Bite) + 70 Physical (Swipe) + Poison T3",
             "A massive thorned beast lurking in the deepest reaches of the swamp dungeon. Its 3-attack combo chain delivers devastating blows alongside a potent toxin.",
-            new String[]{"Hedera's Bramble"},
+            new String[]{"Hedera's Bramble", "Void Essence", "Swamp Currency", "Venom Sac", "Bone Fragment"},
             "Swamp Dungeon", "Bramble_Elite.png");
 
         // === ENDGAME ===

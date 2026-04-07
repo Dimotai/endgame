@@ -1,0 +1,40 @@
+{
+  "Parent": "Trork",
+  "Model": "NPC/Intelligent/Hedera/Models/Model.blockymodel",
+  "Texture": "NPC/Intelligent/Hedera/Models/Texture.png",
+  "EyeHeight": 0.8,
+  "CrouchOffset": -0.2,
+  "HitBox": {
+    "Max": { "X": 0.3, "Y": 1.2, "Z": 0.3 },
+    "Min": { "X": -0.3, "Y": 0, "Z": -0.3 }
+  },
+  "MinScale": 0.7,
+  "MaxScale": 0.7,
+  "DefaultAttachments": [
+    {
+      "Model": "NPC/Intelligent/Hedera/Models/Attachments/Hair.blockymodel",
+      "Texture": "NPC/Intelligent/Hedera/Models/Attachments/Hair_Texture.png"
+    },
+    {
+      "Model": "NPC/Intelligent/Hedera/Models/Attachments/Crown.blockymodel",
+      "Texture": "NPC/Intelligent/Hedera/Models/Attachments/Crown_Texture.png"
+    }
+  ],
+  "AnimationSets": {
+    "Idle": {
+      "Animations": [{ "Animation": "NPC/Intelligent/Hedera/Animations/Default/Idle.blockyanim" }]
+    },
+    "Walk": {
+      "Animations": [{ "Animation": "NPC/Intelligent/Hedera/Animations/Default/Walk.blockyanim" }]
+    },
+    "Run": {
+      "Animations": [{ "Animation": "NPC/Intelligent/Hedera/Animations/Default/Run.blockyanim" }]
+    },
+    "Hurt": {
+      "Animations": [{ "Animation": "NPC/Intelligent/Trork/Animations/Damage/Hurt.blockyanim", "Looping": false }]
+    },
+    "Death": {
+      "Animations": [{ "Animation": "NPC/Intelligent/Trork/Animations/Damage/Death.blockyanim", "Looping": false }]
+    }
+  }
+}

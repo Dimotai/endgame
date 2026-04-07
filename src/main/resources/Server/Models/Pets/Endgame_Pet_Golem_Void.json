@@ -1,0 +1,38 @@
+{
+  "Parent": "Player",
+  "Model": "NPC/Bosses/Endgame_Golem_Void/Models/Model.blockymodel",
+  "Texture": "NPC/Bosses/Endgame_Golem_Void/Models/Texture.png",
+  "GradientSet": null,
+  "GradientId": null,
+  "DefaultAttachments": [],
+  "EyeHeight": 1.2,
+  "HitBox": {
+    "Max": { "X": 0.4, "Y": 1.8, "Z": 0.4 },
+    "Min": { "X": -0.4, "Y": 0, "Z": -0.4 }
+  },
+  "MinScale": 0.4,
+  "MaxScale": 0.4,
+  "AnimationSets": {
+    "Idle": {
+      "Animations": [{ "Animation": "NPC/Bosses/Endgame_Golem_Void/Animations/Idle.blockyanim" }]
+    },
+    "Walk": {
+      "Animations": [{ "Animation": "NPC/Bosses/Endgame_Golem_Void/Animations/Walk.blockyanim" }]
+    },
+    "Run": {
+      "Animations": [{ "Animation": "NPC/Bosses/Endgame_Golem_Void/Animations/Run.blockyanim" }]
+    },
+    "Jump": {
+      "Animations": [{ "Animation": "NPC/Bosses/Endgame_Golem_Void/Animations/Jump.blockyanim", "Looping": false }]
+    },
+    "Fall": {
+      "Animations": [{ "Animation": "NPC/Bosses/Endgame_Golem_Void/Animations/Fall.blockyanim" }]
+    },
+    "Hurt": {
+      "Animations": [{ "Animation": "NPC/Bosses/Endgame_Golem_Void/Animations/Hurt.blockyanim", "Looping": false }]
+    },
+    "Death": {
+      "Animations": [{ "Animation": "NPC/Bosses/Endgame_Golem_Void/Animations/Death.blockyanim", "Looping": false }]
+    }
+  }
+}

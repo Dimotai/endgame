@@ -21,7 +21,7 @@
     "ChaseRelativeSpeed": 0.8,
     "CombatMovingRelativeSpeed": 0.7,
     "IsMemory": true,
-    "MemoriesCategory": "Feran",
+    "MemoriesCategory": "Endgame",
     "MemoriesNameOverride": "Feran_Sharptooth",
     "DefaultPlayerAttitude": "HOSTILE",
     "NameTranslationKey": {
