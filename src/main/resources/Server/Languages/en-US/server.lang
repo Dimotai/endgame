@@ -178,3 +178,7 @@ items.Endgame_Accessory_Hedera_Seed.description = A dormant seed of Hedera, reta
 
 memories.categories.Endgame.title = Endgame
 server.npcRoles.Endgame_Bramble_Elite.name = Bramble Elite
+server.npcRoles.Endgame_Pet_Dragon_Frost.name = Dragon Frost
+server.npcRoles.Endgame_Pet_Dragon_Fire.name = Dragon Fire
+server.npcRoles.Endgame_Pet_Hedera.name = Hedera
+server.npcRoles.Endgame_Pet_Golem_Void.name = Golem Void

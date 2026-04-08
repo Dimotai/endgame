@@ -213,8 +213,14 @@ public class EndgameQoL extends JavaPlugin {
             config.get().setRPGLevelingAutoDetected("present");
             config.save();
             this.getLogger().atInfo().log("[EndgameQoL] RPG Leveling detected — auto-enabled");
-        } else if (!modPresent && !"absent".equals(state)) {
-            config.get().setRPGLevelingAutoDetected("absent");
+        } else if (!modPresent) {
+            if (config.get().isRPGLevelingEnabled()) {
+                config.get().setRPGLevelingEnabled(false);
+                this.getLogger().atInfo().log("[EndgameQoL] RPG Leveling removed — auto-disabled");
+            }
+            if (!"absent".equals(state)) {
+                config.get().setRPGLevelingAutoDetected("absent");
+            }
             config.save();
         }
 
@@ -248,8 +254,14 @@ public class EndgameQoL extends JavaPlugin {
             config.get().setEndlessLevelingAutoDetected("present");
             config.save();
             this.getLogger().atInfo().log("[EndgameQoL] Endless Leveling detected — auto-enabled");
-        } else if (!modPresent && !"absent".equals(state)) {
-            config.get().setEndlessLevelingAutoDetected("absent");
+        } else if (!modPresent) {
+            if (config.get().isEndlessLevelingEnabled()) {
+                config.get().setEndlessLevelingEnabled(false);
+                this.getLogger().atInfo().log("[EndgameQoL] Endless Leveling removed — auto-disabled");
+            }
+            if (!"absent".equals(state)) {
+                config.get().setEndlessLevelingAutoDetected("absent");
+            }
             config.save();
         }
 
@@ -278,8 +290,14 @@ public class EndgameQoL extends JavaPlugin {
         // OrbisGuard: detect but never auto-enable (disabled by default, admin must opt-in)
         boolean modPresent = isClassAvailable("com.orbisguard.api.OrbisGuardAPI");
         String state = config.get().getOrbisGuardAutoDetected();
-        if (!modPresent && !"absent".equals(state)) {
-            config.get().setOrbisGuardAutoDetected("absent");
+        if (!modPresent) {
+            if (config.get().isOrbisGuardEnabled()) {
+                config.get().setOrbisGuardEnabled(false);
+                this.getLogger().atInfo().log("[EndgameQoL] OrbisGuard removed — auto-disabled");
+            }
+            if (!"absent".equals(state)) {
+                config.get().setOrbisGuardAutoDetected("absent");
+            }
             config.save();
         } else if (modPresent && "pending".equals(state)) {
             config.get().setOrbisGuardAutoDetected("detected");

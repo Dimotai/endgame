@@ -35,7 +35,7 @@ public class PetConfig {
     private float dragonFireChance = 0.90f;
     private float golemVoidChance = 0.90f;
     private float hederaChance = 0.90f;
-    private float teleportDistance = 40f;
+    private float teleportDistance = 15f;
 
     public boolean isEnabled() { return enabled; }
     public void setEnabled(boolean e) { this.enabled = e; }

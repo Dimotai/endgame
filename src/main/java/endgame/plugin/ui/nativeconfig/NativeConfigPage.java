@@ -104,6 +104,7 @@ public class NativeConfigPage extends InteractiveCustomUIPage<NativeConfigPage.C
         new SearchEntry("Warden Trials", "Misc", "toggle:warden", c -> c.isWardenTrialEnabled() ? "ON" : "OFF", "warden trial challenge"),
         new SearchEntry("Vorthak Merchant", "Misc", "toggle:vorthak", c -> c.isVorthakEnabled() ? "ON" : "OFF", "shop trade npc"),
         new SearchEntry("Temporal Portals", "Misc", "toggle:temporalPortal", c -> c.getTemporalPortalConfig().isEnabled() ? "ON" : "OFF", "temporal portal random dungeon"),
+        new SearchEntry("Pet System", "Misc", "toggle:pets", c -> c.pets().isEnabled() ? "ON" : "OFF", "pet companion system"),
         new SearchEntry("Portal Spawn Interval", "Misc", "field:portalSpawnMin", c -> c.getTemporalPortalConfig().getSpawnIntervalMinSeconds() + "-" + c.getTemporalPortalConfig().getSpawnIntervalMaxSeconds() + "s", "temporal portal spawn timer"),
         new SearchEntry("Portal Duration", "Misc", "field:portalDuration", c -> c.getTemporalPortalConfig().getPortalDurationSeconds() + "s", "temporal portal despawn time"),
         new SearchEntry("Max Portals", "Misc", "field:maxPortals", c -> String.valueOf(c.getTemporalPortalConfig().getMaxConcurrentPortals()), "temporal portal max concurrent"),
@@ -571,6 +572,7 @@ public class NativeConfigPage extends InteractiveCustomUIPage<NativeConfigPage.C
         setToggleValue(cmd, "#ToggleWarden", config.isWardenTrialEnabled());
         setToggleValue(cmd, "#ToggleVorthak", config.isVorthakEnabled());
         setToggleValue(cmd, "#ToggleTemporalPortal", config.getTemporalPortalConfig().isEnabled());
+        setToggleValue(cmd, "#TogglePets", config.pets().isEnabled());
         cmd.set("#PortalDuration.Value", String.valueOf(config.getTemporalPortalConfig().getPortalDurationSeconds()));
         cmd.set("#MaxPortals.Value", String.valueOf(config.getTemporalPortalConfig().getMaxConcurrentPortals()));
         cmd.set("#InstanceTimeLimit.Value", String.valueOf(config.getTemporalPortalConfig().getInstanceTimeLimitSeconds()));
@@ -592,6 +594,7 @@ public class NativeConfigPage extends InteractiveCustomUIPage<NativeConfigPage.C
         events.addEventBinding(CustomUIEventBindingType.Activating, "#ToggleWarden", EventData.of("Action", "toggle:warden"), false);
         events.addEventBinding(CustomUIEventBindingType.Activating, "#ToggleVorthak", EventData.of("Action", "toggle:vorthak"), false);
         events.addEventBinding(CustomUIEventBindingType.Activating, "#ToggleTemporalPortal", EventData.of("Action", "toggle:temporalPortal"), false);
+        events.addEventBinding(CustomUIEventBindingType.Activating, "#TogglePets", EventData.of("Action", "toggle:pets"), false);
         bindNumField(events, "#PortalDuration", "portalDuration");
         bindAdjust(events, "#PortalDurationDown", "adjust:portalDurationDown");
         bindAdjust(events, "#PortalDurationUp", "adjust:portalDurationUp");
@@ -606,9 +609,28 @@ public class NativeConfigPage extends InteractiveCustomUIPage<NativeConfigPage.C
     // ==================== INTEGRATION ====================
 
     private void populateIntegration(UICommandBuilder cmd, UIEventBuilder events, EndgameConfig config) {
+        EndgameQoL p = plugin;
+
+        // RPG Leveling
+        boolean rpgPresent = p.isRPGLevelingModPresent();
         setToggleValue(cmd, "#ToggleRPGLeveling", config.isRPGLevelingEnabled());
+        cmd.set("#IntegRPGStatus.Text", rpgPresent ? "DETECTED" : "NOT FOUND");
+        cmd.set("#IntegRPGStatus.Style.TextColor", rpgPresent ? "#4aff7f" : "#ff5555");
+        cmd.set("#IntegRPGAccent.Background.Color", rpgPresent ? "#55ccff" : "#333333");
+
+        // Endless Leveling
+        boolean elPresent = p.isEndlessLevelingModPresent();
         setToggleValue(cmd, "#ToggleEndlessLeveling", config.isEndlessLevelingEnabled());
+        cmd.set("#IntegELStatus.Text", elPresent ? "DETECTED" : "NOT FOUND");
+        cmd.set("#IntegELStatus.Style.TextColor", elPresent ? "#4aff7f" : "#ff5555");
+        cmd.set("#IntegELAccent.Background.Color", elPresent ? "#E8A93B" : "#333333");
+
+        // OrbisGuard
+        boolean ogPresent = p.isOrbisGuardModPresent();
         setToggleValue(cmd, "#ToggleOrbisGuard", config.isOrbisGuardEnabled());
+        cmd.set("#IntegOGStatus.Text", ogPresent ? "DETECTED" : "NOT FOUND");
+        cmd.set("#IntegOGStatus.Style.TextColor", ogPresent ? "#4aff7f" : "#ff5555");
+        cmd.set("#IntegOGAccent.Background.Color", ogPresent ? "#55ff88" : "#333333");
 
         events.addEventBinding(CustomUIEventBindingType.Activating, "#ToggleRPGLeveling", EventData.of("Action", "toggle:rpgLeveling"), false);
         events.addEventBinding(CustomUIEventBindingType.Activating, "#ToggleEndlessLeveling", EventData.of("Action", "toggle:endlessLeveling"), false);
@@ -940,6 +962,7 @@ public class NativeConfigPage extends InteractiveCustomUIPage<NativeConfigPage.C
             case "warden" -> config.setWardenTrialEnabled(!config.isWardenTrialEnabled());
             case "vorthak" -> config.setVorthakEnabled(!config.isVorthakEnabled());
             case "temporalPortal" -> config.getTemporalPortalConfig().setEnabled(!config.getTemporalPortalConfig().isEnabled());
+            case "pets" -> config.pets().setEnabled(!config.pets().isEnabled());
             case "rpgLeveling" -> {
                 boolean newVal = !config.isRPGLevelingEnabled();
                 config.setRPGLevelingEnabled(newVal);

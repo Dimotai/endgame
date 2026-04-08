@@ -14,6 +14,7 @@ import com.hypixel.hytale.server.core.universe.Universe;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.NPCPlugin;
+import com.hypixel.hytale.server.npc.entities.NPCEntity;
 import endgame.plugin.EndgameQoL;
 import endgame.plugin.components.PetOwnerComponent;
 import endgame.plugin.components.PlayerEndgameComponent;
@@ -61,8 +62,10 @@ public class PetManager {
      */
     public void spawnPet(@Nonnull Store<EntityStore> store, @Nonnull UUID ownerUuid,
                          @Nonnull String petId, @Nonnull Vector3d position) {
+        if (!plugin.getConfig().get().pets().isEnabled()) return;
+
         // Despawn old pet first
-        despawnPet(store, ownerUuid);
+        despawnPet(ownerUuid);
 
         try {
             Vector3f rotation = new Vector3f(0, 0, 0);
@@ -71,6 +74,10 @@ public class PetManager {
             if (result != null && result.left() != null && result.left().isValid()) {
                 Ref<EntityStore> petRef = result.left();
                 petsByOwner.put(ownerUuid, petRef);
+
+                // Do NOT set LockedTarget to owner — pet would attack the owner.
+                // Follow is handled by PetFollowSystem emergency teleport.
+                // Combat target is set by PetCombatSystem only when owner fights.
             }
 
             PlayerEndgameComponent comp = plugin.getPlayerComponent(ownerUuid);
@@ -85,13 +92,21 @@ public class PetManager {
     }
 
     /**
-     * Despawn the player's active pet.
+     * Despawn the player's active pet. Thread-safe — always runs removal
+     * on the pet's own world thread, regardless of which world the caller is in.
      */
-    public void despawnPet(@Nonnull Store<EntityStore> store, @Nonnull UUID ownerUuid) {
+    public void despawnPet(@Nonnull UUID ownerUuid) {
         Ref<EntityStore> petRef = petsByOwner.remove(ownerUuid);
         if (petRef != null && petRef.isValid()) {
             try {
-                store.removeEntity(petRef, com.hypixel.hytale.component.RemoveReason.REMOVE);
+                World petWorld = petRef.getStore().getExternalData().getWorld();
+                if (petWorld != null && petWorld.isAlive()) {
+                    petWorld.execute(() -> {
+                        if (petRef.isValid()) {
+                            petRef.getStore().removeEntity(petRef, com.hypixel.hytale.component.RemoveReason.REMOVE);
+                        }
+                    });
+                }
                 LOGGER.atFine().log("[Pet] Despawned pet for %s", ownerUuid);
             } catch (Exception e) {
                 LOGGER.atFine().log("[Pet] Despawn cleanup: %s", e.getMessage());
@@ -137,31 +152,19 @@ public class PetManager {
     // =========================================================================
 
     public void onPlayerConnect(@Nonnull UUID uuid, @Nonnull PlayerEndgameComponent comp) {
-        // Auto-respawn active pet if player had one
+        if (!plugin.getConfig().get().pets().isEnabled()) return;
+
+        // Clear stale active pet on reconnect — pet entity was destroyed on disconnect
         String activePetId = comp.getPetData().getActivePetId();
         if (activePetId != null && !activePetId.isEmpty()) {
-            // Defer spawn to when player is fully in world
-            // PetFollowSystem handles this via activePetId check
-            LOGGER.atFine().log("[Pet] Player %s has active pet %s — will respawn on world join", uuid, activePetId);
+            comp.getPetData().setActivePetId("");
+            LOGGER.atFine().log("[Pet] Cleared stale active pet %s for %s on reconnect", activePetId, uuid);
         }
+        petsByOwner.remove(uuid);
     }
 
     public void onPlayerDisconnect(@Nonnull UUID uuid) {
-        Ref<EntityStore> petRef = petsByOwner.remove(uuid);
-        if (petRef != null && petRef.isValid()) {
-            try {
-                World world = petRef.getStore().getExternalData().getWorld();
-                if (world != null && world.isAlive()) {
-                    world.execute(() -> {
-                        if (petRef.isValid()) {
-                            petRef.getStore().removeEntity(petRef, com.hypixel.hytale.component.RemoveReason.REMOVE);
-                        }
-                    });
-                }
-            } catch (Exception e) {
-                LOGGER.atFine().log("[Pet] Disconnect cleanup: %s", e.getMessage());
-            }
-        }
+        despawnPet(uuid);
     }
 
     // =========================================================================
@@ -245,6 +248,10 @@ public class PetManager {
             if (uuid.equals(pUuid)) return p;
         }
         return null;
+    }
+
+    public ConcurrentHashMap<UUID, Ref<EntityStore>> getPetsByOwner() {
+        return petsByOwner;
     }
 
     public void forceClear() {

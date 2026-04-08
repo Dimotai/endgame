@@ -1,0 +1,14 @@
+{
+  "Groups": {
+    "Ignore": [
+      "Player",
+      "Predators",
+      "PredatorsBig",
+      "Prey",
+      "PreyBig",
+      "Undead",
+      "Void",
+      "Endgame_Pet"
+    ]
+  }
+}

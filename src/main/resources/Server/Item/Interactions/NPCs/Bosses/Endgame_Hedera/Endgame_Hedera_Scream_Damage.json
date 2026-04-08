@@ -7,7 +7,7 @@
   },
   "DamageEffects": {
     "StaminaDrainMultiplier": 2.0,
-    "CameraEffect": "Hedera_Scream"
+    "CameraEffect": "Impact"
   },
   "EntityStatsOnHit": [
     {

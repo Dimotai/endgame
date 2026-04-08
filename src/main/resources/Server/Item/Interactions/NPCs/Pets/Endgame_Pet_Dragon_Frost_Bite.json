@@ -1,0 +1,61 @@
+{
+  "Type": "Simple",
+  "Effects": {
+    "ItemPlayerAnimationsId": "Endgame_Dragon_Frost",
+    "ItemAnimationId": "Bite",
+    "WorldSoundEventId": "SFX_NPC_Unarmed_Swing"
+  },
+  "RunTime": 0.3,
+  "Next": {
+    "Type": "Parallel",
+    "Interactions": [
+      {
+        "Interactions": [
+          {
+            "Type": "Selector",
+            "RunTime": 0.2,
+            "Selector": {
+              "Id": "Horizontal",
+              "Direction": "ToLeft",
+              "TestLineOfSight": false,
+              "ExtendTop": 0.5,
+              "ExtendBottom": 0.5,
+              "StartDistance": 0.3,
+              "EndDistance": 2.5,
+              "Length": 60,
+              "RollOffset": 90,
+              "YawStartOffset": -30
+            },
+            "HitEntity": {
+              "Interactions": [
+                {
+                  "Type": "Replace",
+                  "DefaultOk": true,
+                  "DefaultValue": {
+                    "Interactions": ["NPC_Attack_Melee_Damage"]
+                  },
+                  "Var": "Melee_Damage"
+                }
+              ]
+            },
+            "Next": {
+              "Type": "Simple",
+              "RunTime": 0.3
+            }
+          }
+        ]
+      },
+      {
+        "Interactions": [
+          {
+            "Type": "Simple",
+            "RunTime": 0.4,
+            "Effects": {
+              "Particles": [{ "SystemId": "Impact_Ice" }]
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

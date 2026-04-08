@@ -152,32 +152,40 @@ public class TemporalPortalManager {
         Ref<EntityStore> playerRef = targetPlayer.getReference();
         if (playerRef == null || !playerRef.isValid()) return;
 
-        TransformComponent transform = playerRef.getStore().getComponent(playerRef, TransformComponent.getComponentType());
-        if (transform == null) return;
-
-        Vector3d playerPos = transform.getPosition();
-        World world = playerRef.getStore().getExternalData().getWorld();
+        World world;
+        try {
+            world = playerRef.getStore().getExternalData().getWorld();
+        } catch (Exception e) { return; }
         if (world == null || !world.isAlive()) return;
 
-        // Try up to 3 positions, skip protected zones
-        float radius = config.getSpawnOffsetRadius();
-        Vector3d spawnPos = null;
-        for (int attempt = 0; attempt < 3; attempt++) {
-            double angle = ThreadLocalRandom.current().nextDouble() * Math.PI * 2;
-            double offsetX = Math.cos(angle) * (3 + ThreadLocalRandom.current().nextDouble() * (radius - 3));
-            double offsetZ = Math.sin(angle) * (3 + ThreadLocalRandom.current().nextDouble() * (radius - 3));
-            int bx = (int) Math.floor(playerPos.x + offsetX);
-            int bz = (int) Math.floor(playerPos.z + offsetZ);
-            if (!isPositionProtected(world.getName(), bx, (int) playerPos.y, bz)) {
-                spawnPos = new Vector3d(bx, playerPos.y, bz);
-                break;
-            }
-        }
-        if (spawnPos == null) return;
+        // All ECS access must happen on the world thread
+        final TemporalPortalConfig cfg = config;
+        final TemporalPortalSession.DungeonType dt = dungeonType;
+        world.execute(() -> {
+            if (!playerRef.isValid()) return;
+            TransformComponent transform = playerRef.getStore().getComponent(playerRef, TransformComponent.getComponentType());
+            if (transform == null) return;
 
-        String sessionId = UUID.randomUUID().toString().substring(0, 8);
-        TemporalPortalSession session = new TemporalPortalSession(sessionId, dungeonType);
-        placePortalBlock(session, world, spawnPos, config);
+            Vector3d playerPos = transform.getPosition();
+            float radius = cfg.getSpawnOffsetRadius();
+            Vector3d spawnPos = null;
+            for (int attempt = 0; attempt < 3; attempt++) {
+                double angle = ThreadLocalRandom.current().nextDouble() * Math.PI * 2;
+                double offsetX = Math.cos(angle) * (3 + ThreadLocalRandom.current().nextDouble() * (radius - 3));
+                double offsetZ = Math.sin(angle) * (3 + ThreadLocalRandom.current().nextDouble() * (radius - 3));
+                int bx = (int) Math.floor(playerPos.x + offsetX);
+                int bz = (int) Math.floor(playerPos.z + offsetZ);
+                if (!isPositionProtected(world.getName(), bx, (int) playerPos.y, bz)) {
+                    spawnPos = new Vector3d(bx, playerPos.y, bz);
+                    break;
+                }
+            }
+            if (spawnPos == null) return;
+
+            String sessionId = UUID.randomUUID().toString().substring(0, 8);
+            TemporalPortalSession session = new TemporalPortalSession(sessionId, dt);
+            placePortalBlock(session, world, spawnPos, cfg);
+        });
 
         lastSpawnTimeMs = now;
         nextSpawnIntervalMs = randomInterval();
@@ -321,7 +329,7 @@ public class TemporalPortalManager {
                     PortalWorld portalWorld = spawnedWorld.getEntityStore().getStore()
                             .getResource(PortalWorld.getResourceType());
                     if (portalWorld != null) {
-                        int timeLimitSec = plugin.getConfig().get().getTemporalPortalConfig().getInstanceTimeLimitSeconds();
+                        int timeLimitSec = session.getDungeonType().getTimeLimitSeconds();
                         portalWorld.init(portalType, timeLimitSec,
                                 new PortalRemovalCondition((double) timeLimitSec), null);
                     }

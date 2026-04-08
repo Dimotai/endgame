@@ -1001,6 +1001,16 @@ $C.@PageOverlay {
             Group { Anchor: (Width: 4); }
             TextButton #InstanceTimeLimitUp { Anchor: (Width: 40, Height: 28); Text: "+"; Style: @AdjustBtnStyle; }
           }
+
+          // ---- Pet System ----
+          Group { Anchor: (Height: 8); }
+          Group { Anchor: (Height: 1); Background: #1a2633; }
+          Group { Anchor: (Height: 8); }
+          Label { Style: (FontSize: 14, TextColor: #ffaa00, RenderBold: true); Anchor: (Height: 20); Text: "Pet System"; }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @LabelStyle; FlexWeight: 1; Text: "Enabled"; }
+            TextButton #TogglePets { Anchor: (Width: 80, Height: 28); Text: "ON"; Style: @ToggleOnStyle; }
+          }
         }
       }
 
@@ -1012,42 +1022,70 @@ $C.@PageOverlay {
         Padding: (Full: 16);
         Visible: false;
 
-        Label { Style: (FontSize: 16, TextColor: #ffaa4a, RenderBold: true); Anchor: (Height: 24); Text: "Mod Integration"; }
-        Label { Style: (FontSize: 12, TextColor: #6a7a8e); Anchor: (Height: 28); Text: "RPG Leveling and Endless Leveling are auto-enabled when detected. Restart required after changes."; }
+        Label { Style: (FontSize: 16, TextColor: #ffaa4a, RenderBold: true); Anchor: (Height: 24); Text: "Integrations & Addons"; }
+        Label { Style: (FontSize: 11, TextColor: #5a6a7a); Anchor: (Height: 18); Text: "Detected mods are auto-enabled. Restart required after changes."; }
         Group { Anchor: (Height: 1); Background: #1e2a36; }
         Group { Anchor: (Height: 10); }
 
         // RPG Leveling
-        Group { Background: #0b141f(0.84); LayoutMode: Top; Padding: (Full: 12);
-          Label { Style: (FontSize: 14, TextColor: #55ccff, RenderBold: true); Anchor: (Height: 20); Text: "RPG Leveling"; }
-          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
-            Label { Style: @LabelStyle; FlexWeight: 1; Text: "Enabled"; }
-            TextButton #ToggleRPGLeveling { Anchor: (Width: 80, Height: 28); Text: "OFF"; Style: @ToggleOffStyle; }
+        Group #IntegRPG { LayoutMode: Left; Anchor: (Bottom: 8); Background: #0b141f(0.88); Padding: (Full: 0);
+          Group #IntegRPGAccent { Anchor: (Width: 3, Height: 70); Background: #55ccff; }
+          Group { LayoutMode: Top; FlexWeight: 1; Padding: (Full: 12);
+            Group { LayoutMode: Left; Anchor: (Height: 22);
+              Label { Style: (FontSize: 14, TextColor: #55ccff, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Text: "RPG Leveling"; }
+              Label #IntegRPGStatus { Style: (FontSize: 10, TextColor: #4aff7f, RenderBold: true, VerticalAlignment: Center); Anchor: (Width: 90); Text: "DETECTED"; }
+            }
+            Label { Style: (FontSize: 10, TextColor: #5a6a7a); Anchor: (Height: 16); Text: "XP rewards, boss kill XP, level scaling"; }
+            Group { Anchor: (Height: 4); }
+            Group { LayoutMode: Left; Anchor: (Height: 26);
+              Label { Style: (FontSize: 11, TextColor: #c0cee5, VerticalAlignment: Center); FlexWeight: 1; Text: "Bridge Active"; }
+              TextButton #ToggleRPGLeveling { Anchor: (Width: 80, Height: 24); Text: "OFF"; Style: @ToggleOffStyle; }
+            }
           }
-          Label { Style: (FontSize: 11, TextColor: #4a9eff); Anchor: (Height: 16); Text: "Restart required after changing"; }
         }
-        Group { Anchor: (Height: 8); }
 
         // Endless Leveling
-        Group { Background: #0b141f(0.84); LayoutMode: Top; Padding: (Full: 12);
-          Label { Style: (FontSize: 14, TextColor: #E8A93B, RenderBold: true); Anchor: (Height: 20); Text: "Endless Leveling"; }
-          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
-            Label { Style: @LabelStyle; FlexWeight: 1; Text: "Enabled"; }
-            TextButton #ToggleEndlessLeveling { Anchor: (Width: 80, Height: 28); Text: "OFF"; Style: @ToggleOffStyle; }
+        Group #IntegEL { LayoutMode: Left; Anchor: (Bottom: 8); Background: #0b141f(0.88); Padding: (Full: 0);
+          Group #IntegELAccent { Anchor: (Width: 3, Height: 70); Background: #E8A93B; }
+          Group { LayoutMode: Top; FlexWeight: 1; Padding: (Full: 12);
+            Group { LayoutMode: Left; Anchor: (Height: 22);
+              Label { Style: (FontSize: 14, TextColor: #E8A93B, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Text: "Endless Leveling"; }
+              Label #IntegELStatus { Style: (FontSize: 10, TextColor: #4aff7f, RenderBold: true, VerticalAlignment: Center); Anchor: (Width: 90); Text: "DETECTED"; }
+            }
+            Label { Style: (FontSize: 10, TextColor: #5a6a7a); Anchor: (Height: 16); Text: "Mob level scaling, dungeon levels, XP integration"; }
+            Group { Anchor: (Height: 4); }
+            Group { LayoutMode: Left; Anchor: (Height: 26);
+              Label { Style: (FontSize: 11, TextColor: #c0cee5, VerticalAlignment: Center); FlexWeight: 1; Text: "Bridge Active"; }
+              TextButton #ToggleEndlessLeveling { Anchor: (Width: 80, Height: 24); Text: "OFF"; Style: @ToggleOffStyle; }
+            }
           }
-          Label { Style: (FontSize: 11, TextColor: #4a9eff); Anchor: (Height: 16); Text: "Restart required after changing"; }
         }
-        Group { Anchor: (Height: 8); }
 
         // OrbisGuard
-        Group { Background: #0b141f(0.84); LayoutMode: Top; Padding: (Full: 12);
-          Label { Style: (FontSize: 14, TextColor: #55ff88, RenderBold: true); Anchor: (Height: 20); Text: "OrbisGuard"; }
-          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
-            Label { Style: @LabelStyle; FlexWeight: 1; Text: "Enabled"; }
-            TextButton #ToggleOrbisGuard { Anchor: (Width: 80, Height: 28); Text: "OFF"; Style: @ToggleOffStyle; }
+        Group #IntegOG { LayoutMode: Left; Anchor: (Bottom: 8); Background: #0b141f(0.88); Padding: (Full: 0);
+          Group #IntegOGAccent { Anchor: (Width: 3, Height: 70); Background: #55ff88; }
+          Group { LayoutMode: Top; FlexWeight: 1; Padding: (Full: 12);
+            Group { LayoutMode: Left; Anchor: (Height: 22);
+              Label { Style: (FontSize: 14, TextColor: #55ff88, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Text: "OrbisGuard"; }
+              Label #IntegOGStatus { Style: (FontSize: 10, TextColor: #4aff7f, RenderBold: true, VerticalAlignment: Center); Anchor: (Width: 90); Text: "DETECTED"; }
+            }
+            Label { Style: (FontSize: 10, TextColor: #5a6a7a); Anchor: (Height: 16); Text: "Dungeon instance protection, portal spawn zones"; }
+            Group { Anchor: (Height: 4); }
+            Group { LayoutMode: Left; Anchor: (Height: 26);
+              Label { Style: (FontSize: 11, TextColor: #c0cee5, VerticalAlignment: Center); FlexWeight: 1; Text: "Bridge Active"; }
+              TextButton #ToggleOrbisGuard { Anchor: (Width: 80, Height: 24); Text: "OFF"; Style: @ToggleOffStyle; }
+            }
           }
-          Label { Style: (FontSize: 11, TextColor: #4a9eff); Anchor: (Height: 16); Text: "Restart required after changing"; }
         }
+
+        // ---- Addons Section ----
+        Group { Anchor: (Height: 12); }
+        Label { Style: (FontSize: 16, TextColor: #ffaa4a, RenderBold: true); Anchor: (Height: 24); Text: "Addons"; }
+        Label { Style: (FontSize: 11, TextColor: #5a6a7a); Anchor: (Height: 18); Text: "Endgame&QoL addons will appear here when installed."; }
+        Group { Anchor: (Height: 1); Background: #1e2a36; }
+        Group { Anchor: (Height: 8); }
+
+        Label #AddonEmpty { Style: (FontSize: 11, TextColor: #3a4a5a, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Height: 40); Text: "No addons detected."; }
       }
     }
   }

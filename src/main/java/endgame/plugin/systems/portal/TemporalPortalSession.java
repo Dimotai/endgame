@@ -14,26 +14,29 @@ public class TemporalPortalSession {
 
     public enum DungeonType {
         FROZEN_DUNGEON("Endgame_Frozen_Dungeon", "Frozen Dungeon", "#5bceff",
-                "Endgame_Portal_Frozen_Dungeon"),
+                "Endgame_Portal_Frozen_Dungeon", 1200),
         SWAMP_DUNGEON("Endgame_Swamp_Dungeon", "Swamp Dungeon", "#23970c",
-                "Endgame_Portal_Swamp_Dungeon");
+                "Endgame_Portal_Swamp_Dungeon", 5400);
 
         private final String instanceId;
         private final String displayName;
         private final String color;
         private final String portalTypeId;
+        private final int timeLimitSeconds;
 
-        DungeonType(String instanceId, String displayName, String color, String portalTypeId) {
+        DungeonType(String instanceId, String displayName, String color, String portalTypeId, int timeLimitSeconds) {
             this.instanceId = instanceId;
             this.displayName = displayName;
             this.color = color;
             this.portalTypeId = portalTypeId;
+            this.timeLimitSeconds = timeLimitSeconds;
         }
 
         public String getInstanceId() { return instanceId; }
         public String getDisplayName() { return displayName; }
         public String getColor() { return color; }
         public String getPortalTypeId() { return portalTypeId; }
+        public int getTimeLimitSeconds() { return timeLimitSeconds; }
     }
 
     public enum InstanceState { NONE, SPAWNING, READY, FAILED }

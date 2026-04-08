@@ -44,6 +44,10 @@ Lingering **Poison Clouds** spawn every 18-25s during Phase 2+, last 6 seconds, 
 
 ### Other
 - **Endgame Memories Category** - Custom "Endgame" tab in the Bench Memories with dedicated icon. 19 NPCs grouped under one category
+- **Pet toggle in /eg config** - Enable/disable the pet system from the Misc tab
+- **Integration tab rework** - Auto-detection status per mod (DETECTED/NOT FOUND), addons section for future extensions
+- **Integration auto-disable** - Mods auto-disable when their JAR is removed (RPG Leveling, Endless Leveling, OrbisGuard)
+- **SimpleClaims compatibility** - 3x3 area break and portal spawning respect claimed chunks
 - **Item ID Migration** - Automatic item ID conversion on player connect and chunk load
 - **Unified commands** - All commands now under `/eg`: config, admin, pet, journal, gauntlet
 
@@ -65,6 +69,8 @@ Lingering **Poison Clouds** spawn every 18-25s during Phase 2+, last 6 seconds, 
 - **Prisma 3x3 drops lost** - Blocks now drop as world items when inventory is full
 - **Endless Leveling level override** - Dungeon mob levels handled natively
 - **Boss XP cap** - Increased from 100k to 1M
+- **Empty "beast" Memories category** - Grooble reclassified from "Beast" to "Predator"
+- **Bestiary drops outdated** - Updated all drop lists to match actual drop tables
 
 ---
 

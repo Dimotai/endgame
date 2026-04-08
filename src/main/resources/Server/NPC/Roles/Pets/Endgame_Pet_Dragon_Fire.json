@@ -1,31 +1,48 @@
 {
-  "Type": "Variant",
-  "Reference": "Template_Endgame_Dragon_Frost",
-  "Modify": {
-    "Appearance": "Endgame_Pet_Dragon_Fire",
-    "MaxHealth": 100,
-    "IsMemory": false,
-    "DropList": "Empty",
-    "AttitudeGroup": "Dragon",
-    "MaxSpeed": 14,
-    "ViewRange": 5,
-    "ViewSector": 360,
-    "HearingRange": 5,
-    "AbsoluteDetectionRange": 5,
-    "KnockbackScale": 0,
-    "LeashDistance": 200,
-    "HardLeashDistance": 300,
-    "Attack": "Root_NPC_Attack_Melee",
-    "AttackDistance": 3,
-    "EnableRangedAttack": false,
-    "BreathesInWater": true,
-    "NameTranslationKey": {
-      "Compute": "NameTranslationKey"
-    }
-  },
-  "Parameters": {
-    "NameTranslationKey": {
-      "Value": "server.npcRoles.Endgame_Pet_Dragon_Fire.name"
-    }
-  }
+  "Type": "Generic",
+  "Appearance": "Endgame_Pet_Dragon_Fire",
+  "StartState": "Idle",
+  "DefaultSubState": "Default",
+  "Invulnerable": true,
+  "BreathesInWater": true,
+  "MaxHealth": 100,
+  "IsMemory": false,
+  "DropList": "Empty",
+  "AttitudeGroup": "Endgame_Pet",
+  "NameTranslationKey": "server.npcRoles.Endgame_Pet_Dragon_Fire.name",
+  "DisableDamageGroups": ["Self", "Player", "Endgame_Pet"],
+  "MotionControllerList": [
+    { "Type": "Walk", "MaxWalkSpeed": 14, "Acceleration": 20, "Gravity": 10, "MaxFallSpeed": 8, "MaxClimbHeight": 3 }
+  ],
+  "Instructions": [
+    { "Instructions": [
+      { "Sensor": { "Type": "State", "State": "Idle" }, "Instructions": [
+        { "Sensor": { "Type": "State", "State": ".Default" }, "Instructions": [
+          {
+            "Sensor": { "Type": "Target", "TargetSlot": "LockedTarget", "Range": 4 },
+            "HeadMotion": { "Type": "Watch" },
+            "BodyMotion": { "Type": "Seek", "SlowDownDistance": 2, "StopDistance": 1, "RelativeSpeed": 0.9 },
+            "ActionsBlocking": true,
+            "Actions": [
+              {
+                "Type": "Random",
+                "Actions": [
+                  { "Action": { "Type": "Attack", "Attack": "Root_NPC_Attack_Melee", "AttackPauseRange": [1.0, 2.0] }, "Weight": 1 }
+                ]
+              }
+            ]
+          },
+          {
+            "Sensor": { "Type": "Target", "TargetSlot": "LockedTarget", "Range": 200 },
+            "HeadMotion": { "Type": "Watch" },
+            "BodyMotion": { "Type": "Seek", "SlowDownDistance": 8, "StopDistance": 5, "RelativeSpeed": 0.7 }
+          },
+          {
+            "Sensor": { "Type": "Any" },
+            "BodyMotion": { "Type": "WanderInCircle", "Radius": 4, "RelativeSpeed": 0.3 }
+          }
+        ]}
+      ]}
+    ]}
+  ]
 }

@@ -145,10 +145,11 @@ public class NativePetPage extends InteractiveCustomUIPage<NativePetPage.PetEven
 
         World world = store.getExternalData().getWorld();
 
+        boolean handled = false;
+
         if (data.action.equals("despawn")) {
-            if (world != null) {
-                world.execute(() -> petManager.despawnPet(store, playerUuid));
-            }
+            petManager.despawnPet(playerUuid);
+            handled = true;
         } else if (data.action.startsWith("spawn:")) {
             String petId = data.action.substring(6);
             plugin.getLogger().atInfo().log("[PetPage] Spawn requested: petId=%s, playerUuid=%s", petId, playerUuid);
@@ -159,18 +160,17 @@ public class NativePetPage extends InteractiveCustomUIPage<NativePetPage.PetEven
                     Vector3d pos = new Vector3d(
                             tc.getPosition().x + 2, tc.getPosition().y + 1, tc.getPosition().z + 2);
                     world.execute(() -> petManager.spawnPet(store, playerUuid, petId, pos));
-                } else {
-                    plugin.getLogger().atWarning().log("[PetPage] TransformComponent or world is null");
+                    handled = true;
                 }
-            } else {
-                plugin.getLogger().atWarning().log("[PetPage] Pet not unlocked or comp is null: %s", petId);
             }
         }
 
-        // Close page after action — player reopens /eg pet to see updated state
-        Player player = store.getComponent(ref, Player.getComponentType());
-        if (player != null) {
-            player.getPageManager().setPage(ref, store, com.hypixel.hytale.protocol.packets.interface_.Page.None);
+        // Close page only after a real action — ignore stray events like SummonMouseExited
+        if (handled) {
+            Player player = store.getComponent(ref, Player.getComponentType());
+            if (player != null) {
+                player.getPageManager().setPage(ref, store, com.hypixel.hytale.protocol.packets.interface_.Page.None);
+            }
         }
     }
 
@@ -180,6 +180,11 @@ public class NativePetPage extends InteractiveCustomUIPage<NativePetPage.PetEven
         if (ref == null || !ref.isValid()) return;
         Player player = store.getComponent(ref, Player.getComponentType());
         if (player == null) return;
+        // Ensure component is ready before opening (prevents first-connect crash)
+        if (plugin.getPlayerComponent(uuid) == null) {
+            playerRef.sendMessage(com.hypixel.hytale.server.core.Message.raw("[EndgameQoL] Loading pet data, please try again.").color("#ffaa00"));
+            return;
+        }
         player.getPageManager().openCustomPage(ref, store, new NativePetPage(playerRef, plugin, uuid));
     }
 

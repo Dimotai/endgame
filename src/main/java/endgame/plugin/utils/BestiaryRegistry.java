@@ -228,17 +228,6 @@ public final class BestiaryRegistry {
             new String[]{"Adamantite Bar", "Void Essence", "Mithril Bar"},
             "Warden Trial", "Goblin_Duke.png");
 
-        reg("Scarak_Fighter", "Scarak Fighter", Category.ENDGAME, 81,
-            "Physical",
-            "Chitinous insectoid warriors that swarm from underground nests. Never found alone.",
-            new String[]{"Sturdy Chitin", "Venom Sac"},
-            "Zone 3 — Caves", "Scarak_Fighter.png");
-
-        reg("Scarak_Broodmother", "Scarak Broodmother", Category.ENDGAME, 145,
-            "Physical",
-            "The egg-laying matriarch of a Scarak colony. Protected fiercely by her swarm.",
-            new String[]{"Venom Sac", "Sturdy Chitin", "Adamantite Bar"},
-            "Zone 3 — Caves", "Scarak_Broodmother.png");
 
         reg("Endgame_Necromancer_Void", "Necromancer Void", Category.ENDGAME, 500,
             "Magic",
@@ -246,11 +235,6 @@ public final class BestiaryRegistry {
             new String[]{"Bone Fragment", "Void Essence", "Voidheart"},
             "Warden Trial", null);
 
-        reg("Outlander_Brute", "Outlander Brute", Category.ENDGAME, 124,
-            "Axe",
-            "A hulking outlaw wielding a crude battleaxe. Slow but devastatingly powerful swings.",
-            new String[]{"Adamantite Bar", "Shadoweave Fabric"},
-            "Warden Trial", "Outlander_Brute.png");
 
         // === SPECIAL ===
         reg("Onyxium_Encounter", "Onyxium Encounter", Category.SPECIAL, 700,
