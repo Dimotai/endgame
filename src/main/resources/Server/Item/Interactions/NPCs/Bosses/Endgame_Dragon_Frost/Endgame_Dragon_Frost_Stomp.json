@@ -17,14 +17,11 @@
         },
         "HitEntity": {
             "Interactions": [
+                "Endgame_Dragon_Frost_Stomp_Damage",
                 {
-                    "Type": "Replace",
-                    "DefaultValue": {
-                        "Interactions": [
-                            "NPC_Attack_Melee_Damage"
-                        ]
-                    },
-                    "Var": "Melee_Damage"
+                    "Type": "ApplyEffect",
+                    "EffectId": "Endgame_Stagger",
+                    "Entity": "Target"
                 }
             ]
         }

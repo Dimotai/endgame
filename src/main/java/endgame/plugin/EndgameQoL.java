@@ -139,6 +139,9 @@ public class EndgameQoL extends JavaPlugin {
         this.getCodecRegistry(Interaction.CODEC).register(
                 "EndgameAccessoryPouch", endgame.plugin.ui.OpenAccessoryPouchInteraction.class,
                 endgame.plugin.ui.OpenAccessoryPouchInteraction.CODEC);
+        this.getCodecRegistry(Interaction.CODEC).register(
+                "GolemVoidJumpSlam", endgame.plugin.systems.boss.GolemVoidJumpSlamInteraction.class,
+                endgame.plugin.systems.boss.GolemVoidJumpSlamInteraction.CODEC);
         com.hypixel.hytale.server.npc.NPCPlugin.get().registerCoreComponentType(
                 "EndgameOpenTradeUI", endgame.plugin.ui.BuilderActionOpenTradeUI::new);
         com.hypixel.hytale.server.npc.NPCPlugin.get().registerCoreComponentType(
@@ -189,7 +192,7 @@ public class EndgameQoL extends JavaPlugin {
         endgame.plugin.integration.ClaimProtectionBridge.get().init();
 
         // HStats analytics (hstats.dev)
-        new HStats("00a9cb44-fac7-4aae-bdd7-8fb5e8291280", "4.2.0");
+        new HStats("00a9cb44-fac7-4aae-bdd7-8fb5e8291280", "5.0.0");
 
         this.getLogger().atInfo().log("[EndgameQoL] Setup finished!");
     }

@@ -447,6 +447,10 @@ public class ComboMeterManager {
         synchronized (state) {
             if (state.hudActive) return;
         }
+        // Wave arenas own the single CustomHud slot while active — skip the combo HUD
+        // to avoid clobbering the WaveAnnouncementHud. Combo state (dmg boosts) keeps tracking.
+        if (endgame.wavearena.WaveArenaAPI.isInArena(state.playerUuid)) return;
+
         try {
             PlayerRef playerRef = findPlayerRef(state.playerUuid);
             if (playerRef == null) return;
@@ -479,6 +483,9 @@ public class ComboMeterManager {
         long now = System.currentTimeMillis();
 
         for (ComboState state : playerStates.values()) {
+            // Skip refresh while the player is in a WaveArena — wave HUD owns the slot.
+            if (endgame.wavearena.WaveArenaAPI.isInArena(state.playerUuid)) continue;
+
             ComboMeterHud hud;
             int comboCount, comboTier, personalBest;
             boolean newRecord;

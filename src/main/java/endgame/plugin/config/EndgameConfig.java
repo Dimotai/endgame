@@ -23,7 +23,7 @@ public class EndgameConfig {
     public static final BuilderCodec<EndgameConfig> CODEC = BuilderCodec
             .builder(EndgameConfig.class, EndgameConfig::new)
             .append(new KeyedCodec<String>("Version", Codec.STRING),
-                    (c, v) -> c.version = "4.2.0", c -> c.version).add()
+                    (c, v) -> c.version = "5.0.0", c -> c.version).add()
             .append(new KeyedCodec<DifficultyConfig>("Difficulty", DifficultyConfig.CODEC),
                     (c, v) -> { if (v != null) c.difficulty = v; }, c -> c.difficulty).add()
             .append(new KeyedCodec<Map<String, BossConfig>>("Bosses",
@@ -51,7 +51,7 @@ public class EndgameConfig {
 
     // === SUB-CONFIG INSTANCES ===
 
-    private String version = "4.2.0";
+    private String version = "5.0.0";
     private DifficultyConfig difficulty = new DifficultyConfig();
     private final Map<String, BossConfig> bossConfigs = new ConcurrentHashMap<>();
     private WeaponsConfig weapons = new WeaponsConfig();

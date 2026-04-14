@@ -22,7 +22,7 @@
                 "Endgame_Outlander_Brute_Stomp_Damage",
                 {
                   "Type": "ApplyEffect",
-                  "EffectId": "Endgame_Outlander_Brute_Slow"
+                  "EffectId": "Slow"
                 }
               ]
             },

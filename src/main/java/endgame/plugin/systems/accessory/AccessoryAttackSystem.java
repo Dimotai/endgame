@@ -39,7 +39,7 @@ import java.util.UUID;
 public class AccessoryAttackSystem extends DamageEventSystem {
 
     private static final HytaleLogger LOGGER = HytaleLogger.get("EndgameQoL.AccessoryAttack");
-    private static final String BURN_EFFECT_ID = "Endgame_Accessory_Burn";
+    private static final String BURN_EFFECT_ID = "Burn";
     private static final double AOE_RADIUS = 3.0;
 
     private final EndgameQoL plugin;

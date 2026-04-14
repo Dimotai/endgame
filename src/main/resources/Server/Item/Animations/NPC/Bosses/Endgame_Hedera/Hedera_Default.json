@@ -20,6 +20,11 @@
       "ThirdPerson": "NPC/Intelligent/Hedera/Animations/Attacks/Entangle.blockyanim",
       "Speed": 1,
       "Looping": false
+    },
+    "Run": {
+      "ThirdPerson": "NPC/Intelligent/Hedera/Animations/Default/Run.blockyanim",
+      "Speed": 1,
+      "Looping": true
     }
   },
   "Camera": {

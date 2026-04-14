@@ -40,7 +40,7 @@
           },
           "Next": {
             "Type": "ApplyEffect",
-              "EffectId": "Endgame_Scarak_Venom"
+              "EffectId": "Poison_T1"
           }
         },
         {

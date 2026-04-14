@@ -2,36 +2,44 @@ Group {
   LayoutMode: Center;
 
   Group #GamePanel {
-    Background: #0a0a12;
-    Anchor: (Width: 500, Height: 570);
+    Background: #0d0d18;
+    Anchor: (Width: 480, Height: 540);
     LayoutMode: Top;
-    Padding: (Left: 10, Right: 10, Top: 10, Bottom: 10);
+    Padding: (Left: 10, Right: 10, Top: 8, Bottom: 6);
 
+    // Header bar
     Group #Header {
       LayoutMode: Left;
-      Anchor: (Height: 32);
-      Padding: (Left: 20, Right: 20);
+      Anchor: (Height: 28);
+      Padding: (Left: 16, Right: 16);
 
       Label #Title {
-        Style: (FontSize: 20, TextColor: #00ff41);
+        Style: (FontSize: 18, TextColor: #00ff41, RenderBold: true);
         Text: "SNAKE";
-        Anchor: (Width: 220);
+        Anchor: (Width: 200);
       }
 
       Label #Score {
-        Style: (FontSize: 20, TextColor: #00ff41, Alignment: End);
+        Style: (FontSize: 14, TextColor: #55cc66, Alignment: End);
         Text: "Score: 0";
-        Anchor: (Width: 220);
+        FlexWeight: 1;
       }
     }
 
-    Group #Spacer1 { Anchor: (Height: 6); }
+    Group { Anchor: (Height: 4); }
 
-    Group #GridWrapper {
+    // Grid frame — green border around the play area
+    Group #GridFrame {
       LayoutMode: Center;
-      Background: #080810;
-      Anchor: (Height: 404);
+      Background: #1a3a1a;
+      Anchor: (Height: 408);
       Padding: (Full: 2);
+
+      Group #GridWrapper {
+        LayoutMode: Center;
+        Background: #080810;
+        Anchor: (Height: 404);
+        Padding: (Full: 2);
 
       Group #GameArea {
         LayoutMode: Top;
@@ -517,83 +525,37 @@ Group {
         }
       }
     }
+    }
 
-    Group #Spacer2 { Anchor: (Height: 8); }
+    Group { Anchor: (Height: 4); }
 
-    Group #Controls {
-      LayoutMode: Left;
-      Anchor: (Height: 38);
-      Padding: (Left: 20);
+    // Hint + game over overlay
+    Group #BottomBar {
+      LayoutMode: Top;
+      Anchor: (Height: 60);
+      Padding: (Left: 20, Right: 20, Top: 4);
 
-      TextButton #BtnUp {
-        Anchor: (Width: 60, Height: 34);
-        Text: "W";
-        Background: #1a2a1a;
+      Label #HintLabel {
+        Style: (FontSize: 11, TextColor: #336633, Alignment: Center);
+        Text: "WASD move  |  R retry";
+        Anchor: (Height: 16);
       }
 
-      Group #Sp3 { Anchor: (Width: 6); }
-
-      TextButton #BtnLeft {
-        Anchor: (Width: 60, Height: 34);
-        Text: "A";
-        Background: #1a2a1a;
-      }
-
-      Group #Sp4 { Anchor: (Width: 6); }
-
-      TextButton #BtnDown {
-        Anchor: (Width: 60, Height: 34);
-        Text: "S";
-        Background: #1a2a1a;
-      }
-
-      Group #Sp5 { Anchor: (Width: 6); }
-
-      TextButton #BtnRight {
-        Anchor: (Width: 60, Height: 34);
-        Text: "D";
-        Background: #1a2a1a;
-      }
-
-      Group #Sp6 { Anchor: (Width: 14); }
-
-      TextButton #BtnRetry {
-        Anchor: (Width: 80, Height: 34);
-        Text: "Retry";
-        Background: #2d5a2d;
+      Label #GameOverLabel {
+        Style: (FontSize: 20, TextColor: #ff3333, Alignment: Center, RenderBold: true);
+        Text: "GAME OVER";
         Visible: false;
+        Anchor: (Height: 28);
       }
     }
 
-    Group #Spacer3 { Anchor: (Height: 6); }
-
-    Group #KeyRow {
-      LayoutMode: Left;
-      Anchor: (Height: 30);
-      Padding: (Left: 20);
-
-      Label #KeyHint {
-        Style: (FontSize: 12, TextColor: #336633);
-        Text: "Type here to use keyboard:";
-        Anchor: (Width: 200, Height: 28);
-      }
-
-      TextField #KeyInput {
-        AutoFocus: true;
-        MaxLength: 256;
-        Anchor: (Width: 60, Height: 28);
-        Background: #161620;
-        PlaceholderText: "...";
-      }
-    }
-
-    Group #Spacer4 { Anchor: (Height: 4); }
-
-    Label #GameOverLabel {
-      Style: (FontSize: 22, TextColor: #ff3333, Alignment: Center);
-      Text: "GAME OVER";
-      Visible: false;
-      Anchor: (Height: 30);
+    // Hidden TextField — captures keyboard input (1px tall, invisible)
+    TextField #KeyInput {
+      AutoFocus: true;
+      MaxLength: 99999;
+      Anchor: (Width: 1, Height: 1);
+      Background: #0a0a12;
+      PlaceholderText: "";
     }
   }
 }

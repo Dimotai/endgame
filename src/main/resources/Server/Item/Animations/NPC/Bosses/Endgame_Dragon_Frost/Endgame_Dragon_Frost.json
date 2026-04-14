@@ -20,6 +20,13 @@
       "Speed": 1,
       "BlendingDuration": 0.2,
       "Looping": false
+    },
+    "IcyWind": {
+      "ThirdPerson": "NPC/Bosses/Endgame_Dragon_Frost/Animations/Attacks/Icy_Wind.blockyanim",
+      "ThirdPersonMoving": "NPC/Bosses/Endgame_Dragon_Frost/Animations/Attacks/Icy_Wind.blockyanim",
+      "Speed": 1,
+      "BlendingDuration": 0.2,
+      "Looping": false
     }
   },
   "Camera": {

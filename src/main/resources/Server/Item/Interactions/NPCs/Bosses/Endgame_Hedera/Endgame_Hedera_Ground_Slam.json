@@ -31,7 +31,14 @@
               ]
             },
             "HitEntity": {
-              "Interactions": [ "Endgame_Hedera_Ground_Slam_Damage" ]
+              "Interactions": [
+                "Endgame_Hedera_Ground_Slam_Damage",
+                {
+                  "Type": "ApplyEffect",
+                  "EffectId": "Endgame_Stagger",
+                  "Entity": "Target"
+                }
+              ]
             },
             "Next": {
               "Type": "Simple",

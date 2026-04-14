@@ -1,0 +1,48 @@
+Group #WaveRoot {
+  Anchor: (Width: 300, Height: 60, Top: 46);
+  LayoutMode: Top;
+
+  // Thin top accent bar (theme color)
+  Group #WaveTopAccent {
+    Anchor: (Width: 300, Height: 2);
+    Background: #aa44ee;
+  }
+
+  // Main panel
+  Group {
+    Anchor: (Width: 300, Height: 58);
+    Background: #0a0611(0.88);
+    LayoutMode: Top;
+
+    Group { Anchor: (Height: 3); }
+
+    // Subtitle: arena label + wave progress dots (e.g. "VOID GAUNTLET  \u25cf \u25cb \u25cb")
+    Label #WaveSubtitle {
+      Style: (FontSize: 9, TextColor: #8855bb, RenderBold: true, LetterSpacing: 2, HorizontalAlignment: Center, VerticalAlignment: Center);
+      Anchor: (Width: 300, Height: 13);
+      Text: "VOID GAUNTLET";
+    }
+
+    // Title: large state text (WAVE 1 / 3, PREPARE, CLEARED, COMPLETE, FAILED...)
+    Label #WaveTitle {
+      Style: (FontSize: 20, TextColor: #ffffff, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center);
+      Anchor: (Width: 300, Height: 24);
+      Text: "PREPARE";
+    }
+
+    // Detail: context text (Fight!, Next wave in 8s, Starting in 5s, Rewards incoming...)
+    Label #WaveDetail {
+      Style: (FontSize: 10, TextColor: #aa44ee, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center);
+      Anchor: (Width: 300, Height: 12);
+      Text: "";
+    }
+
+    Group { Anchor: (Height: 3); }
+  }
+
+  // Thin bottom accent (subtle mirror, fades the panel into the game view)
+  Group #WaveBottomAccent {
+    Anchor: (Width: 300, Height: 1);
+    Background: #442288(0.4);
+  }
+}

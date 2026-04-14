@@ -2,9 +2,9 @@
   "Model": "NPC_Spawn_Marker",
   "NPCs": [
     {
-      "Name": "Endgame_Golem_Void",
+      "Name": "Endgame_Void_Frog",
       "Weight": 100,
-      "SpawnAfterGameTime": "PT1H"
+      "SpawnAfterGameTime": "PT2H"
     }
   ],
   "ExclusionRadius": 0,

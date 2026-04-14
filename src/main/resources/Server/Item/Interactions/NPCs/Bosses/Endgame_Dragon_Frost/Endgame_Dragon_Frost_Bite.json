@@ -31,16 +31,7 @@
                         },
                         "HitEntity": {
                             "Interactions": [
-                                {
-                                    "Type": "Replace",
-                                    "DefaultOk": true,
-                                    "DefaultValue": {
-                                        "Interactions": [
-                                            "NPC_Attack_Melee_Damage"
-                                        ]
-                                    },
-                                    "Var": "Melee_Damage"
-                                }
+                                "Endgame_Dragon_Frost_Melee_Damage"
                             ]
                         },
                         "Next": {

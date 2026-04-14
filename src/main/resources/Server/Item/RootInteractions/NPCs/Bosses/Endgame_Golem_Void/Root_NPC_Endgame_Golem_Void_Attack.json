@@ -17,7 +17,9 @@
         "Golem_Void_Throw",
         "Golem_Void_Pound_Double",
         "Golem_Void_Throw_Double",
-        "Golem_Void_Spin"
+        "Golem_Void_Jump_Slam",
+        "Golem_Void_Jump_Slam",
+        "Golem_Void_Jump_Slam"
       ]
     }
   ],

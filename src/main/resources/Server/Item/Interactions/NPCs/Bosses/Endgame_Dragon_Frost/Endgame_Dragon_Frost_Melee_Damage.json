@@ -1,0 +1,27 @@
+{
+  "Parent": "DamageEntityParent",
+  "DamageCalculator": {
+    "Type": "Absolute",
+    "BaseDamage": {
+      "Physical": 15,
+      "Ice": 10
+    },
+    "RandomPercentageModifier": 0.1
+  },
+  "Effects": {
+    "CameraEffect": "Impact_Light"
+  },
+  "DamageEffects": {
+    "Knockback": {
+      "Force": 4,
+      "RelativeZ": -3,
+      "VelocityY": 2
+    },
+    "WorldSoundEventId": "SFX_Unarmed_Impact",
+    "WorldParticles": [
+      {
+        "SystemId": "Impact_Ice"
+      }
+    ]
+  }
+}

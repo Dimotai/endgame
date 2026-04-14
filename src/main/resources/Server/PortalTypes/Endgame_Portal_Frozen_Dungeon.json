@@ -7,7 +7,8 @@
     "SplashImage": "DefaultArtwork.png",
     "Tips": [
       "server.portals.frozen_dungeon.tip1",
-      "server.portals.frozen_dungeon.tip2"
+      "server.portals.frozen_dungeon.tip2",
+      "server.portals.frozen_dungeon.tip3"
     ]
   },
   "Spawn": {

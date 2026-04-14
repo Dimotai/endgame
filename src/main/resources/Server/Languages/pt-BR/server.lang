@@ -58,6 +58,8 @@ npcRoles.Golem_Eye_Void.name = Olho do Vazio
 items.Endgame_Portal_Mithril_Dragon.name = Fragmento do Cume Congelado
 items.Endgame_Portal_Mithril_Dragon.description = Um fragmento irregular de permafrost. <color is="#b8860b">Clique Direito</color> em um <color is="#a9a9a9">Portal Ancestral</color> para abrir o caminho para o <color is="#7de8ff">Cume Congelado</color>.\nSob os picos cobertos de neve desta taiga gelada, <color is="#7de8ff">Dragões de Gelo</color> guardam antigos veios de <color is="#7de8ff">Mithril</color>.
 portals.mithril.tip = <i><color is="#05c09a">Uma besta mítica dorme aqui,\npresa em um sono eterno...</color></i>\n\n<color is="#888888">Dizem que um</color> <color is="#7de8ff">minério prateado</color> <color is="#888888">brilha nas profundezas congeladas.</color>
+items.Endgame_Dungeon_Portal.name = Portal Ancestral Endgame
+items.Endgame_Dungeon_Portal.description = Um portal reforçado sintonizado com os reinos Endgame. Coloque-o e clique com o botão direito segurando um <color is="#a9a9a9">Fragmento do Vazio</color>, uma <color is="#80ffff">Chave da Masmorra Congelada</color> ou uma <color is="#55aa55">Chave da Masmorra do Pântano</color>. Os Portal Devices vanilla rejeitam essas chaves.
 items.Endgame_Portal_Swamp_Dungeon.name = Chave da Masmorra do Pântano
 items.Endgame_Portal_Swamp_Dungeon.description = Uma chave tecida de raízes ancestrais, gotejando seiva escura. <color is="#b8860b">Clique Direito</color> em um <color is="#a9a9a9">Portal Ancestral</color> para abrir o caminho à <color is="#2E8B57">Masmorra do Pântano</color>.\nNas profundezas do pântano sufocante, <color is="#2E8B57">Hedera</color> aguarda no coração da Grande Árvore Oca.
 items.Endgame_Portal_Void_Realm.name = Fragmento do Vazio
@@ -88,6 +90,7 @@ portals.frozen_dungeon = Portão de Frostfall
 portals.frozen_dungeon.description = Uma fenda uivante de <color is="#7de8ff">gelo e vazio</color>, suas bordas crepitando com relâmpagos congelados. Além dela jaz um bastião em ruínas aberto ao <color is="#B0C4DE">céu infinito</color>.
 portals.frozen_dungeon.tip1 = <i><color is="#7de8ff">O vento grita através de pedras destroçadas,</color></i>
 portals.frozen_dungeon.tip2 = <i><color is="#7de8ff">e acima, algo imenso circula na geada...</color></i>
+portals.frozen_dungeon.tip3 = <color is="#ffb060">Traga uma arma à distância</color> <color is="#cccccc">(arco, lança, cajado)</color> <color is="#ffb060">— o dragão é imune ao corpo-a-corpo enquanto voa.</color>
 portals.swamp_dungeon = Portão da Masmorra do Pântano
 portals.swamp_dungeon.description = Um portal retorcido de <color is="#2E8B57">vinhas emaranhadas e energia sombria</color>, suas bordas pulsando com vida corrompida. Além dele jaz um pântano consumido pelo poder ancestral de <color is="#2E8B57">Hedera</color>.
 portals.swamp_dungeon.tip1 = <i><color is="#2E8B57">As raízes se torcem e alcançam através da névoa,</color></i>

@@ -58,6 +58,8 @@ npcRoles.Golem_Eye_Void.name = Œil du Vide
 items.Endgame_Portal_Mithril_Dragon.name = Éclat du Sommet Gelé
 items.Endgame_Portal_Mithril_Dragon.description = Un fragment irrégulier de permafrost. <color is="#b8860b">Clic Droit</color> sur un <color is="#a9a9a9">Portail Ancestral</color> pour ouvrir le passage vers le <color is="#7de8ff">Sommet Gelé</color>.\nSous les pics enneigés de cette taïga glaciale, des <color is="#7de8ff">Dragons de Glace</color> gardent d'anciens filons de <color is="#7de8ff">Mithril</color>.
 portals.mithril.tip = <i><color is="#05c09a">Une bête mythique sommeille ici,\nprisonnière d'un sommeil éternel...</color></i>\n\n<color is="#888888">On dit qu'un</color> <color is="#7de8ff">minerai argenté</color> <color is="#888888">scintille dans les profondeurs gelées.</color>
+items.Endgame_Dungeon_Portal.name = Portail Ancestral Endgame
+items.Endgame_Dungeon_Portal.description = Un portail renforcé accordé aux royaumes Endgame. Posez-le, puis clic droit avec un <color is="#a9a9a9">Éclat du Vide</color>, une <color is="#80ffff">Clé du Donjon Gelé</color> ou une <color is="#55aa55">Clé du Donjon du Marais</color>. Les Portail Devices vanilla rejettent ces clés.
 items.Endgame_Portal_Swamp_Dungeon.name = Clé du Donjon du Marais
 items.Endgame_Portal_Swamp_Dungeon.description = Une clé tissée de racines ancestrales, dégoulinant de sève sombre. <color is="#b8860b">Clic Droit</color> sur un <color is="#a9a9a9">Portail Ancestral</color> pour ouvrir le passage vers le <color is="#2E8B57">Donjon du Marais</color>.\nAu plus profond du marais suffocant, <color is="#2E8B57">Hedera</color> attend au cœur du Grand Arbre Creux.
 items.Endgame_Portal_Void_Realm.name = Éclat du Vide
@@ -88,6 +90,7 @@ portals.frozen_dungeon = Porte de Frostfall
 portals.frozen_dungeon.description = Une faille hurlante de <color is="#7de8ff">glace et de vide</color>, ses bords crépitant d'éclairs gelés. Au-delà se trouve un bastion en ruines ouvert au <color is="#B0C4DE">ciel infini</color>.
 portals.frozen_dungeon.tip1 = <i><color is="#7de8ff">Le vent hurle à travers la pierre brisée,</color></i>
 portals.frozen_dungeon.tip2 = <i><color is="#7de8ff">et au-dessus, quelque chose d'immense tourne dans le givre...</color></i>
+portals.frozen_dungeon.tip3 = <color is="#ffb060">Apportez une arme à distance</color> <color is="#cccccc">(arc, lance, bâton)</color> <color is="#ffb060">— le dragon en vol est invulnérable aux coups de mêlée.</color>
 portals.swamp_dungeon = Porte du Donjon du Marais
 portals.swamp_dungeon.description = Un portail de <color is="#2E8B57">vignes emmêlées et d'énergie sombre</color>, ses bords pulsant de vie corrompue. Au-delà se trouve un marais consumé par le pouvoir ancestral d'<color is="#2E8B57">Hedera</color>.
 portals.swamp_dungeon.tip1 = <i><color is="#2E8B57">Les racines se tordent et s'étendent à travers la brume,</color></i>

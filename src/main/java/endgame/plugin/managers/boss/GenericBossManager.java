@@ -40,8 +40,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class GenericBossManager {
 
     private static final int HUD_REFRESH_RATE_MS = 200;
-    private static final int HEALTH_BAR_WIDTH = 380;
-    private static final int ELITE_HEALTH_BAR_WIDTH = 280;
+    // Bar dimensions come from endgame.bossbar.BossBarRenderer (BAR_WIDTH, BAR_HEIGHT, HIGHLIGHT_HEIGHT)
 
     // Composite key for per-player per-boss HUD tracking — uses Ref directly (stable equals/hashCode)
     private record HudKey(UUID playerUuid, Ref<EntityStore> bossRef) {}
@@ -124,6 +123,8 @@ public class GenericBossManager {
         public volatile boolean isInvulnerable = false;
         public volatile long invulnerabilityEndTime = 0;
         public volatile float lastHealthPercent = 1.0f;
+        public volatile int lastHealthCurrent = 0;
+        public volatile int lastHealthMax = 0;
         public final long spawnTimestamp = System.currentTimeMillis();
 
         public GenericBossState(Ref<EntityStore> bossRef, BossEncounterConfig config, String npcTypeId) {
@@ -236,6 +237,9 @@ public class GenericBossManager {
             plugin.getLogger().atFine().log("[GenericBoss] Unregistered %s: %s",
                     state.config.displayName, state.npcTypeId);
             hideAllBossBarsForBoss(bossRef);
+            // Release focus from any player currently focused on this boss — their
+            // next damage event on another boss will claim focus.
+            endgame.bossbar.BossBarFocus.releaseBoss(bossRef);
         }
     }
 
@@ -370,15 +374,24 @@ public class GenericBossManager {
     }
 
     public void updateHealthTracking(Ref<EntityStore> bossRef, EntityStatMap statMap) {
+        updateHealthTracking(bossRef, statMap, 0f);
+    }
+
+    /** Updates the tracked health percent, optionally subtracting a pending FILTER-group
+     *  damage amount. Call with the final damage value after all modifications
+     *  (frost bonus, etc.) so the boss bar reflects the post-damage HP. */
+    public void updateHealthTracking(Ref<EntityStore> bossRef, EntityStatMap statMap, float pendingDamage) {
         GenericBossState state = activeBosses.get(bossRef);
         if (state == null || statMap == null)
             return;
         EntityStatValue healthValue = statMap.get(DefaultEntityStatTypes.getHealth());
         if (healthValue == null)
             return;
-        float currentHealth = healthValue.get();
+        float currentHealth = Math.max(0f, healthValue.get() - Math.max(0f, pendingDamage));
         float maxHealth = healthValue.getMax();
         state.lastHealthPercent = maxHealth > 0 ? currentHealth / maxHealth : 0f;
+        state.lastHealthCurrent = Math.max(0, Math.round(currentHealth));
+        state.lastHealthMax = Math.max(0, Math.round(maxHealth));
     }
 
     // =========================================================================
@@ -513,13 +526,22 @@ public class GenericBossManager {
             return;
 
         HudKey hudKey = new HudKey(playerUuid, bossRef);
-        if (playerHuds.containsKey(hudKey))
+        if (playerHuds.containsKey(hudKey)) {
+            // Already showing this boss to this player — re-acquire focus in case
+            // another mod had taken it, then exit (refresh loop handles updates).
+            endgame.bossbar.BossBarFocus.acquire(playerUuid, bossRef);
             return;
+        }
+
+        // Take focus for this player (priority: last-damaged wins).
+        // Any previous focus (same mod or another mod) will self-hide on its next refresh
+        // via isFocused() check below.
+        endgame.bossbar.BossBarFocus.acquire(playerUuid, bossRef);
 
         // Clear removed flag so the new HUD's refresh will work
         removedHudKeys.remove(hudKey);
 
-        String html = state.config.elite ? buildEliteBarHtml(state) : buildBossBarHtml(state);
+        String html = buildBarHtml(state);
 
         try {
             HyUIHud hud = HudBuilder.hudForPlayer(playerRef)
@@ -533,6 +555,14 @@ public class GenericBossManager {
                                 return;
                             if (playerHuds.get(hudKey) != h)
                                 return;
+
+                            // Priority focus: if another boss (same or different mod) took focus
+                            // for this player, self-hide this bar.
+                            if (!endgame.bossbar.BossBarFocus.isFocused(playerUuid, bossRef)) {
+                                removedHudKeys.add(hudKey);
+                                pendingHudRemovals.add(hudKey);
+                                return;
+                            }
 
                             GenericBossState currentState = activeBosses.get(bossRef);
                             if (currentState == null || !currentState.bossRef.isValid()
@@ -549,56 +579,55 @@ public class GenericBossManager {
                             final boolean snapshotInvuln = currentState.isInvulnerable;
 
                             int healthPct = Math.round(snapshotHealth * 100);
+                            int fillWidth = Math.max(0, Math.min(endgame.bossbar.BossBarRenderer.BAR_WIDTH,
+                                    Math.round(endgame.bossbar.BossBarRenderer.BAR_WIDTH * snapshotHealth)));
 
-                            if (currentState.config.elite) {
-                                // Elite bar: update health text and fill only (no phase text)
-                                int eliteFillWidth = Math.max(0, Math.min(ELITE_HEALTH_BAR_WIDTH,
-                                        Math.round(ELITE_HEALTH_BAR_WIDTH * snapshotHealth)));
-                                try {
-                                    h.getById("health-text", LabelBuilder.class)
-                                            .ifPresent(l -> l.withText(healthPct + "% HP"));
-                                } catch (Exception e) {
-                                    plugin.getLogger().atFine().log("[GenericBoss] HUD element update error: %s", e.getMessage());
-                                }
-                                try {
-                                    h.getById("health-bar-fill", GroupBuilder.class)
-                                            .ifPresent(b -> b.withAnchor(new HyUIAnchor()
-                                                    .setWidth(eliteFillWidth).setHeight(10).setLeft(0).setTop(0)));
-                                } catch (Exception e) {
-                                    plugin.getLogger().atFine().log("[GenericBoss] HUD element update error: %s", e.getMessage());
-                                }
+                            // Resolve phase subtitle from registered theme (theme-aware)
+                            final int phaseSnapshot = snapshotPhase;
+                            final String finalPhaseText = endgame.bossbar.BossBarRegistry.getTheme(currentState.npcTypeId)
+                                    .map(t -> {
+                                        var ph = t.phase(phaseSnapshot);
+                                        return t.phases().size() > 1
+                                                ? "Phase " + ph.number() + " - " + ph.name()
+                                                : ph.name();
+                                    })
+                                    .orElse("Phase " + snapshotPhase);
+
+                            // HP numeric line
+                            final String finalHpNumeric;
+                            if (currentState.lastHealthMax > 0) {
+                                finalHpNumeric = endgame.bossbar.BossBarRenderer.formatNumber(currentState.lastHealthCurrent)
+                                        + " / " + endgame.bossbar.BossBarRenderer.formatNumber(currentState.lastHealthMax)
+                                        + " HP  \u2022  " + healthPct + "%";
                             } else {
-                                // Boss bar: update phase text, health text, and fill (using snapshots)
-                                String phText = (snapshotPhase >= 1 && snapshotPhase <= currentState.config.phaseNames.length)
-                                        ? currentState.config.phaseNames[snapshotPhase - 1]
-                                        : "Unknown";
-                                String fullPhaseText = "Phase " + snapshotPhase + " - " + phText;
-                                if (snapshotInvuln)
-                                    fullPhaseText += " [INVULNERABLE]";
+                                finalHpNumeric = healthPct + "%";
+                            }
 
-                                final String finalPhaseText = fullPhaseText;
-                                int fillWidth = Math.max(0, Math.min(HEALTH_BAR_WIDTH,
-                                        Math.round(HEALTH_BAR_WIDTH * snapshotHealth)));
-
-                                try {
-                                    h.getById("health-text", LabelBuilder.class)
-                                            .ifPresent(l -> l.withText(healthPct + "% HP"));
-                                } catch (Exception e) {
-                                    plugin.getLogger().atFine().log("[GenericBoss] HUD element update error: %s", e.getMessage());
-                                }
-                                try {
-                                    h.getById("phase-text", LabelBuilder.class)
-                                            .ifPresent(l -> l.withText(finalPhaseText));
-                                } catch (Exception e) {
-                                    plugin.getLogger().atFine().log("[GenericBoss] HUD element update error: %s", e.getMessage());
-                                }
-                                try {
-                                    h.getById("health-bar-fill", GroupBuilder.class)
-                                            .ifPresent(b -> b.withAnchor(new HyUIAnchor()
-                                                    .setWidth(fillWidth).setHeight(14).setLeft(0).setTop(0)));
-                                } catch (Exception e) {
-                                    plugin.getLogger().atFine().log("[GenericBoss] HUD element update error: %s", e.getMessage());
-                                }
+                            try {
+                                h.getById(endgame.bossbar.BossBarRenderer.ID_HP_NUMERIC, LabelBuilder.class)
+                                        .ifPresent(l -> l.withText(finalHpNumeric));
+                            } catch (Exception e) {
+                                plugin.getLogger().atFine().log("[GenericBoss] HUD element update error: %s", e.getMessage());
+                            }
+                            try {
+                                h.getById(endgame.bossbar.BossBarRenderer.ID_PHASE_TEXT, LabelBuilder.class)
+                                        .ifPresent(l -> l.withText(finalPhaseText));
+                            } catch (Exception e) {
+                                plugin.getLogger().atFine().log("[GenericBoss] HUD element update error: %s", e.getMessage());
+                            }
+                            try {
+                                h.getById(endgame.bossbar.BossBarRenderer.ID_HP_BAR_FILL, GroupBuilder.class)
+                                        .ifPresent(b -> b.withAnchor(new HyUIAnchor()
+                                                .setWidth(fillWidth).setHeight(endgame.bossbar.BossBarRenderer.BAR_HEIGHT).setLeft(0).setTop(0)));
+                            } catch (Exception e) {
+                                plugin.getLogger().atFine().log("[GenericBoss] HUD element update error: %s", e.getMessage());
+                            }
+                            try {
+                                h.getById(endgame.bossbar.BossBarRenderer.ID_HP_BAR_HL, GroupBuilder.class)
+                                        .ifPresent(b -> b.withAnchor(new HyUIAnchor()
+                                                .setWidth(fillWidth).setHeight(endgame.bossbar.BossBarRenderer.HIGHLIGHT_HEIGHT).setLeft(0).setTop(0)));
+                            } catch (Exception e) {
+                                plugin.getLogger().atFine().log("[GenericBoss] HUD element update error: %s", e.getMessage());
                             }
                         } catch (Exception e) {
                             // Outer catch — flag for deferred removal, NEVER call h.remove() here
@@ -618,27 +647,23 @@ public class GenericBossManager {
         }
     }
 
-    private String buildBossBarHtml(GenericBossState state) {
-        BossEncounterConfig config = state.config;
-        String phaseName = config.phaseNames[state.currentPhase - 1];
-        String phaseText = "Phase " + state.currentPhase + " - " + phaseName;
-        String phaseColor = config.phaseColors[state.currentPhase - 1];
-        String healthBarColor = config.healthBarColors[state.currentPhase - 1];
-
-        return endgame.plugin.utils.BossBarHtmlBuilder.buildBossBar(
-                config.displayName, config.nameColor,
-                phaseText, phaseColor,
+    /** Renders boss/elite bar HTML via {@link endgame.bossbar.BossBarRegistry}.
+     *  Theme is looked up by {@code npcTypeId} — register themes in
+     *  {@code EndgameBossBarThemes.registerAll()} at startup. */
+    private String buildBarHtml(GenericBossState state) {
+        endgame.bossbar.BossBarState barState = new endgame.bossbar.BossBarState(
+                state.currentPhase,
+                state.lastHealthPercent,
+                state.lastHealthCurrent,
+                state.lastHealthMax,
                 state.isInvulnerable,
-                state.lastHealthPercent, HEALTH_BAR_WIDTH, healthBarColor);
-    }
-
-    private String buildEliteBarHtml(GenericBossState state) {
-        BossEncounterConfig config = state.config;
-        String healthBarColor = config.healthBarColors[0];
-
-        return endgame.plugin.utils.BossBarHtmlBuilder.buildEliteBar(
-                config.displayName, config.nameColor,
-                state.lastHealthPercent, ELITE_HEALTH_BAR_WIDTH, healthBarColor);
+                false);  // enraged tracking not wired into GenericBossManager yet
+        return endgame.bossbar.BossBarRegistry.render(state.npcTypeId, barState)
+                .orElseGet(() -> {
+                    plugin.getLogger().atWarning().log(
+                            "[GenericBoss] No boss bar theme registered for %s", state.npcTypeId);
+                    return "";
+                });
     }
 
     // =========================================================================

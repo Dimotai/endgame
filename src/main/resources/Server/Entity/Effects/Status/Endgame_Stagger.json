@@ -1,0 +1,5 @@
+{
+  "$Comment": "Short stagger for heavy AOE hits (Stomp, Ground Slam). Extends vanilla Stun with a 1s duration — vanilla Stun defaults to 10s which is way too long for a boss attack.",
+  "Parent": "Stun",
+  "Duration": 1
+}

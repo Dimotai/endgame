@@ -1,0 +1,35 @@
+{
+  "Parent": "DamageEntityParent",
+  "DamageCalculator": {
+    "Type": "Absolute",
+    "BaseDamage": {
+      "Physical": 40,
+      "Ice": 20
+    },
+    "RandomPercentageModifier": 0.15
+  },
+  "DamageEffects": {
+    "Knockback": {
+      "Type": "Point",
+      "VelocityConfig": {
+        "AirResistance": 0.97,
+        "GroundResistance": 0.94,
+        "Style": "Exp"
+      },
+      "Force": 12,
+      "VelocityY": 3,
+      "VelocityType": "Set"
+    },
+    "CameraEffect": "Impact",
+    "WorldSoundEventId": "SFX_Golem_Earth_Slam_Impact",
+    "WorldParticles": [
+      {
+        "SystemId": "Impact_Ice"
+      },
+      {
+        "SystemId": "Ice_Blast",
+        "Scale": 3
+      }
+    ]
+  }
+}

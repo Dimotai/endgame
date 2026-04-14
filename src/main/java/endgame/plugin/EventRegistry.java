@@ -12,6 +12,7 @@ import com.hypixel.hytale.server.core.universe.Universe;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.WorldConfig;
 import com.hypixel.hytale.server.core.universe.world.events.AddWorldEvent;
+import com.hypixel.hytale.server.core.universe.world.events.RemoveWorldEvent;
 import com.hypixel.hytale.server.core.universe.world.worldmap.markers.MapMarkerBuilder;
 
 import endgame.plugin.utils.I18n;
@@ -54,7 +55,13 @@ public class EventRegistry {
         plugin.getEventRegistry().registerGlobal(DrainPlayerFromWorldEvent.class, this::onPlayerLeaveWorld);
         plugin.getEventRegistry().registerGlobal(AddPlayerToWorldEvent.class, this::onPlayerEnterWorld);
         plugin.getEventRegistry().registerGlobal(AddWorldEvent.class, this::onWorldAdded);
+        plugin.getEventRegistry().registerGlobal(RemoveWorldEvent.class, this::onWorldRemoved);
         plugin.getEntityStoreRegistry().registerSystem(new endgame.plugin.ui.snake.ArcadeMachineUseSystem());
+        plugin.getEntityStoreRegistry().registerSystem(new endgame.plugin.systems.portal.VanillaPortalKeyGuardSystem());
+        // Portal theming via particle emission (no block state switching → no InteractionManager desync).
+        // Tracker listens to UseBlockEvent.Pre + held key; Emitter ticks a scheduler and spawns
+        // the matching Portal_Endgame_* particle system on top of the portal block.
+        plugin.getEntityStoreRegistry().registerSystem(new endgame.plugin.systems.portal.PortalThemeTracker());
     }
 
     private void onPlayerDisconnect(PlayerDisconnectEvent event) {
@@ -72,6 +79,8 @@ public class EventRegistry {
             // Systems cleanup
             var dangerZone = systemRegistry.getDangerZoneTickSystem();
             if (dangerZone != null) dangerZone.clearPlayerState(playerUuid);
+            var proximity = systemRegistry.getBossBarProximitySystem();
+            if (proximity != null) proximity.clearPlayerState(playerUuid);
             var accessory = systemRegistry.getAccessoryPassiveSystem();
             if (accessory != null) accessory.onPlayerDisconnect(playerUuid);
 
@@ -90,6 +99,7 @@ public class EventRegistry {
             endgame.plugin.systems.block.PrismaPickaxeAreaBreakSystem.clearPlayer(playerUuid);
             endgame.plugin.utils.CommandRateLimit.clearPlayer(playerUuid);
             endgame.plugin.utils.PlayerRefCache.unregister(playerUuid);
+            endgame.plugin.systems.portal.PortalThemeTracker.clearPlayer(playerUuid);
             I18n.onPlayerDisconnect(playerUuid);
 
             // Database sync: save player data on disconnect (before uncaching component)
@@ -119,6 +129,8 @@ public class EventRegistry {
                 if (genericBoss != null) genericBoss.hideBossBarForPlayerUuid(playerUuid);
                 var dangerZone = systemRegistry.getDangerZoneTickSystem();
                 if (dangerZone != null) dangerZone.clearPlayerState(playerUuid);
+                var proximity = systemRegistry.getBossBarProximitySystem();
+                if (proximity != null) proximity.clearPlayerState(playerUuid);
                 endgame.wavearena.WaveArenaAPI.failArena(playerUuid);
                 var combo = systemRegistry.getComboMeterManager();
                 // Only hide HUD — don't destroy combo state (survives world transfers)
@@ -156,12 +168,25 @@ public class EventRegistry {
                 boolean isEndgame = EndgameQoL.isEndgameInstance(world);
                 boolean isFrozen = EndgameQoL.isFrozenDungeonInstance(world);
                 boolean isSwamp = EndgameQoL.isSwampDungeonInstance(world);
+                boolean isVoidRealm = EndgameQoL.isGolemVoidInstance(world);
+
+                // Auto-start Void Realm Trial — gate before the Golem Void appears
+                if (isVoidRealm && playerUuid != null) {
+                    startVoidRealmTrial(playerUuid, world);
+                }
 
                 // Publish dungeon enter event
                 if ((isFrozen || isSwamp) && playerUuid != null) {
                     String dungeonType = isFrozen ? "frozen_dungeon" : "swamp_dungeon";
                     plugin.getGameEventBus().publish(
                             new endgame.plugin.events.domain.GameEvent.DungeonEnterEvent(playerUuid, dungeonType));
+                }
+
+                // Transfer themed-portal tracking from per-player to per-instance. When the
+                // instance is destroyed (last player leaves), we'll revert the source block.
+                if ((isFrozen || isSwamp || isVoidRealm) && playerUuid != null) {
+                    endgame.plugin.systems.portal.PortalThemeTracker
+                            .onPlayerEnterInstance(playerUuid, world.getName());
                 }
 
                 if ((isEndgame || isFrozen || isSwamp) && world.isAlive()) {
@@ -192,6 +217,40 @@ public class EventRegistry {
     }
 
     /**
+     * Auto-start the Void Realm Trial when a player enters the Void Realm, unless:
+     *  - the player is already in an arena (avoid double-start)
+     *  - the Void Golem is already alive (arena already cleared, just respawning)
+     */
+    private void startVoidRealmTrial(UUID playerUuid, com.hypixel.hytale.server.core.universe.world.World world) {
+        try {
+            // Already in an arena — don't double-start
+            if (endgame.wavearena.WaveArenaAPI.isInArena(playerUuid)) return;
+
+            // Don't start if the Void Golem is already alive (player re-entering after beating the trial)
+            var golemMgr = systemRegistry.getGolemVoidBossManager();
+            if (golemMgr != null && !golemMgr.getActiveBosses().isEmpty()) return;
+
+            endgame.plugin.utils.PlayerRefCache.getByUuid(playerUuid);
+            var playerRef = endgame.plugin.utils.PlayerRefCache.getByUuid(playerUuid);
+            if (playerRef == null) return;
+
+            // Arena center = center of the main floating island
+            com.hypixel.hytale.math.vector.Vector3d arenaCenter =
+                    new com.hypixel.hytale.math.vector.Vector3d(1.0, 102.0, -55.0);
+
+            boolean started = endgame.wavearena.WaveArenaAPI.startArena(
+                    playerUuid, playerRef, arenaCenter, "Void_Realm_Trial", world);
+
+            if (started) {
+                plugin.getLogger().atInfo().log("[VoidRealm] Started Void Realm Trial for player %s",
+                        playerUuid.toString().substring(0, 8));
+            }
+        } catch (Exception e) {
+            plugin.getLogger().atWarning().log("[VoidRealm] Failed to start trial: %s", e.getMessage());
+        }
+    }
+
+    /**
      * Thread-safe UUID lookup by holder reference (field access only, no ECS).
      */
     private static UUID findUuidByHolder(Object holder) {
@@ -204,10 +263,30 @@ public class EventRegistry {
         return null;
     }
 
+    private void onWorldRemoved(RemoveWorldEvent event) {
+        try {
+            World world = event.getWorld();
+            if (world == null) return;
+            endgame.plugin.systems.portal.PortalThemeTracker.onWorldRemoved(world.getName());
+        } catch (Exception e) {
+            plugin.getLogger().atFine().log("[EndgameQoL] onWorldRemoved error: %s", e.getMessage());
+        }
+    }
+
     private void onWorldAdded(AddWorldEvent event) {
         try {
             World world = event.getWorld();
             if (world == null) return;
+
+            // Hook the "Summon Portal" moment: creating the dungeon instance world is the
+            // signal that the player confirmed in the PortalDevice UI. We swap the source
+            // block to its themed variant now so the Spawning animation + Active particles
+            // show the theme — before and during the teleport.
+            if (EndgameQoL.isFrozenDungeonInstance(world)
+                    || EndgameQoL.isSwampDungeonInstance(world)
+                    || EndgameQoL.isGolemVoidInstance(world)) {
+                endgame.plugin.systems.portal.PortalThemeTracker.onInstanceWorldCreated(world.getName());
+            }
 
             // Register map markers for Swamp Dungeon POIs
             if (EndgameQoL.isSwampDungeonInstance(world)) {

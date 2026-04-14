@@ -16,8 +16,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Blocks friendly fire from boss NPCs to allied minion NPCs.
- * Prevents Hedera Scream from damaging Spirit_Root, etc.
+ * Blocks NPC-to-NPC damage involving bosses (both directions):
+ *  - Boss → other NPC (prevents e.g. Hedera Scream from killing allied Spirit_Root)
+ *  - Other NPC → Boss (prevents skeletons / dungeon mobs from aggroing the dragon)
+ * Player damage to/from bosses is untouched — only NPC vs NPC is filtered.
  * Runs in the FILTER damage group (before damage is applied).
  */
 public class BossFriendlyFireFilterSystem extends AbstractBossDamageSystem {
@@ -42,16 +44,26 @@ public class BossFriendlyFireFilterSystem extends AbstractBossDamageSystem {
                        @Nonnull Store<EntityStore> store,
                        @Nonnull CommandBuffer<EntityStore> commandBuffer,
                        @Nonnull Damage damage) {
-        // Resolve attacker
         Ref<EntityStore> sourceRef = resolveAttacker(damage);
         if (sourceRef == null) return;
 
-        // Check if attacker is a boss
+        // Only filter NPC-vs-NPC interactions — leave player damage alone.
         String attackerTypeId = resolveNPCTypeId(sourceRef, store);
-        if (attackerTypeId == null) return;
-        if (BossType.fromTypeId(attackerTypeId) == null) return;
+        if (attackerTypeId == null) return;  // attacker is a player (no NPCEntity)
 
-        // Attacker is a boss, target is an NPC → block the damage
-        damage.setAmount(0);
+        // Direction 1: boss attacking other NPC → block (friendly fire protection)
+        if (BossType.fromTypeId(attackerTypeId) != null) {
+            damage.setAmount(0);
+            return;
+        }
+
+        // Direction 2: NPC attacking boss → block (prevent dungeon mobs from aggroing bosses)
+        Ref<EntityStore> targetRef = archetypeChunk.getReferenceTo(index);
+        if (targetRef == null || !targetRef.isValid()) return;
+        String targetTypeId = resolveNPCTypeId(targetRef, store);
+        if (targetTypeId == null) return;
+        if (BossType.fromTypeId(targetTypeId) != null) {
+            damage.setAmount(0);
+        }
     }
 }

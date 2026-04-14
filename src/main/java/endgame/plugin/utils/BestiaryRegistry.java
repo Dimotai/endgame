@@ -142,12 +142,6 @@ public final class BestiaryRegistry {
             new String[]{"Forest Essence"},
             "Swamp Dungeon", "Endgame_Spirit_Root.png");
 
-        reg("Spectre_Void", "Spectre Void", Category.ELEMENTAL, 120,
-            "50 Physical",
-            "A flickering void apparition. Fast and unpredictable, phasing in and out of reality.",
-            new String[]{"Void Essence", "Voidheart"},
-            "Void Instance", "Spectre_Void.png");
-
         reg("Golem_Eye_Void", "Golem Eye Void", Category.ELEMENTAL, 250,
             "25 Physical",
             "A floating void sentinel with a piercing crystalline eye. Guards the rift passages.",

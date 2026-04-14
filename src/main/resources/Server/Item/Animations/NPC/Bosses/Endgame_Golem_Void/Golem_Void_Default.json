@@ -83,6 +83,24 @@
       "Speed": 1,
       "BlendingDuration": 0.3,
       "Looping": false
+    },
+    "Run": {
+      "ThirdPerson": "NPC/Bosses/Endgame_Golem_Void/Animations/Run.blockyanim",
+      "Speed": 1,
+      "BlendingDuration": 0.3,
+      "Looping": true
+    },
+    "JumpFar": {
+      "ThirdPerson": "NPC/Bosses/Endgame_Golem_Void/Animations/Jump_Far.blockyanim",
+      "Speed": 1,
+      "BlendingDuration": 0.2,
+      "Looping": false
+    },
+    "FallFar": {
+      "ThirdPerson": "NPC/Bosses/Endgame_Golem_Void/Animations/Fall_Far.blockyanim",
+      "Speed": 1,
+      "BlendingDuration": 0.2,
+      "Looping": false
     }
   },
   "Camera": {

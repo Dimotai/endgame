@@ -1,7 +1,7 @@
 {
   "Duration": 5,
   "Debuff": true,
-  "StatusEffectIcon": "UI/Icons/Effects/Ice.png",
+  "$Comment": "No StatusEffectIcon — vanilla has no ice icon and custom UI/Icons/Effects/Ice.png doesn't exist. The tint + screen effect + movement slow are enough visual feedback.",
   "ApplicationEffects": {
     "EntityBottomTint": "#80ecff",
     "EntityTopTint": "#c0f0ff",

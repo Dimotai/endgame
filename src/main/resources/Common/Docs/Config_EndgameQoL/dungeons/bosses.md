@@ -71,16 +71,23 @@ All three main bosses can enter an <#ff5555>enraged state</#ff5555> when taking 
 **XP Reward** — 700
 **Location** — Frozen Dungeon (accessed via <#55ffff>Frozen Dungeon Key</#55ffff>)
 
-A massive frost dragon with ice-based attacks and a 3-phase fight.
+A fly/walk hybrid dragon with 3 HP-based phases and **damage type immunity** — you must switch weapons as the fight progresses.
 
-**Phase 1 — Frozen Calm** (100-70% HP)
-Basic melee bites and claw swipes. 27 Physical + 10 Ice damage, moderate knockback.
+**Phase 1 — Sky Sentinel** (100-70% HP)
+The dragon stays airborne, circling the arena. <#ff5555>Melee attacks deal 0 damage</#ff5555> — use bows, crossbows, staves, or thrown spears. Two attacks:
+- **Frost Bolt** — ranged ice projectile with approach
+- **Icy Wind** — at close range the dragon hovers in place and flaps its wings to release a 10-block radial frost gust (5 Physical + 20 Ice + knockback + slow). Keep distance or roll through it
 
-**Phase 2 — Ice Storm** (70-40% HP)
-Gains a sky bolt barrage: ice projectiles rain from above onto nearby players. Chase speed increases.
+**Phase 2 — Ground Fury** (70-40% HP)
+The dragon lands. <#ff5555>Projectile attacks deal 0 damage</#ff5555> — use melee weapons. Three attacks:
+- **Swing / Bite** — 15 Physical + 10 Ice, close-range melee
+- **Frost Breath** — 10 Physical + 15 Ice cone AOE + Frost Chill effect
+- **Stomp** — 40 Physical + 20 Ice AOE slam with camera shake and knockback
 
-**Phase 3 — Blizzard Fury** (40-0% HP)
-Frost Nova ring pulses outward. Summons up to 4 <#55ffff>Spirit Frost</#55ffff> minions. Most dangerous phase.
+**Phase 3 — Hybrid Frenzy** (40-0% HP)
+The dragon alternates between flying (8-10s) and grounded (8-10s) states. **Immunity cycles with the state** — fly = melee immune, ground = projectile immune. Sky bolt barrages intensify, Spirit Frost minions spawn. Most dangerous phase.
+
+!! Hitting the dragon with an immune damage type sends a one-time chat hint telling you which weapon to switch to. Detection range is short (25 blocks) — the dragon won't aggro if you're still far from the arena.
 
 **Drops** — <#aaaaaa>Dragon Heart</#aaaaaa> (guaranteed), <#aaaaaa>Mithril Bar</#aaaaaa> (4-5), <#55ffff>Frostbite Blade</#55ffff> (2% rare). Plus one of: Storm Hide (40%), Ice Essence (35%), Sapphire (25%).
 

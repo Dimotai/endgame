@@ -35,7 +35,12 @@
     },
     "HitEntity": {
       "Interactions": [
-        "NPC_Attack_Golem_Void_Slam_Damage"
+        "NPC_Attack_Golem_Void_Slam_Damage",
+        {
+          "Type": "ApplyEffect",
+          "EffectId": "Endgame_Stagger",
+          "Entity": "Target"
+        }
       ]
     },
     "Next": {

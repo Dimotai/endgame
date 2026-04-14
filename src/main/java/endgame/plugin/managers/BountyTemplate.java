@@ -194,8 +194,6 @@ public class BountyTemplate {
                 BountyDifficulty.HARD, "Defeat Hedera in under 4 minutes", "Endgame_Drop_Reward_20", 250, 3),
         new BountyTemplate("hard_speed_dragon", BountyType.SPEED_KILL_BOSS, "Endgame_Dragon_Frost", 180,
                 BountyDifficulty.HARD, "Defeat Frost Dragon in under 3 minutes", "Endgame_Drop_Reward_20", 250, 3),
-        new BountyTemplate("hard_spectre_5", BountyType.KILL_NPC, "Spectre_Void", 5,
-                BountyDifficulty.HARD, "Slay 5 Void Spectres", "Endgame_Drop_Reward_20", 250, 3),
         new BountyTemplate("hard_aberrant_2", BountyType.KILL_NPC, "Zombie_Aberrant", 2,
                 BountyDifficulty.HARD, "Slay 2 Zombie Aberrants", "Endgame_Drop_Reward_20", 250, 3),
         new BountyTemplate("hard_broodmother_1", BountyType.KILL_NPC, "Scarak_Broodmother", 1,

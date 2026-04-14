@@ -1,0 +1,30 @@
+{
+  "Parent": "DamageEntityParent",
+  "DamageCalculator": {
+    "Type": "Absolute",
+    "BaseDamage": {
+      "Physical": 5,
+      "Ice": 20
+    },
+    "RandomPercentageModifier": 0.1
+  },
+  "DamageEffects": {
+    "Knockback": {
+      "Type": "Point",
+      "VelocityConfig": {
+        "AirResistance": 0.97,
+        "GroundResistance": 0.94,
+        "Style": "Exp"
+      },
+      "Force": 14,
+      "VelocityY": 2,
+      "VelocityType": "Set"
+    },
+    "WorldSoundEventId": "SFX_Ice_Hit",
+    "WorldParticles": [
+      {
+        "SystemId": "Impact_Ice"
+      }
+    ]
+  }
+}

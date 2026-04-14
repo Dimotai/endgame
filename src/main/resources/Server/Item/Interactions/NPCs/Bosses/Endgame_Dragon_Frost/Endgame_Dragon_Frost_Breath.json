@@ -1,0 +1,79 @@
+{
+  "Type": "Simple",
+  "$Comment": "Frost Breath — cone AOE, ground phase attack",
+  "Effects": {
+    "ItemPlayerAnimationsId": "Endgame_Dragon_Frost",
+    "ItemAnimationId": "Bite",
+    "WorldSoundEventId": "SFX_Ice_Break",
+    "Particles": [
+      {
+        "SystemId": "Ice_Blast",
+        "Scale": 3
+      }
+    ]
+  },
+  "RunTime": 0.8,
+  "Next": {
+    "Type": "Parallel",
+    "Interactions": [
+      {
+        "Interactions": [
+          {
+            "Type": "Selector",
+            "RunTime": 0.3,
+            "Selector": {
+              "Id": "Horizontal",
+              "Direction": "ToLeft",
+              "TestLineOfSight": false,
+              "ExtendTop": 2,
+              "ExtendBottom": 2,
+              "StartDistance": 0.5,
+              "EndDistance": 6,
+              "Length": 90,
+              "YawStartOffset": -45,
+              "PitchOffset": 0
+            },
+            "HitEntity": {
+              "Interactions": [
+                "Endgame_Dragon_Frost_Breath_Damage",
+                {
+                  "Type": "ApplyEffect",
+                  "EffectId": "Endgame_Frost_Chill",
+                  "Entity": "Target"
+                }
+              ]
+            },
+            "Next": {
+              "Type": "Simple",
+              "RunTime": 0.5
+            }
+          }
+        ]
+      },
+      {
+        "Interactions": [
+          {
+            "Type": "Simple",
+            "RunTime": 0.8,
+            "Effects": {
+              "WorldSoundEventId": "SFX_Ice_Ball_Death",
+              "Particles": [
+                {
+                  "SystemId": "Weapon_Frost_Mist",
+                  "Scale": 2
+                },
+                {
+                  "SystemId": "Impact_Ice",
+                  "Scale": 2,
+                  "PositionOffset": {
+                    "Z": 3
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

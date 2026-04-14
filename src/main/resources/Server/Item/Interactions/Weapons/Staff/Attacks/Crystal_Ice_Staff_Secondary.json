@@ -34,7 +34,7 @@
                   "Interactions": [
                     {
                       "Type": "ApplyEffect",
-                      "EffectId": "Endgame_Frost_Frozen",
+                      "EffectId": "Freeze",
                       "Entity": "Target"
                     },
                     "Crystal_Ice_Staff_Secondary_Damage"

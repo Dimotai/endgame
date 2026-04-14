@@ -23,7 +23,7 @@
     ],
     "CombatBackOffAfterAttack": false,
     "CombatRelativeTurnSpeed": 0.2,
-    "MaxSpeed": 8,
+    "MaxSpeed": 14,
     "MaxHealth": 3500,
     "Weapons": [],
     "OffHand": [],

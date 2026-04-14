@@ -132,23 +132,24 @@ public class GenericBossDamageSystem extends AbstractBossDamageSystem {
         // Check invulnerability timeout
         bossManager.checkInvulnerabilityTimeout(targetRef);
 
-        // Always update health tracking
-        bossManager.updateHealthTracking(targetRef, statMap);
-
-        // Show boss bar to attacker
+        // Resolve attacker early (needed for frost bonus + boss bar)
         Ref<EntityStore> attackerRef = resolveAttacker(damage);
-        if (attackerRef != null) {
-            PlayerRef playerRef = findPlayerRef(attackerRef);
-            if (playerRef != null) {
-                bossManager.showBossBarToPlayer(playerRef, targetRef, store);
-            }
-        }
 
-        // Cancel damage if invulnerable
+        // Cancel damage if invulnerable — record HP with no pending damage (nothing will apply)
         if (bossManager.isBossInvulnerable(targetRef)) {
             damage.setCancelled(true);
+            bossManager.updateHealthTracking(targetRef, statMap, 0f);
+            if (attackerRef != null) {
+                PlayerRef playerRef = findPlayerRef(attackerRef);
+                if (playerRef != null) {
+                    bossManager.showBossBarToPlayer(playerRef, targetRef, store);
+                }
+            }
             return;
         }
+
+        // Apply damage modifications BEFORE health tracking so the boss bar reflects the
+        // post-damage HP (previously it lagged one hit behind).
 
         // Hedera frost weakness: bonus damage when attacker wields Endgame_Frozen_Sword
         if (bossType == BossType.HEDERA && attackerRef != null) {
@@ -158,6 +159,17 @@ public class GenericBossDamageSystem extends AbstractBossDamageSystem {
                     plugin.getLogger().atFine().log(
                             "[GenericBossDamage] Hedera frost weakness: %.1f -> %.1f (x%.0f%%)",
                             original, damage.getAmount(), (HEDERA_FROST_BONUS - 1.0f) * 100);
+            }
+        }
+
+        // Now update health tracking with the effective damage amount
+        bossManager.updateHealthTracking(targetRef, statMap, damage.getAmount());
+
+        // Show boss bar to attacker
+        if (attackerRef != null) {
+            PlayerRef playerRef = findPlayerRef(attackerRef);
+            if (playerRef != null) {
+                bossManager.showBossBarToPlayer(playerRef, targetRef, store);
             }
         }
 

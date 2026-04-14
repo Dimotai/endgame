@@ -33,7 +33,8 @@
         "Type": "Crafting",
         "Categories": [
           "Workbench_Tools"
-        ]
+        ],
+     "RequiredTierLevel": 3
       }
     ]
   },

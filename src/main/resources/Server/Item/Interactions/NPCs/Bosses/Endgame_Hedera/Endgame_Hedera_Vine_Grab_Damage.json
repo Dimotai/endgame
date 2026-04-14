@@ -8,13 +8,7 @@
     "RandomPercentageModifier": 0.15
   },
   "DamageEffects": {
-    "Knockback": {
-      "Force": 2,
-      "RelativeX": 0,
-      "RelativeZ": 0.25,
-      "VelocityY": 0.15,
-      "VelocityType": "Set"
-    },
+    "$Comment": "No Knockback here — the pull/grab velocity is applied by the Vine_Grab interaction itself. Stacking a Knockback on top would also race against Ground_Slam's Knockback when both hit in the same tick (engine adds KnockbackComponent via commandBuffer.putComponent which crashes on duplicate).",
     "WorldSoundEventId": "SFX_Unarmed_Impact",
     "CameraEffect": "Impact_Light"
   }

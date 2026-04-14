@@ -45,9 +45,14 @@ public class SnakeGamePage extends InteractiveCustomUIPage<SnakeEventData> {
 
     // --- Color engine ---
 
-    /** Snake body gradient: bright green (#33ff66) at head → dark green (#004411) at tail. */
+    private static final String HEAD_COLOR = "#55ffaa";
+    private static final String DEATH_COLOR = "#881111";
+    private static final String EAT_FLASH_COLOR = "#ffffff";
+    private static final String GRID_BG = "#111118";
+
+    /** Snake body gradient: head is distinct bright cyan-green, body fades to dark green. */
     private static String bodyColor(int index, int length) {
-        if (index == 0) return "#33ff66";
+        if (index == 0) return HEAD_COLOR;
         float ratio = (float) index / Math.max(1, length - 1);
         int g = (int) (0xff * (1f - ratio) + 0x44 * ratio);
         int b = (int) (0x41 * (1f - ratio) + 0x11 * ratio);
@@ -63,6 +68,21 @@ public class SnakeGamePage extends InteractiveCustomUIPage<SnakeEventData> {
     private static String bonusFoodColor(int tick) {
         return (tick % 4 < 2) ? "#ffaa00" : "#ffdd33";
     }
+
+    /** Speed level from tick delay. */
+    private static int speedLevel(long delay) {
+        if (delay >= 130) return 1;
+        if (delay >= 110) return 2;
+        if (delay >= 90) return 3;
+        if (delay >= 70) return 4;
+        return 5;
+    }
+
+    // --- Animation state ---
+    private volatile boolean deathAnimating;
+    private volatile int deathAnimFrame;
+    private List<int[]> deathPositions;
+    private volatile int lastRenderedLength;
 
     // --- Page lifecycle ---
 
@@ -92,29 +112,18 @@ public class SnakeGamePage extends InteractiveCustomUIPage<SnakeEventData> {
         }
 
         cmd.set("#Score.Text", "Score: 0  |  Best: " + highScore);
-        cmd.set("#BtnRetry.Visible", false);
 
         // "GET READY" countdown
         cmd.set("#GameOverLabel.Text", "GET READY...");
         cmd.set("#GameOverLabel.Visible", true);
 
-        // Button controls
-        events.addEventBinding(CustomUIEventBindingType.Activating, "#BtnUp",
-                EventData.of("Direction", "up"));
-        events.addEventBinding(CustomUIEventBindingType.Activating, "#BtnDown",
-                EventData.of("Direction", "down"));
-        events.addEventBinding(CustomUIEventBindingType.Activating, "#BtnLeft",
-                EventData.of("Direction", "left"));
-        events.addEventBinding(CustomUIEventBindingType.Activating, "#BtnRight",
-                EventData.of("Direction", "right"));
-        events.addEventBinding(CustomUIEventBindingType.Activating, "#BtnRetry",
-                EventData.of("Retry", "true"));
-
-        // Keyboard via TextField
+        // Single TextField captures all input (WASD + R) — no buttons to steal focus
         events.addEventBinding(CustomUIEventBindingType.ValueChanged, "#KeyInput",
                 EventData.of("@KeyCode", "#KeyInput.Value"), false);
 
         lastProcessedLength = 0;
+        lastRenderedLength = 0;
+        deathAnimating = false;
         startGameLoop();
     }
 
@@ -122,33 +131,28 @@ public class SnakeGamePage extends InteractiveCustomUIPage<SnakeEventData> {
     public void handleDataEvent(@Nonnull Ref<EntityStore> ref, @Nonnull Store<EntityStore> store,
                                 @Nonnull SnakeEventData data) {
         synchronized (game) {
-            if (data.direction != null) {
-                switch (data.direction.toLowerCase()) {
-                    case "up" -> game.setDirection(SnakeGame.UP);
-                    case "down" -> game.setDirection(SnakeGame.DOWN);
-                    case "left" -> game.setDirection(SnakeGame.LEFT);
-                    case "right" -> game.setDirection(SnakeGame.RIGHT);
-                }
-            }
-
+            // All input via TextField — WASD for direction, R for retry
             if (data.keyCode != null && data.keyCode.length() > lastProcessedLength) {
                 for (int i = lastProcessedLength; i < data.keyCode.length(); i++) {
-                    switch (Character.toLowerCase(data.keyCode.charAt(i))) {
+                    char c = Character.toLowerCase(data.keyCode.charAt(i));
+                    switch (c) {
                         case 'w' -> game.setDirection(SnakeGame.UP);
                         case 's' -> game.setDirection(SnakeGame.DOWN);
                         case 'a' -> game.setDirection(SnakeGame.LEFT);
                         case 'd' -> game.setDirection(SnakeGame.RIGHT);
+                        case 'r' -> {
+                            if (game.isGameOver()) {
+                                game.reset();
+                                started = false;
+                                lastProcessedLength = data.keyCode.length();
+                                rebuild();
+                                startGameLoop();
+                                return;
+                            }
+                        }
                     }
                 }
                 lastProcessedLength = data.keyCode.length();
-            }
-
-            if (data.retry != null && data.retry && game.isGameOver()) {
-                game.reset();
-                started = false;
-                lastProcessedLength = 0;
-                rebuild();
-                startGameLoop();
             }
         }
     }
@@ -212,54 +216,110 @@ public class SnakeGamePage extends InteractiveCustomUIPage<SnakeEventData> {
 
             UICommandBuilder cmd = new UICommandBuilder();
 
+            // --- Death animation phase ---
+            if (deathAnimating) {
+                if (deathAnimFrame < deathPositions.size()) {
+                    // Turn 2 cells red per frame for a fast domino effect
+                    for (int j = 0; j < 2 && deathAnimFrame < deathPositions.size(); j++, deathAnimFrame++) {
+                        int[] pos = deathPositions.get(deathAnimFrame);
+                        cmd.set("#Cx" + pos[0] + "y" + pos[1] + ".Background", DEATH_COLOR);
+                    }
+                    sendUpdate(cmd, null, false);
+                    tickTask = SCHEDULER.schedule(this::gameTick, 50, TimeUnit.MILLISECONDS);
+                    return;
+                } else {
+                    // Animation done — show game over text
+                    deathAnimating = false;
+                    String msg = score > 0 && score >= highScore
+                            ? "NEW BEST! " + score + " - Press R"
+                            : "GAME OVER " + score + " - Press R";
+                    cmd.set("#GameOverLabel.Text", msg);
+                    cmd.set("#GameOverLabel.Visible", true);
+                    sendUpdate(cmd, null, false);
+                    return;
+                }
+            }
+
             if (isOver) {
-                cancelGameLoop();
                 if (score > highScore) highScore = score;
-
-                // Flash snake red on death
-                for (int[] pos : snakePositions) {
-                    cmd.set("#Cx" + pos[0] + "y" + pos[1] + ".Background", "#661111");
-                }
-
-                String msg = score > 0 && score >= highScore
-                        ? "NEW BEST!  Score: " + score
-                        : "GAME OVER  -  Score: " + score;
-                cmd.set("#GameOverLabel.Text", msg);
-                cmd.set("#GameOverLabel.Visible", true);
-                cmd.set("#BtnRetry.Visible", true);
                 cmd.set("#Score.Text", "Score: " + score + "  |  Best: " + highScore);
-            } else {
-                // Clear removed cells (tail, expired bonus food)
-                for (int[] change : changes) {
-                    if (change[2] == SnakeGame.EMPTY) {
-                        cmd.set("#Cx" + change[0] + "y" + change[1] + ".Background", "#111118");
-                    }
-                }
 
-                // Render food (new spawns + pulse existing)
-                for (int[] change : changes) {
-                    if (change[2] == SnakeGame.FOOD) {
-                        cmd.set("#Cx" + change[0] + "y" + change[1] + ".Background", foodColor(tick));
-                    }
-                    if (change[2] == SnakeGame.BONUS_FOOD) {
-                        cmd.set("#Cx" + change[0] + "y" + change[1] + ".Background", bonusFoodColor(tick));
-                    }
-                }
+                // Start death animation — cells turn red head→tail
+                deathPositions = snakePositions;
+                deathAnimFrame = 0;
+                deathAnimating = true;
+                sendUpdate(cmd, null, false);
+                tickTask = SCHEDULER.schedule(this::gameTick, 200, TimeUnit.MILLISECONDS);
+                return;
+            }
 
-                // Pulse existing bonus food
-                if (hasBonusFood) {
-                    cmd.set("#Cx" + bonusX + "y" + bonusY + ".Background", bonusFoodColor(tick));
-                }
+            // --- Normal game rendering ---
 
-                // Render full snake with gradient (every tick for smooth gradient shift)
-                int len = snakePositions.size();
+            // Detect if food was eaten this tick (for eat flash)
+            boolean ateFood = false;
+            int eatX = 0, eatY = 0;
+            for (int[] change : changes) {
+                if (change[2] == SnakeGame.FOOD || change[2] == SnakeGame.BONUS_FOOD) {
+                    // New food spawned = old food was eaten at head position
+                    ateFood = true;
+                    int[] head = snakePositions.getFirst();
+                    eatX = head[0]; eatY = head[1];
+                }
+            }
+
+            // Clear removed cells (tail, expired bonus food)
+            for (int[] change : changes) {
+                if (change[2] == SnakeGame.EMPTY) {
+                    cmd.set("#Cx" + change[0] + "y" + change[1] + ".Background", GRID_BG);
+                }
+            }
+
+            // Render food (new spawns + pulse existing)
+            for (int[] change : changes) {
+                if (change[2] == SnakeGame.FOOD) {
+                    cmd.set("#Cx" + change[0] + "y" + change[1] + ".Background", foodColor(tick));
+                }
+                if (change[2] == SnakeGame.BONUS_FOOD) {
+                    cmd.set("#Cx" + change[0] + "y" + change[1] + ".Background", bonusFoodColor(tick));
+                }
+            }
+
+            // Pulse existing bonus food
+            if (hasBonusFood) {
+                cmd.set("#Cx" + bonusX + "y" + bonusY + ".Background", bonusFoodColor(tick));
+            }
+
+            // Render snake — only head (new), neck (was head), and tail (removed)
+            // Full gradient re-render only when length changes (growth)
+            int len = snakePositions.size();
+            if (len != lastRenderedLength) {
+                // Length changed (ate food) — full gradient re-render
                 for (int i = 0; i < len; i++) {
                     int[] pos = snakePositions.get(i);
                     cmd.set("#Cx" + pos[0] + "y" + pos[1] + ".Background", bodyColor(i, len));
                 }
-
-                cmd.set("#Score.Text", "Score: " + score + "  |  Best: " + highScore);
+                lastRenderedLength = len;
+            } else {
+                // Length unchanged — only update head (bright) and old head→body
+                if (len > 0) {
+                    int[] head = snakePositions.get(0);
+                    cmd.set("#Cx" + head[0] + "y" + head[1] + ".Background", HEAD_COLOR);
+                }
+                if (len > 1) {
+                    int[] neck = snakePositions.get(1);
+                    cmd.set("#Cx" + neck[0] + "y" + neck[1] + ".Background", bodyColor(1, len));
+                }
             }
+
+            // Eat flash — briefly white-flash the head when food is eaten
+            if (ateFood) {
+                cmd.set("#Cx" + eatX + "y" + eatY + ".Background", EAT_FLASH_COLOR);
+            }
+
+            // Speed indicator + score
+            long delay;
+            synchronized (game) { delay = game.getTickDelay(); }
+            cmd.set("#Score.Text", "Score: " + score + "  Speed: " + speedLevel(delay) + "  Best: " + highScore);
 
             sendUpdate(cmd, null, false);
 

@@ -1,4 +1,5 @@
 {
+  "$Comment": "Uses Serial to chain Clear→Apply — Hytale only resolves ONE level of inline Next, so 2 nested Next blocks fail validation. Serial Interactions[] bypasses the limit.",
   "Type": "EffectCondition",
   "Entity": "Target",
   "EntityEffectIds": [
@@ -6,13 +7,18 @@
   ],
   "Match": "None",
   "Next": {
-    "Type": "ClearEntityEffect",
-    "Entity": "Target",
-    "EntityEffectId": "Poison_T3",
-    "Next": {
-      "Type": "ApplyEffect",
-      "Entity": "Target",
-      "EffectId": "Poison_T3"
-    }
+    "Type": "Serial",
+    "Interactions": [
+      {
+        "Type": "ClearEntityEffect",
+        "Entity": "Target",
+        "EntityEffectId": "Poison_T3"
+      },
+      {
+        "Type": "ApplyEffect",
+        "Entity": "Target",
+        "EffectId": "Poison_T3"
+      }
+    ]
   }
 }

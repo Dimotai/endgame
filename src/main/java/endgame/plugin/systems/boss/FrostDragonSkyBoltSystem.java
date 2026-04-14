@@ -104,7 +104,7 @@ public class FrostDragonSkyBoltSystem extends EntityTickingSystem<EntityStore> {
     private static final long PLAYER_CACHE_TTL_MS = 2000;
 
     /**
-     * Tracks per-dragon barrage and nova state.
+     * Tracks per-dragon barrage, nova, and phase state.
      */
     private static class DragonState {
         volatile long lastCheckTime;
@@ -129,6 +129,11 @@ public class FrostDragonSkyBoltSystem extends EntityTickingSystem<EntityStore> {
         volatile long nextSpiritCooldown;
         final CopyOnWriteArrayList<Ref<EntityStore>> spiritRefs = new CopyOnWriteArrayList<>();
 
+        // Phase immunity tracking (for Hybrid rework)
+        volatile boolean isFlying = true;
+        volatile int lastKnownPhase = -1;
+        volatile long lastPhaseTransitionTime;
+
         DragonState() {
             this.lastCheckTime = 0;
             this.lastBarrageStartTime = 0;
@@ -139,7 +144,18 @@ public class FrostDragonSkyBoltSystem extends EntityTickingSystem<EntityStore> {
             this.spiritsSpawned = 0;
             this.lastSpiritSpawnTime = 0;
             this.nextSpiritCooldown = ThreadLocalRandom.current().nextLong(SPIRIT_SPAWN_MIN_MS, SPIRIT_SPAWN_MAX_MS);
+            this.lastPhaseTransitionTime = System.currentTimeMillis();
         }
+    }
+
+    // Phase component type (set after registration in SystemRegistry)
+    private volatile com.hypixel.hytale.component.ComponentType<EntityStore,
+            endgame.plugin.components.FrostDragonPhaseComponent> phaseComponentType;
+
+    public void setPhaseComponentType(
+            com.hypixel.hytale.component.ComponentType<EntityStore,
+                    endgame.plugin.components.FrostDragonPhaseComponent> type) {
+        this.phaseComponentType = type;
     }
 
     public FrostDragonSkyBoltSystem(EndgameQoL plugin) {
@@ -213,6 +229,30 @@ public class FrostDragonSkyBoltSystem extends EntityTickingSystem<EntityStore> {
         } else {
             float hpRatio = getDragonHpRatio(archetypeChunk, index, store, dragonRef);
             phase = getPhase(hpRatio);
+        }
+
+        // Phase immunity tracking — update FrostDragonPhaseComponent based on HP phase
+        if (phaseComponentType != null && state.lastKnownPhase != phase) {
+            state.lastKnownPhase = phase;
+            state.lastPhaseTransitionTime = now;
+            boolean shouldFly = switch (phase) {
+                case 0 -> true;   // Phase 1: Sky Sentinel (flying, melee immune)
+                case 1 -> false;  // Phase 2: Ground Fury (grounded, projectile immune)
+                case 2 -> state.isFlying; // Phase 3: Hybrid, starts with current state
+                default -> true;
+            };
+            state.isFlying = shouldFly;
+            updatePhaseComponent(store, dragonRef, commandBuffer, shouldFly);
+        }
+
+        // Phase 3 fly/ground cycling (8-10s each)
+        if (phase == 2) {
+            long elapsed = now - state.lastPhaseTransitionTime;
+            if (elapsed >= (state.isFlying ? 10_000 : 8_000)) {
+                state.isFlying = !state.isFlying;
+                state.lastPhaseTransitionTime = now;
+                updatePhaseComponent(store, dragonRef, commandBuffer, state.isFlying);
+            }
         }
 
         // Get dragon position
@@ -589,6 +629,30 @@ public class FrostDragonSkyBoltSystem extends EntityTickingSystem<EntityStore> {
         if (hpRatio <= PHASE3_THRESHOLD) return 2;
         if (hpRatio <= PHASE2_THRESHOLD) return 1;
         return 0;
+    }
+
+    /**
+     * Update the FrostDragonPhaseComponent on the dragon entity.
+     * This controls whether the damage filter applies melee or projectile immunity.
+     */
+    private void updatePhaseComponent(Store<EntityStore> store, Ref<EntityStore> dragonRef,
+                                       com.hypixel.hytale.component.CommandBuffer<EntityStore> commandBuffer,
+                                       boolean isFlying) {
+        if (phaseComponentType == null) return;
+        try {
+            commandBuffer.run(s -> {
+                var existing = s.getComponent(dragonRef, phaseComponentType);
+                if (existing != null) {
+                    existing.setFlying(isFlying);
+                } else {
+                    s.addComponent(dragonRef, phaseComponentType,
+                            new endgame.plugin.components.FrostDragonPhaseComponent(isFlying));
+                }
+            });
+            plugin.getLogger().atFine().log("[FrostDragon] Phase component updated: flying=%s", isFlying);
+        } catch (Exception e) {
+            plugin.getLogger().atFine().log("[FrostDragon] Failed to update phase component: %s", e.getMessage());
+        }
     }
 
     /**

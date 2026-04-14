@@ -71,7 +71,11 @@ public class GolemVoidBossManager {
         public volatile boolean isInvulnerable = false;
         public volatile long invulnerabilityEndTime = 0;
         public volatile float lastHealthPercent = 1.0f;
+        public volatile int lastHealthCurrent = 0;
+        public volatile int lastHealthMax = 0;
         public final long spawnTimestamp = System.currentTimeMillis();
+        /** Captured at registerBoss() — used as void-safe fallback for the Jump Slam teleport. */
+        public volatile Vector3d spawnPosition;
 
         public GolemVoidState(Ref<EntityStore> bossRef, String npcTypeId) {
             this.bossRef = bossRef;
@@ -79,10 +83,26 @@ public class GolemVoidBossManager {
         }
     }
 
+    // Optional enrage tracker reference — used for the enhanced bar's "ENRAGED" indicator.
+    // Wired up in SystemRegistry after both managers are created.
+    private volatile endgame.plugin.managers.boss.EnrageTracker enrageTracker;
+    public void setEnrageTracker(endgame.plugin.managers.boss.EnrageTracker tracker) {
+        this.enrageTracker = tracker;
+    }
+
     public void registerBoss(Ref<EntityStore> bossRef, String npcTypeId, Store<EntityStore> store) {
         if (bossRef == null || !bossRef.isValid()) return;
 
         GolemVoidState state = new GolemVoidState(bossRef, npcTypeId);
+
+        // Capture spawn position (Jump Slam falls back to this if player hovers over void)
+        try {
+            TransformComponent spawnTc = store.getComponent(bossRef, TransformComponent.getComponentType());
+            if (spawnTc != null) {
+                Vector3d p = spawnTc.getPosition();
+                if (p != null) state.spawnPosition = p.clone();
+            }
+        } catch (Exception ignored) {}
 
         ComponentType<EntityStore, EntityStatMap> statType = EntityStatMap.getComponentType();
         if (statType != null) {
@@ -122,6 +142,8 @@ public class GolemVoidBossManager {
             plugin.getLogger().atFine().log("[GolemVoidBoss] Boss unregistered: %s", state.npcTypeId);
             // Clear all HUDs
             hideAllBossBars();
+            // Release focus from any player currently focused on this boss
+            endgame.bossbar.BossBarFocus.releaseBoss(bossRef);
         }
     }
 
@@ -418,6 +440,8 @@ public class GolemVoidBossManager {
         float currentHealth = healthValue.get();
         float maxHealth = healthValue.getMax();
         state.lastHealthPercent = maxHealth > 0 ? currentHealth / maxHealth : 0f;
+        state.lastHealthCurrent = Math.max(0, Math.round(currentHealth));
+        state.lastHealthMax = Math.max(0, Math.round(maxHealth));
     }
 
     /**
@@ -431,17 +455,23 @@ public class GolemVoidBossManager {
         UUID playerUuid = endgame.plugin.utils.EntityUtils.getUuid(playerRef);
         if (playerUuid == null) return;
 
-        // Skip if player already has HUD (avoid duplicates)
-        if (playerHuds.containsKey(playerUuid)) return;
-
-        // Clear removed flag so the new HUD's refresh will work
-        removedPlayerHuds.remove(playerUuid);
-
         // Get the first active boss state (thread-safe). Captured by the closure
         // so onRefresh doesn't re-stream activeBosses on every tick.
         GolemVoidState state = activeBosses.values().stream().findFirst().orElse(null);
         if (state == null) return;
         final GolemVoidState capturedState = state;
+
+        // Skip if player already has HUD for this same boss (avoid duplicates)
+        if (playerHuds.containsKey(playerUuid)) {
+            endgame.bossbar.BossBarFocus.acquire(playerUuid, state.bossRef);
+            return;
+        }
+
+        // Take focus (priority: last-damaged wins; overrides bars from other mods)
+        endgame.bossbar.BossBarFocus.acquire(playerUuid, state.bossRef);
+
+        // Clear removed flag so the new HUD's refresh will work
+        removedPlayerHuds.remove(playerUuid);
 
         String html = buildBossBarHtml(state);
 
@@ -455,6 +485,13 @@ public class GolemVoidBossManager {
                     // This prevents sending commands to a client-side removed element.
                     if (removedPlayerHuds.contains(playerUuid)) return;
                     if (playerHuds.get(playerUuid) != h) return;
+
+                    // Priority focus: if another boss took focus for this player, self-hide
+                    if (!endgame.bossbar.BossBarFocus.isFocused(playerUuid, capturedState.bossRef)) {
+                        removedPlayerHuds.add(playerUuid);
+                        pendingHudRemovals.add(playerUuid);
+                        return;
+                    }
 
                     // Use captured state — volatile fields (lastHealthPercent, currentPhase, isInvulnerable)
                     // are updated in place on the same instance. A new boss spawn creates a new state
@@ -474,20 +511,39 @@ public class GolemVoidBossManager {
                     final boolean snapshotInvuln = currentState.isInvulnerable;
 
                     int healthPct = Math.round(snapshotHealth * 100);
-                    String phText = getPhaseText(snapshotPhase);
-                    if (snapshotInvuln) phText += " [INVULNERABLE]";
+                    // Resolve phase subtitle from the registered theme (theme-aware, multi-phase or elite)
+                    final String finalPhText = endgame.bossbar.BossBarRegistry.getTheme(currentState.npcTypeId)
+                            .map(t -> {
+                                var ph = t.phase(snapshotPhase);
+                                return t.phases().size() > 1
+                                        ? "Phase " + ph.number() + " - " + ph.name()
+                                        : ph.name();
+                            })
+                            .orElse("Phase " + snapshotPhase);
 
-                    final String finalPhText = phText;
-                    int fillWidth = Math.max(0, Math.min(HEALTH_BAR_WIDTH,
-                            Math.round(HEALTH_BAR_WIDTH * snapshotHealth)));
+                    int fillWidth = Math.max(0, Math.min(BAR_WIDTH,
+                            Math.round(BAR_WIDTH * snapshotHealth)));
 
-                    try { h.getById("health-text", LabelBuilder.class)
-                            .ifPresent(l -> l.withText(healthPct + "% HP")); } catch (Exception e) { plugin.getLogger().atFine().log("[GolemVoidBoss] HUD element update error: %s", e.getMessage()); }
-                    try { h.getById("phase-text", LabelBuilder.class)
+                    String hpNumeric;
+                    if (currentState.lastHealthMax > 0) {
+                        hpNumeric = formatNumber(currentState.lastHealthCurrent)
+                                + " / " + formatNumber(currentState.lastHealthMax)
+                                + " HP  \u2022  " + healthPct + "%";
+                    } else {
+                        hpNumeric = healthPct + "%";
+                    }
+                    final String finalHpNumeric = hpNumeric;
+
+                    try { h.getById(ID_HP_NUMERIC, LabelBuilder.class)
+                            .ifPresent(l -> l.withText(finalHpNumeric)); } catch (Exception e) { plugin.getLogger().atFine().log("[GolemVoidBoss] HUD element update error: %s", e.getMessage()); }
+                    try { h.getById(ID_PHASE_TEXT, LabelBuilder.class)
                             .ifPresent(l -> l.withText(finalPhText)); } catch (Exception e) { plugin.getLogger().atFine().log("[GolemVoidBoss] HUD element update error: %s", e.getMessage()); }
-                    try { h.getById("health-bar-fill", GroupBuilder.class)
+                    try { h.getById(ID_HP_BAR_FILL, GroupBuilder.class)
                             .ifPresent(b -> b.withAnchor(new HyUIAnchor()
-                                    .setWidth(fillWidth).setHeight(14).setLeft(0).setTop(0))); } catch (Exception e) { plugin.getLogger().atFine().log("[GolemVoidBoss] HUD element update error: %s", e.getMessage()); }
+                                    .setWidth(fillWidth).setHeight(BAR_HEIGHT).setLeft(0).setTop(0))); } catch (Exception e) { plugin.getLogger().atFine().log("[GolemVoidBoss] HUD element update error: %s", e.getMessage()); }
+                    try { h.getById(ID_HP_BAR_HL, GroupBuilder.class)
+                            .ifPresent(b -> b.withAnchor(new HyUIAnchor()
+                                    .setWidth(fillWidth).setHeight(HIGHLIGHT_H).setLeft(0).setTop(0))); } catch (Exception e) { plugin.getLogger().atFine().log("[GolemVoidBoss] HUD element update error: %s", e.getMessage()); }
                     } catch (Exception e) {
                         // Outer catch — flag for deferred removal, NEVER call h.remove() here
                         removedPlayerHuds.add(playerUuid);
@@ -563,44 +619,47 @@ public class GolemVoidBossManager {
         plugin.getLogger().atFine().log("[GolemVoidBoss] All boss bars marked for removal");
     }
 
-    // Health bar background width in pixels
-    private static final int HEALTH_BAR_WIDTH = 380;
+    // Reference to renderer's element IDs + dimensions — used by onRefresh handlers
+    private static final String ID_PHASE_TEXT  = endgame.bossbar.BossBarRenderer.ID_PHASE_TEXT;
+    private static final String ID_HP_BAR_FILL = endgame.bossbar.BossBarRenderer.ID_HP_BAR_FILL;
+    private static final String ID_HP_BAR_HL   = endgame.bossbar.BossBarRenderer.ID_HP_BAR_HL;
+    private static final String ID_HP_NUMERIC  = endgame.bossbar.BossBarRenderer.ID_HP_NUMERIC;
+    private static final int BAR_WIDTH         = endgame.bossbar.BossBarRenderer.BAR_WIDTH;
+    private static final int BAR_HEIGHT        = endgame.bossbar.BossBarRenderer.BAR_HEIGHT;
+    private static final int HIGHLIGHT_H       = endgame.bossbar.BossBarRenderer.HIGHLIGHT_HEIGHT;
+
+    private static String formatNumber(int n) {
+        if (n < 1000) return String.valueOf(n);
+        String s = String.valueOf(n);
+        StringBuilder r = new StringBuilder();
+        int len = s.length();
+        for (int i = 0; i < len; i++) {
+            if (i > 0 && (len - i) % 3 == 0) r.append(',');
+            r.append(s.charAt(i));
+        }
+        return r.toString();
+    }
 
     private String buildBossBarHtml(GolemVoidState state) {
-        String phaseText = getPhaseText(state.currentPhase);
-        String phaseColor = getPhaseColor(state.currentPhase);
-        String healthBarColor = getHealthBarColor(state.lastHealthPercent);
-
-        return endgame.plugin.utils.BossBarHtmlBuilder.buildBossBar(
-                "GOLEM VOID", "#bb44ff",
-                phaseText, phaseColor,
+        boolean enraged = enrageTracker != null && enrageTracker.isEnraged(state.bossRef);
+        endgame.bossbar.BossBarState barState = new endgame.bossbar.BossBarState(
+                state.currentPhase,
+                state.lastHealthPercent,
+                state.lastHealthCurrent,
+                state.lastHealthMax,
                 state.isInvulnerable,
-                state.lastHealthPercent, HEALTH_BAR_WIDTH, healthBarColor);
+                enraged);
+        return endgame.bossbar.BossBarRegistry.render(state.npcTypeId, barState)
+                .orElseGet(() -> {
+                    plugin.getLogger().atWarning().log(
+                            "[GolemVoidBoss] No theme registered for %s", state.npcTypeId);
+                    return "";
+                });
     }
 
-    private String getHealthBarColor(float healthPercent) {
-        if (healthPercent > 0.66f) return "#00cc00";
-        if (healthPercent > 0.33f) return "#ffaa00";
-        return "#cc0000";
-    }
 
-    private String getPhaseText(int phase) {
-        return switch (phase) {
-            case 1 -> "Phase 1 - Awakened";
-            case 2 -> "Phase 2 - Enraged";
-            case 3 -> "Phase 3 - FURY";
-            default -> "Phase " + phase;
-        };
-    }
-
-    private String getPhaseColor(int phase) {
-        return switch (phase) {
-            case 1 -> "#88ff88";
-            case 2 -> "#ffaa00";
-            case 3 -> "#ff0000";
-            default -> "#ffffff";
-        };
-    }
+    // Phase text / colors now live in the BossBarRegistry theme for "Endgame_Golem_Void"
+    // (see EndgameBossBarThemes.registerAll).
 
     // =========================================================================
     // Public API

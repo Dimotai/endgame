@@ -1,0 +1,24 @@
+{
+  "Parent": "DamageEntityParent",
+  "DamageCalculator": {
+    "Type": "Absolute",
+    "BaseDamage": {
+      "Physical": 10,
+      "Ice": 15
+    },
+    "RandomPercentageModifier": 0.1
+  },
+  "DamageEffects": {
+    "Knockback": {
+      "Force": 2,
+      "RelativeZ": -2,
+      "VelocityY": 1
+    },
+    "WorldSoundEventId": "SFX_Ice_Hit",
+    "WorldParticles": [
+      {
+        "SystemId": "Impact_Ice"
+      }
+    ]
+  }
+}

@@ -69,6 +69,7 @@ public class SystemRegistry {
     private GenericBossDamageSystem genericBossDamageSystem;
     private BossTargetSwitchSystem bossTargetSwitchSystem;
     private DangerZoneTickSystem dangerZoneTickSystem;
+    private endgame.plugin.systems.boss.BossBarProximitySystem bossBarProximitySystem;
     private FrostDragonSkyBoltSystem frostDragonSkyBoltSystem;
     private endgame.plugin.systems.ArmorHPRegenSystem armorHPRegenSystem;
     private ComboKillTracker comboKillTracker;
@@ -100,6 +101,12 @@ public class SystemRegistry {
 
     private void registerManagers() {
         plugin.getLogger().atInfo().log("[EndgameQoL] Registering managers...");
+
+        // Register boss bar themes (extractable API) before any manager uses them.
+        endgame.plugin.bossbar.EndgameBossBarThemes.registerAll();
+        plugin.getLogger().atInfo().log("[EndgameQoL] Registered %d boss bar themes",
+                endgame.bossbar.BossBarRegistry.size());
+
         this.bossHealthManager = new BossHealthManager(plugin);
 
         this.mobManager = new MobManager(plugin);
@@ -112,6 +119,8 @@ public class SystemRegistry {
         this.genericBossManager = new GenericBossManager(plugin);
         this.enrageTracker = new EnrageTracker(plugin);
         this.mobManager.setGolemVoidBossManager(this.golemVoidBossManager);
+        // Wire enrage tracker into Golem Void manager for the enhanced boss bar
+        this.golemVoidBossManager.setEnrageTracker(this.enrageTracker);
     }
 
     private void registerBossSystems() {
@@ -128,6 +137,18 @@ public class SystemRegistry {
         plugin.getEntityStoreRegistry().registerSystem(new endgame.plugin.systems.portal.InstanceRespawnSystem(plugin));
         this.dangerZoneTickSystem = new DangerZoneTickSystem(plugin, this.golemVoidBossManager, this.genericBossManager, this.enrageTracker);
         plugin.getEntityStoreRegistry().registerSystem(this.dangerZoneTickSystem);
+
+        // Proximity-based boss bar show/hide (covers all bosses + elites — replaces prior
+        // proximity logic that lived inside DangerZoneTickSystem for Golem Void only)
+        this.bossBarProximitySystem = new endgame.plugin.systems.boss.BossBarProximitySystem(
+                this.golemVoidBossManager, this.genericBossManager);
+        plugin.getEntityStoreRegistry().registerSystem(this.bossBarProximitySystem);
+
+        // Auto-register bosses with their manager at spawn (not on first damage) so
+        // proximity-based features (boss bar show on approach) work without attacking
+        plugin.getEntityStoreRegistry().registerSystem(new endgame.plugin.systems.boss.BossAutoRegisterSystem(
+                plugin, this.golemVoidBossManager, this.genericBossManager));
+
         plugin.getEntityStoreRegistry().registerSystem(new GolemVoidDeathSystem(plugin, this.golemVoidBossManager, this.enrageTracker));
         plugin.getEntityStoreRegistry().registerSystem(new endgame.plugin.systems.boss.BossDamageFilterSystem(plugin, this.enrageTracker));
         plugin.getEntityStoreRegistry().registerSystem(new endgame.plugin.systems.boss.BossFriendlyFireFilterSystem());
@@ -166,6 +187,14 @@ public class SystemRegistry {
         this.frostDragonSkyBoltSystem = new FrostDragonSkyBoltSystem(plugin);
         this.frostDragonSkyBoltSystem.setGenericBossManager(this.genericBossManager);
         plugin.getEntityStoreRegistry().registerSystem(this.frostDragonSkyBoltSystem);
+
+        // Frost dragon phase immunity (melee immune in fly, projectile immune on ground)
+        var frostPhaseType = plugin.getEntityStoreRegistry().registerComponent(
+                endgame.plugin.components.FrostDragonPhaseComponent.class,
+                endgame.plugin.components.FrostDragonPhaseComponent::new);
+        plugin.getEntityStoreRegistry().registerSystem(
+                new endgame.plugin.systems.boss.FrostDragonPhaseFilterSystem(frostPhaseType));
+        this.frostDragonSkyBoltSystem.setPhaseComponentType(frostPhaseType);
     }
 
     private void registerWeaponSystems() {
@@ -283,6 +312,23 @@ public class SystemRegistry {
                         new WaveArenaConfig.PoolEntry("Endgame_Werewolf", 30, 7, false),
                         new WaveArenaConfig.PoolEntry("Endgame_Goblin_Duke", 15, 8, true),
                         new WaveArenaConfig.PoolEntry("Alpha_Rex", 10, 9, true)
+                )).build());
+
+        // Void Realm Trial — 3 waves before the Void Golem appears. Auto-started on
+        // Void Realm entry (see EventRegistry.onPlayerEnterWorld). Boss spawned via
+        // EndgameWaveCallbacks.onArenaCompleted when this arenaId is matched.
+        // Void Realm Trial: arena centered on island (1,102,-55), single large ground ring.
+        // Dome/column variants need a vertical-beam particle (Warden_Trial_Zone is flat-only).
+        waveArenaEngine.registerConfig(WaveArenaConfig.builder("Void_Realm_Trial")
+                .displayName("Void Gauntlet").displayColor("#aa44ee")
+                .waveCount(3).timeLimitSeconds(360).spawnRadius(12f).intervalSeconds(6).countdownSeconds(5).mobLevel(100)
+                .xpReward(300).xpSource("VOID_REALM_TRIAL")
+                .fixedCenter(new com.hypixel.hytale.math.vector.Vector3d(1.0, 102.0, -55.0))
+                .zoneParticleId("Void_Trial_Zone").zoneParticleScale(20f).zoneParticleYOffset(-0.3)
+                .waves(java.util.List.of(
+                        new endgame.wavearena.WaveDef(java.util.List.of(M.apply("Endgame_Ghoul",3), M.apply("Endgame_Shadow_Knight",2))),
+                        new endgame.wavearena.WaveDef(java.util.List.of(M.apply("Golem_Eye_Void",2), M.apply("Endgame_Shadow_Knight",2), M.apply("Endgame_Necromancer_Void",1))),
+                        new endgame.wavearena.WaveDef(java.util.List.of(M.apply("Endgame_Necromancer_Void",1), M.apply("Endgame_Shadow_Knight",3), M.apply("Golem_Eye_Void",2)))
                 )).build());
 
         plugin.getLogger().atInfo().log("[WaveArena] Registered %d arena configs", waveArenaEngine.getRegisteredIds().size());
@@ -442,6 +488,11 @@ public class SystemRegistry {
             plugin.getLogger().atInfo().log("[EndgameQoL] Cleared DangerZoneTickSystem tracking");
         }
 
+        if (this.bossBarProximitySystem != null) {
+            this.bossBarProximitySystem.forceClear();
+            plugin.getLogger().atInfo().log("[EndgameQoL] Cleared BossBarProximitySystem tracking");
+        }
+
         if (this.mobManager != null) {
             this.mobManager.cleanup();
             plugin.getLogger().atInfo().log("[EndgameQoL] Cleared MobManager tracking");
@@ -461,6 +512,12 @@ public class SystemRegistry {
             this.waveArenaEngine.forceClear();
             plugin.getLogger().atInfo().log("[EndgameQoL] Cleared WaveArenaEngine state");
         }
+
+        // Clear the extractable framework registries (BossBar themes + WaveArena configs
+        // come from the same reload lifecycle as this plugin, so we own them).
+        endgame.bossbar.BossBarRegistry.clear();
+        endgame.bossbar.BossBarFocus.clear();
+        plugin.getLogger().atInfo().log("[EndgameQoL] Cleared BossBarRegistry + BossBarFocus");
 
         if (this.comboMeterManager != null) {
             this.comboMeterManager.forceClear();
@@ -510,6 +567,11 @@ public class SystemRegistry {
     public DangerZoneTickSystem getDangerZoneTickSystem() {
         return dangerZoneTickSystem;
     }
+
+    public endgame.plugin.systems.boss.BossBarProximitySystem getBossBarProximitySystem() {
+        return bossBarProximitySystem;
+    }
+
 
     public FrostDragonSkyBoltSystem getFrostDragonSkyBoltSystem() {
         return frostDragonSkyBoltSystem;

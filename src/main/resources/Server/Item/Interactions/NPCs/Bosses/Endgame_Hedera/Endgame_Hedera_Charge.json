@@ -2,7 +2,7 @@
   "$Comment": "Charge — Hedera sprints toward player (Run anim), then slams with ScratchLeft on arrival.",
   "Type": "Simple",
   "Effects": {
-    "ItemPlayerAnimationsId": "Default",
+    "ItemPlayerAnimationsId": "Hedera_Default",
     "ItemAnimationId": "Run",
     "WorldSoundEventId": "SFX_NPC_Unarmed_Swing"
   },

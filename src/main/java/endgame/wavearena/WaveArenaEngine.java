@@ -47,6 +47,7 @@ public class WaveArenaEngine {
         long spawnRequestTime;
         volatile boolean playerAlive = true;
         long lastZoneParticleTime;
+        final java.util.Map<Integer, Long> extraLayerLastSpawn = new java.util.concurrent.ConcurrentHashMap<>();
 
         ArenaSession(UUID playerUuid, PlayerRef playerRef, Vector3d position, WaveArenaConfig config) {
             this.playerUuid = playerUuid;
@@ -106,7 +107,9 @@ public class WaveArenaEngine {
             return false;
         }
 
-        ArenaSession session = new ArenaSession(playerUuid, playerRef, position, config);
+        // Use fixed center from config if set, else fallback to player position
+        Vector3d arenaPos = config.getFixedCenter() != null ? config.getFixedCenter() : position;
+        ArenaSession session = new ArenaSession(playerUuid, playerRef, arenaPos, config);
         activeSessions.put(playerUuid, session);
 
         LOGGER.atFine().log("[WaveArena] Started %s for %s", arenaId, playerUuid);
@@ -386,14 +389,33 @@ public class WaveArenaEngine {
                     }
                     if (!viewers.isEmpty()) {
                         WaveArenaConfig cfg = session.config;
-                        double x = session.spawnPosition.x;
-                        double y = session.spawnPosition.y + cfg.getZoneParticleYOffset();
-                        double z = session.spawnPosition.z;
-                        LOGGER.atFine().log("[WaveArena] Spawning zone particle %s at %.0f,%.0f,%.0f scale=%.1f viewers=%d",
-                                cfg.getZoneParticleId(), x, y, z, cfg.getZoneParticleScale(), viewers.size());
-                        ParticleUtil.spawnParticleEffect(cfg.getZoneParticleId(),
-                                x, y, z, 0f, 0f, 0f, cfg.getZoneParticleScale(),
-                                null, null, viewers, pStore);
+                        double cx = session.spawnPosition.x;
+                        double cy = session.spawnPosition.y;
+                        double cz = session.spawnPosition.z;
+
+                        // Base zone particle (center glow)
+                        if (cfg.getZoneParticleId() != null) {
+                            ParticleUtil.spawnParticleEffect(cfg.getZoneParticleId(),
+                                    cx, cy + cfg.getZoneParticleYOffset(), cz,
+                                    0f, 0f, 0f, cfg.getZoneParticleScale(),
+                                    null, null, viewers, pStore);
+                        }
+
+                        // Extra layers (dome, cardinals, pillars) with per-layer intervals
+                        long nowMs = System.currentTimeMillis();
+                        List<ZoneParticleLayer> extras = cfg.getExtraZoneParticles();
+                        for (int i = 0; i < extras.size(); i++) {
+                            ZoneParticleLayer layer = extras.get(i);
+                            Long lastSpawn = session.extraLayerLastSpawn.get(i);
+                            if (lastSpawn != null && nowMs - lastSpawn < layer.intervalMs()) continue;
+                            session.extraLayerLastSpawn.put(i, nowMs);
+                            ParticleUtil.spawnParticleEffect(layer.systemId(),
+                                    cx + layer.offsetX(),
+                                    cy + layer.offsetY(),
+                                    cz + layer.offsetZ(),
+                                    0f, 0f, 0f, layer.scale(),
+                                    null, null, viewers, pStore);
+                        }
                     }
                 } catch (Exception e) {
                     LOGGER.atWarning().log("[WaveArena] Zone particle error: %s", e.getMessage());

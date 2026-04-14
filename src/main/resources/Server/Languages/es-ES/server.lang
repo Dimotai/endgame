@@ -58,6 +58,8 @@ npcRoles.Golem_Eye_Void.name = Ojo del Vacio
 items.Endgame_Portal_Mithril_Dragon.name = Fragmento de la Cumbre Helada
 items.Endgame_Portal_Mithril_Dragon.description = Un fragmento irregular de permafrost. <color is="#b8860b">Clic Derecho</color> en un <color is="#a9a9a9">Portal Ancestral</color> para abrir el paso hacia la <color is="#7de8ff">Cumbre Helada</color>.\nBajo los picos nevados de esta taiga glacial, <color is="#7de8ff">Dragones de Hielo</color> custodian antiguos filones de <color is="#7de8ff">Mithril</color>.
 portals.mithril.tip = <i><color is="#05c09a">Una bestia mitica duerme aqui,\natrapada en un sueno eterno...</color></i>\n\n<color is="#888888">Dicen que un</color> <color is="#7de8ff">mineral plateado</color> <color is="#888888">brilla en las profundidades heladas.</color>
+items.Endgame_Dungeon_Portal.name = Portal Ancestral Endgame
+items.Endgame_Dungeon_Portal.description = Un portal reforzado sintonizado con los reinos Endgame. Coloquelo y haga clic derecho con un <color is="#a9a9a9">Fragmento del Vacio</color>, una <color is="#80ffff">Llave de la Mazmorra Helada</color> o una <color is="#55aa55">Llave de la Mazmorra del Pantano</color>. Los Portal Devices vanilla rechazan estas llaves.
 items.Endgame_Portal_Swamp_Dungeon.name = Llave de la Mazmorra del Pantano
 items.Endgame_Portal_Swamp_Dungeon.description = Una llave tejida de raices ancestrales, goteando savia oscura. <color is="#b8860b">Clic Derecho</color> en un <color is="#a9a9a9">Portal Ancestral</color> para abrir el paso hacia la <color is="#2E8B57">Mazmorra del Pantano</color>.\nEn las profundidades del pantano sofocante, <color is="#2E8B57">Hedera</color> espera en el corazon del Gran Arbol Hueco.
 items.Endgame_Portal_Void_Realm.name = Fragmento del Vacio
@@ -88,6 +90,7 @@ portals.frozen_dungeon = Puerta de Frostfall
 portals.frozen_dungeon.description = Una grieta aullante de <color is="#7de8ff">hielo y vacio</color>, sus bordes crepitando con relampagos helados. Mas alla yace un bastion en ruinas abierto al <color is="#B0C4DE">cielo infinito</color>.
 portals.frozen_dungeon.tip1 = <i><color is="#7de8ff">El viento aulla a traves de la piedra destrozada,</color></i>
 portals.frozen_dungeon.tip2 = <i><color is="#7de8ff">y arriba, algo inmenso gira en la escarcha...</color></i>
+portals.frozen_dungeon.tip3 = <color is="#ffb060">Trae un arma a distancia</color> <color is="#cccccc">(arco, lanza, bastón)</color> <color is="#ffb060">— el dragón es inmune al cuerpo a cuerpo mientras vuela.</color>
 portals.swamp_dungeon = Puerta de la Mazmorra del Pantano
 portals.swamp_dungeon.description = Un portal retorcido de <color is="#2E8B57">vides enmaranadas y energia oscura</color>, sus bordes pulsando con vida corrupta. Mas alla yace un pantano consumido por el poder ancestral de <color is="#2E8B57">Hedera</color>.
 portals.swamp_dungeon.tip1 = <i><color is="#2E8B57">Las raices se retuercen y se extienden a traves de la niebla,</color></i>

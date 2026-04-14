@@ -1,0 +1,11 @@
+{
+  "Spawners": [
+    {"SpawnerId": "Void_Trial_Zone", "FixedRotation": true},
+    {"SpawnerId": "Void_Trial_Zone", "FixedRotation": true, "PositionOffset": {"Y": 1.5}},
+    {"SpawnerId": "Void_Trial_Zone", "FixedRotation": true, "PositionOffset": {"Y": 3.0}}
+  ],
+  "BoundingRadius": 15,
+  "CullDistance": 100.0,
+  "IsImportant": true,
+  "LifeSpan": 4.0
+}

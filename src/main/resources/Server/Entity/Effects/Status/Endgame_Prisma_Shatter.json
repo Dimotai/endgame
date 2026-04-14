@@ -1,7 +1,6 @@
 {
   "Duration": 4,
   "Debuff": true,
-  "StatusEffectIcon": "UI/Icons/Effects/Icon_Slow.png",
   "ApplicationEffects": {
     "EntityBottomTint": "#6020cc",
     "EntityTopTint": "#a060ff",

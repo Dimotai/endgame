@@ -58,6 +58,8 @@ npcRoles.Golem_Eye_Void.name = Око Пустоты
 items.Endgame_Portal_Mithril_Dragon.name = Осколок Ледяной Вершины
 items.Endgame_Portal_Mithril_Dragon.description = Неровный осколок вечной мерзлоты. <color is="#b8860b">Правый Клик</color> по <color is="#a9a9a9">Древнему Порталу</color>, чтобы открыть путь к <color is="#7de8ff">Ледяной Вершине</color>.\nПод заснеженными пиками этой студёной тайги <color is="#7de8ff">Ледяные Драконы</color> охраняют древние жилы <color is="#7de8ff">Мифрила</color>.
 portals.mithril.tip = <i><color is="#05c09a">Мифическое чудовище спит здесь,\nскованное вечным сном...</color></i>\n\n<color is="#888888">Говорят, что</color> <color is="#7de8ff">серебристая руда</color> <color is="#888888">мерцает в ледяных глубинах.</color>
+items.Endgame_Dungeon_Portal.name = Портал Предков Endgame
+items.Endgame_Dungeon_Portal.description = Усиленный портал, настроенный на Endgame-миры. Поставьте его и щёлкните правой кнопкой с <color is="#a9a9a9">Осколком Пустоты</color>, <color is="#80ffff">Ключом Ледяного Подземелья</color> или <color is="#55aa55">Ключом Болотного Подземелья</color>. Ванильные Portal Device отклоняют эти ключи.
 items.Endgame_Portal_Swamp_Dungeon.name = Ключ Болотного Подземелья
 items.Endgame_Portal_Swamp_Dungeon.description = Ключ, сплетённый из древних корней, с которого капает тёмный сок. <color is="#b8860b">ПКМ</color> по <color is="#a9a9a9">Древнему Порталу</color>, чтобы открыть путь в <color is="#2E8B57">Болотное Подземелье</color>.\nВ глубине удушающего болота <color is="#2E8B57">Хедера</color> ждёт в сердце Великого Полого Дерева.
 items.Endgame_Portal_Void_Realm.name = Осколок Пустоты
@@ -88,6 +90,7 @@ portals.frozen_dungeon = Врата Фростфолла
 portals.frozen_dungeon.description = Воющий разлом <color is="#7de8ff">льда и пустоты</color>, его края потрескивают от ледяных молний. За ним лежит разрушенный бастион под <color is="#B0C4DE">бесконечным небом</color>.
 portals.frozen_dungeon.tip1 = <i><color is="#7de8ff">Ветер кричит сквозь разбитые камни,</color></i>
 portals.frozen_dungeon.tip2 = <i><color is="#7de8ff">а наверху что-то огромное кружит в морозе...</color></i>
+portals.frozen_dungeon.tip3 = <color is="#ffb060">Возьмите дальнобойное оружие</color> <color is="#cccccc">(лук, копьё, посох)</color> <color is="#ffb060">— в полёте дракон неуязвим для ближнего боя.</color>
 portals.swamp_dungeon = Врата Болотного Подземелья
 portals.swamp_dungeon.description = Извивающийся портал из <color is="#2E8B57">спутанных лоз и тёмной энергии</color>, его края пульсируют испорченной жизнью. За ним лежит болото, поглощённое древней силой <color is="#2E8B57">Хедеры</color>.
 portals.swamp_dungeon.tip1 = <i><color is="#2E8B57">Корни извиваются и тянутся сквозь туман,</color></i>

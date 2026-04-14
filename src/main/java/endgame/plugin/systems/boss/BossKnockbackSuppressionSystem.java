@@ -27,7 +27,7 @@ import java.util.Set;
 public class BossKnockbackSuppressionSystem extends DamageEventSystem {
 
     private static final Set<String> BOSS_ROLE_NAMES = Set.of(
-            "Endgame_Dragon_Frost", "Dragon_Frost_Hybrid",
+            "Endgame_Dragon_Frost",
             "Endgame_Hedera",
             "Endgame_Golem_Void"
     );

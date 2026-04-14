@@ -7,7 +7,7 @@ published: true
 
 # Endgame & QoL
 
-**v4.2.0**
+**v5.0.0**
 
 Bosses, weapons, dungeons, NPCs, crafting, and quality-of-life systems for Hytale servers.
 
@@ -54,3 +54,7 @@ Bosses, weapons, dungeons, NPCs, crafting, and quality-of-life systems for Hytal
 - [**Achievements**](endgame-qol/achievements) — 24 achievements across 5 categories
 - [**Bestiary**](endgame-qol/bestiary) — 32 NPC entries, kill milestones & discovery
 - [**Warden Trials**](endgame-qol/warden-trials) — 4-tier wave survival with configurable timers
+
+### For Developers
+
+- [**Developer API**](endgame-qol/api) — Public APIs for third-party mod integration (BossBar + WaveArena frameworks)

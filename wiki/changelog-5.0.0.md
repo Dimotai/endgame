@@ -1,4 +1,4 @@
-# Changelog - Version 4.2.0
+# Changelog - Version 5.0.0
 
 ## New Features
 

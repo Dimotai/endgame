@@ -38,6 +38,8 @@ public class WaveArenaConfig {
     private final float zoneParticleScale;
     private final double zoneParticleYOffset;
     private final long zoneParticleIntervalMs;
+    @Nonnull private final List<ZoneParticleLayer> extraZoneParticles;
+    @Nullable private final com.hypixel.hytale.math.vector.Vector3d fixedCenter;
 
     private WaveArenaConfig(Builder b) {
         this.id = b.id;
@@ -66,6 +68,8 @@ public class WaveArenaConfig {
         this.zoneParticleScale = b.zoneParticleScale;
         this.zoneParticleYOffset = b.zoneParticleYOffset;
         this.zoneParticleIntervalMs = b.zoneParticleIntervalMs;
+        this.extraZoneParticles = b.extraZoneParticles != null ? b.extraZoneParticles : List.of();
+        this.fixedCenter = b.fixedCenter;
     }
 
     public static Builder builder(String id) { return new Builder(id); }
@@ -94,6 +98,8 @@ public class WaveArenaConfig {
     public float getZoneParticleScale() { return zoneParticleScale; }
     public double getZoneParticleYOffset() { return zoneParticleYOffset; }
     public long getZoneParticleIntervalMs() { return zoneParticleIntervalMs; }
+    @Nonnull public List<ZoneParticleLayer> getExtraZoneParticles() { return extraZoneParticles; }
+    @Nullable public com.hypixel.hytale.math.vector.Vector3d getFixedCenter() { return fixedCenter; }
 
     @Nonnull
     public WaveDef getWaveForIndex(int waveIndex) {
@@ -183,6 +189,8 @@ public class WaveArenaConfig {
         private float zoneParticleScale = 16.0f;
         private double zoneParticleYOffset = -0.3;
         private long zoneParticleIntervalMs = 1500;
+        private List<ZoneParticleLayer> extraZoneParticles;
+        private com.hypixel.hytale.math.vector.Vector3d fixedCenter;
 
         Builder(String id) { this.id = id; }
 
@@ -211,6 +219,8 @@ public class WaveArenaConfig {
         public Builder zoneParticleScale(float v) { this.zoneParticleScale = v; return this; }
         public Builder zoneParticleYOffset(double v) { this.zoneParticleYOffset = v; return this; }
         public Builder zoneParticleIntervalMs(long v) { this.zoneParticleIntervalMs = v; return this; }
+        public Builder extraZoneParticles(List<ZoneParticleLayer> v) { this.extraZoneParticles = v; return this; }
+        public Builder fixedCenter(com.hypixel.hytale.math.vector.Vector3d v) { this.fixedCenter = v; return this; }
 
         public WaveArenaConfig build() { return new WaveArenaConfig(this); }
     }
