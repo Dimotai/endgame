@@ -115,7 +115,6 @@ public class BossConfig {
     public BossConfig() {
     }
 
-    // === HEALTH ===
 
     public int getHealthOverride() {
         return healthOverride;
@@ -145,7 +144,6 @@ public class BossConfig {
         return healthOverride;
     }
 
-    // === DAMAGE ===
 
     public float getDamageMultiplier() {
         return damageMultiplier;
@@ -166,7 +164,6 @@ public class BossConfig {
         return damageMultiplier;
     }
 
-    // === PLAYER SCALING ===
 
     public int getPlayerScaling() {
         return playerScaling;
@@ -176,7 +173,6 @@ public class BossConfig {
         this.playerScaling = Math.max(0, Math.min(1000, scaling));
     }
 
-    // === XP REWARD ===
 
     public int getXpReward() {
         return xpReward;
@@ -196,7 +192,6 @@ public class BossConfig {
         this.dangerZoneStartPhase = Math.max(1, Math.min(3, phase));
     }
 
-    // === PHASE THRESHOLDS ===
 
     public float getPhase2Threshold() { return phase2Threshold; }
     public float getPhase3Threshold() { return phase3Threshold; }
@@ -204,7 +199,6 @@ public class BossConfig {
     public int getPhase2MinionCount() { return phase2MinionCount; }
     public int getPhase3MinionCount() { return phase3MinionCount; }
 
-    // === ENRAGE ===
 
     public boolean isEnrageEnabled() {
         return enrageEnabled;

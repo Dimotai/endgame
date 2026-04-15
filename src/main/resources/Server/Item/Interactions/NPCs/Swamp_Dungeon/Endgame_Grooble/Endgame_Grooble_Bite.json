@@ -4,7 +4,6 @@
     "ItemPlayerAnimationsId": "Default",
     "ItemAnimationId": "SwingLeft"
   },
-  "$Comment": "Prepare Delay",
   "RunTime": 0.1,
   "Next": {
     "Type": "Parallel",
@@ -33,7 +32,6 @@
             },
             "Next": {
               "Type": "Simple",
-              "$Comment": "Pad the interaction length",
               "RunTime": 0.25
             }
           }

@@ -4,17 +4,14 @@
     "ItemPlayerAnimationsId": "Golem_Crystal_Frost_Default",
     "ItemAnimationId": "SpinHeavy"
   },
-  "$Comment": "Prepare Delay",
   "RunTime": 1,
   "Next": {
     "Type": "Parallel",
-    "$Comment": "Make sure this parallel interaction is needed and can't be optimized away",
     "Interactions": [
       {
         "Interactions": [
           {
             "Type": "Selector",
-            "$Comment": "Length of Combat",
             "RunTime": 0.25,
             "Selector": {
               "Id": "Horizontal",
@@ -30,7 +27,6 @@
             },
             "Next": {
               "Type": "Selector",
-              "$Comment": "Length of Combat",
               "RunTime": 0.25,
               "Selector": {
                 "Id": "Horizontal",
@@ -46,7 +42,6 @@
               },
               "Next": {
                 "Type": "Selector",
-                "$Comment": "Length of Combat",
                 "RunTime": 0.25,
                 "Selector": {
                   "Id": "Horizontal",
@@ -62,7 +57,6 @@
                 },
                 "Next": {
                   "Type": "Selector",
-                  "$Comment": "Length of Combat",
                   "RunTime": 0.25,
                   "Selector": {
                     "Id": "Horizontal",
@@ -78,7 +72,6 @@
                   },
                   "Next": {
                     "Type": "Selector",
-                    "$Comment": "Length of Combat",
                     "RunTime": 0.25,
                     "Selector": {
                       "Id": "Horizontal",
@@ -94,13 +87,11 @@
                     },
                     "Next": {
                       "Type": "Parallel",
-                      "$Comment": "Make sure this parallel interaction is needed and can't be optimized away",
                       "Interactions": [
                         {
                           "Interactions": [
                             {
                               "Type": "Selector",
-                              "$Comment": "Length of Combat",
                               "RunTime": 0.25,
                               "Selector": {
                                 "Id": "Horizontal",
@@ -116,7 +107,6 @@
                               },
                               "Next": {
                                 "Type": "Selector",
-                                "$Comment": "Length of Combat",
                                 "RunTime": 0.25,
                                 "Selector": {
                                   "Id": "Horizontal",
@@ -132,7 +122,6 @@
                                 },
                                 "Next": {
                                   "Type": "Selector",
-                                  "$Comment": "Length of Combat",
                                   "RunTime": 0.25,
                                   "Selector": {
                                     "Id": "Horizontal",
@@ -148,7 +137,6 @@
                                   },
                                   "Next": {
                                     "Type": "Selector",
-                                    "$Comment": "Length of Combat",
                                     "RunTime": 0.25,
                                     "Selector": {
                                       "Id": "Horizontal",
@@ -164,7 +152,6 @@
                                     },
                                     "Next": {
                                       "Type": "Selector",
-                                      "$Comment": "Length of Combat",
                                       "RunTime": 0.25,
                                       "Selector": {
                                         "Id": "Horizontal",
@@ -204,7 +191,6 @@
                           "Interactions": [
                             {
                               "Type": "Simple",
-                              "$Comment": "Length of Effect",
                               "RunTime": 2.75,
                               "Effects": {
                                 "WorldSoundEventId": "SFX_Golem_Earth_Swing"
@@ -240,7 +226,6 @@
         "Interactions": [
           {
             "Type": "Simple",
-            "$Comment": "Length of Effect",
             "RunTime": 2.75,
             "Effects": {
               "WorldSoundEventId": "SFX_Golem_Earth_Swing"

@@ -15,7 +15,10 @@ The Bounty Board provides repeatable objectives that refresh on a schedule. Each
 
 Bounties are **deterministic per player per day** — the same player always gets the same bounties on the same day, ensuring fairness.
 
-**Command:** `/eg journal` — Permission: `endgameqol.journal` (default: allow)
+**Command:** `/eg journal` (Bounties tab) — Permission: `endgameqol.journal` (default: allow)
+
+> [!NOTE]
+> **v5.0.0 — Native Journal Page.** The Bounty Board is the first tab of the unified native `.ui` Journal page (Bounties / Bestiary / Achievements).
 
 ## Bounty Types
 

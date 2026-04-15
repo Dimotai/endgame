@@ -1,5 +1,7 @@
 {
   "Type": "Simple",
+  "HeadMotion": { "Type": "Aim", "RelativeTurnSpeed": 3.0, "HitProbability": 0.95, "Deflection": true },
+  "BodyMotion": { "Type": "Face", "RelativeTurnSpeed": 3.0 },
   "Effects": {
     "ItemPlayerAnimationsId": "Golem_Void_Default",
     "ItemAnimationId": "ThrowDouble",

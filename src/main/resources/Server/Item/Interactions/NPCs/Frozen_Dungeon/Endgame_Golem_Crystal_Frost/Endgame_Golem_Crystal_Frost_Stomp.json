@@ -4,17 +4,14 @@
     "ItemPlayerAnimationsId": "Golem_Crystal_Frost_Default",
     "ItemAnimationId": "Stomp"
   },
-  "$Comment": "Prepare Delay",
   "RunTime": 0.5,
   "Next": {
     "Type": "Parallel",
-    "$Comment": "Make sure this parallel interaction is needed and can't be optimized away",
     "Interactions": [
       {
         "Interactions": [
           {
             "Type": "Selector",
-            "$Comment": "Length of Combat",
             "RunTime": 0.167,
             "Selector": {
               "Id": "AOECircle",
@@ -25,7 +22,6 @@
             },
             "Next": {
               "Type": "Simple",
-              "$Comment": "Pad the interaction length",
               "RunTime": 0.166
             }
           }
@@ -35,7 +31,6 @@
         "Interactions": [
           {
             "Type": "Simple",
-            "$Comment": "Length of Effect",
             "RunTime": 0.25,
             "Effects": {
               "WorldSoundEventId": "SFX_Golem_Earth_Stomp"

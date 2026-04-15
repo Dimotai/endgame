@@ -9,6 +9,8 @@ sort-index: 5
 
 The Bestiary is a full NPC encyclopedia with 32 entries across 6 categories. Track your discoveries, view detailed mob cards, and earn rewards for kill milestones.
 
+Access via <#55ffff>/eg journal</#55ffff> — the Bestiary is now the second tab of the unified **Native Journal** page (Bounty Board, Bestiary, Achievements).
+
 ---
 
 ## <#d16eff>Categories</#d16eff>

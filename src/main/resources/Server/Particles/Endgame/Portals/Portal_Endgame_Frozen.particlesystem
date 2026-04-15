@@ -1,6 +1,5 @@
 {
   "Spawners": [
-    { "SpawnerId": "Portal_Endgame_Frozen_Background",  "PositionOffset": { "X": 0, "Y": 3, "Z": 0 },     "StartDelay": 2.3 },
     { "SpawnerId": "Portal_Endgame_Frozen_Center",      "PositionOffset": { "X": 0, "Y": 3, "Z": 0 },     "StartDelay": 2 },
     { "SpawnerId": "Portal_Endgame_Frozen_Center_Glow", "PositionOffset": { "X": 0, "Y": 3, "Z": 0.04 },  "StartDelay": 2.3 },
     { "SpawnerId": "Portal_Endgame_Frozen_Inside",      "PositionOffset": { "X": 0, "Y": 3, "Z": 0 },     "StartDelay": 2.9 },

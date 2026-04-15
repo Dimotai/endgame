@@ -41,11 +41,7 @@ public class PlayerDeathBossBarSystem extends DeathSystems.OnDeathSystem {
         // Find matching PlayerRef by entity reference
         for (PlayerRef pRef : Universe.get().getPlayers()) {
             if (pRef != null && pRef.getReference() != null && pRef.getReference().equals(ref)) {
-                // Clear the boss bar for this player (Golem Void)
-                if (plugin.getGolemVoidBossManager() != null) {
-                    plugin.getGolemVoidBossManager().hideBossBarForPlayer(pRef);
-                }
-                // Clear generic boss bars (Frost Dragon, Hedera)
+                // Clear all boss bars for this player (unified manager handles every boss)
                 if (plugin.getGenericBossManager() != null) {
                     plugin.getGenericBossManager().hideBossBarForPlayer(pRef);
                 }

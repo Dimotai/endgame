@@ -20,7 +20,6 @@ import endgame.plugin.config.EndgameConfig;
 import endgame.plugin.config.RecipeOverrideConfig;
 import endgame.plugin.managers.BountyManager;
 import endgame.plugin.managers.boss.GenericBossManager;
-import endgame.plugin.managers.boss.GolemVoidBossManager;
 import endgame.wavearena.WaveArenaEngine;
 
 import javax.annotation.Nonnull;
@@ -112,13 +111,16 @@ public class NativeStatusPage extends InteractiveCustomUIPage<NativeStatusPage.S
         cmd.set("#OnlinePlayers.Text", onlinePlayers + " player" + (onlinePlayers != 1 ? "s" : ""));
 
         // Encounters
-        int golemCount = 0, genericCount = 0;
-        GolemVoidBossManager golemMgr = plugin.getGolemVoidBossManager();
+        int golemCount = 0, otherCount = 0;
         GenericBossManager genericMgr = plugin.getGenericBossManager();
-        if (golemMgr != null) golemCount = golemMgr.getActiveBosses().size();
-        if (genericMgr != null) genericCount = genericMgr.getActiveBosses().size();
-        int totalBosses = golemCount + genericCount;
-        setEncounter(cmd, "#Bosses", totalBosses, totalBosses > 0 ? golemCount + " Golem, " + genericCount + " Other" : null);
+        if (genericMgr != null) {
+            for (var state : genericMgr.getActiveBosses().values()) {
+                if (state.config.bossType == endgame.plugin.utils.BossType.GOLEM_VOID) golemCount++;
+                else otherCount++;
+            }
+        }
+        int totalBosses = golemCount + otherCount;
+        setEncounter(cmd, "#Bosses", totalBosses, totalBosses > 0 ? golemCount + " Golem, " + otherCount + " Other" : null);
 
         WaveArenaEngine waveEngine = plugin.getWaveArenaEngine();
         setEncounter(cmd, "#Trials", waveEngine != null ? waveEngine.getActiveSessionCount() : 0, null);

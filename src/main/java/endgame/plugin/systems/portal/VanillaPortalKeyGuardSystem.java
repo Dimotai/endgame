@@ -17,7 +17,7 @@ import java.util.Set;
 
 /**
  * Blocks vanilla Portal_Device from accepting Endgame portal keys.
- * Players must use {@code Endgame_Dungeon_Portal} instead.
+ * Players must use {@code Endgame_Gateway} instead.
  *
  * <p>Hand-only check: fires when the player right-clicks a vanilla Portal_Device
  * with an Endgame portal key in hand.
@@ -55,7 +55,7 @@ public class VanillaPortalKeyGuardSystem extends EntityEventSystem<EntityStore, 
 
         PlayerRef pr = chunk.getComponent(index, PlayerRef.getComponentType());
         if (pr != null) {
-            pr.sendMessage(Message.raw("This key requires an Endgame Dungeon Portal.").color("#ff5555"));
+            pr.sendMessage(Message.raw("This key requires an Endgame Gateway.").color("#ff5555"));
         }
         event.setCancelled(true);
     }

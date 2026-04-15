@@ -33,6 +33,7 @@ public interface WaveArenaCallbacks {
         PLAYER_DEATH,
         TIMEOUT,
         DISCONNECT,
-        MANUAL
+        MANUAL,
+        LEFT_ZONE
     }
 }

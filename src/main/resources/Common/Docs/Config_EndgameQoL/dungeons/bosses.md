@@ -2,7 +2,7 @@
 name: Bosses & Elites
 description: All boss encounters, elite mobs, and enrage system
 author: Lewai
-sort-index: 3
+sort-index: 4
 ---
 
 # <gradient data="#ff5555:#ff6600:#d16eff">Bosses & Elites</gradient>
@@ -20,6 +20,10 @@ Endgame & QoL adds three major boss encounters and several elite mobs. All have 
 | <#d16eff>Golem Void</#d16eff> | 3500 | 3500 |
 
 All three bosses scale <#ff6600>+50% HP</#ff6600> per additional player.
+
+All bosses (and 5 elites) share a unified <#d16eff>HyUI boss bar</#d16eff>: thematic per-boss color fill, glossy highlight overlay, gold phase threshold markers, numeric HP display (`current / max HP  •  %`), and INVULNERABLE/ENRAGED status badges. Bars auto-show when a player enters the 50-block proximity window (hides at 55m) — damage is no longer required. In multi-boss fights, a cross-boss coordinator (`BossBarFocus`) shows only one bar at a time (last-damaged wins).
+
+Each boss has a unique combat music theme that auto-plays when a player enters the 50-block range and stops on death or when all players leave.
 
 ---
 
@@ -105,10 +109,14 @@ A void-corrupted nature boss using poison and root attacks with intelligent comb
 Melee strikes with poison application. Root traps sprout around the arena (5-block radius).
 
 **Phase 2 — Toxic Bloom** (67-34% HP)
-Poison damage intensifies. Root AOE expands to 7-block radius. Aggressive strafe behavior.
+Poison damage intensifies. Root AOE expands to 7-block radius. Aggressive strafe behavior. Three new attacks unlock at Phase 2+:
+- **Vine Grab** — ranged pull that yanks the target into melee range
+- **Ground Slam** — 7-block AOE + camera shake + 1s Stagger stun
+- **Poison Clouds** — lingering toxic clouds every 18-25s
 
 **Phase 3 — Death Blossom** (34-0% HP)
-Root AOE reaches 9 blocks. Extremely aggressive with minimal cooldowns. 3s invulnerability on each phase transition.
+Root AOE reaches 9 blocks. Extremely aggressive with minimal cooldowns. 3s invulnerability on each phase transition. Fourth new attack:
+- **Charge** — running lunge (now correctly plays the Run animation)
 
 **Drops** — <#aaaaaa>Essence of the Forest</#aaaaaa> (10-15), <#aaaaaa>Onyxium Bar</#aaaaaa> (3-7), <#55ff55>Hedera Gem</#55ff55> (guaranteed), <#aaaaaa>Void Essence</#aaaaaa> (10-20), <#aaaaaa>Voidheart</#aaaaaa> (guaranteed).
 
@@ -120,20 +128,24 @@ Root AOE reaches 9 blocks. Extremely aggressive with minimal cooldowns. 3s invul
 
 **HP** — 3500 (scales +50% per extra player)
 **XP Reward** — 3500
-**Location** — Void Realm (accessed via <#d16eff>Shard of the Void</#d16eff>)
+**Location** — <#d16eff>Void Realm</#d16eff> (accessed via the <#d16eff>Void Realm Key</#d16eff>, renamed from "Shard of the Void")
 
-The hardest boss in the mod. A massive void golem with 13 unique attacks and a 3-phase minion-spawning fight.
+The hardest boss in the mod. A massive void golem with 14 unique attacks and a 3-phase minion-spawning fight. Uses the vanilla <#aaaaaa>Combat Action Evaluator</#aaaaaa> for distance-aware, cooldown-gated, HP-phase-gated attack selection. MaxSpeed raised from 8 to 14 — the Golem now noticeably pursues players. **Knockback-immune** (KnockbackScale 0).
 
 **Phase 1** (100-67% HP)
 Full attack repertoire: Slam Left/Right, Grind (360 spin), Rumble (ground shockwave), Pound, Throws (single and double boulder). <#d16eff>Void runic circle</#d16eff> telegraphs appear on the ground before heavy attacks.
 
 **Phase 2** (67-34% HP)
-Spawns 2 <#d16eff>Eye Void</#d16eff> minions (250 HP each). 3s invulnerability during transition. All attacks continue.
+Spawns 2 <#d16eff>Eye Void</#d16eff> minions (250 HP each). 3s invulnerability during transition. All attacks continue. **<#d16eff>Jump Slam</#d16eff>** unlocks (weighted 3× in the pool): the Golem telegraphs, jumps high using the vanilla `JumpFar` animation, teleports to the nearest player's position, and crashes down (`FallFar`) for <#ff5555>80 Physical AOE + 1s Stagger stun</#ff5555>. Camera shake + Explosion_Big + Impact_Critical on impact. **Void-safe** — if the target hovers over the void to bait the boss off the arena, the Golem teleports back to its spawn anchor instead.
 
 **Phase 3** (34-0% HP)
-Spawns 4 <#d16eff>Eye Void</#d16eff> minions. Danger zone activates (configurable start phase). Maximum aggression.
+Spawns 4 <#d16eff>Eye Void</#d16eff> minions. Danger zone activates (configurable start phase). Jump Slam ramps further. Maximum aggression.
 
-**All Attacks** — Swing Left/Right, Swing Charge, Slam Left/Right, Grind, Rumble, Ground Slam, Pound, Pound Double, Throw, Throw Double, Clap. Larger telegraph circle = larger AOE.
+**All Attacks** — Swing Left/Right, Swing Charge, Slam Left/Right, Grind, Rumble, Ground Slam, Pound, Pound Double, Throw, Throw Double, Clap, Jump Slam. Larger telegraph circle = larger AOE.
+
+!v **Auto-spawn removed** — the Void Realm no longer spawns the Golem on arrival. A wave-survival encounter (similar to Warden Trials) will introduce the fight in a future update.
+
+**Void Realm combat music** — Ambient combat theme auto-plays in the Void Realm dimension via the `Env_Endgame_Void_Realm` environment.
 
 **Drops** — <#aaaaaa>Onyxium Bar</#aaaaaa> (6-10), <#d16eff>Prisma Bar</#d16eff> (3-7), <#aaaaaa>Emerald</#aaaaaa> (1-3, 50%), <#aaaaaa>Shard of the Radiant Light</#aaaaaa> (guaranteed).
 

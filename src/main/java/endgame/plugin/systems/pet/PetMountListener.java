@@ -139,7 +139,6 @@ public class PetMountListener implements PlayerPacketFilter {
 
         if (existingMount != null && existingMount.getOwnerPlayerRef() != null) {
             if (Objects.equals(existingMount.getOwnerPlayerRef(), playerRef)) {
-                // === DISMOUNT ===
                 mountedEntities.remove(playerRef.getUuid());
                 targetStore.removeComponent(targetRef, NPCMountComponent.getComponentType());
 
@@ -170,7 +169,6 @@ public class PetMountListener implements PlayerPacketFilter {
             return; // Someone else is mounted
         }
 
-        // === MOUNT ===
         int roleIndex = -1;
         NPCEntity npcEntity = targetStore.getComponent(targetRef, NPCEntity.getComponentType());
         if (npcEntity != null) {

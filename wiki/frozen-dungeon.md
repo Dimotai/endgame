@@ -58,12 +58,22 @@ Collect them efficiently by clearing rooms systematically before visiting the tr
 | Property | Value |
 | :--- | :--- |
 | Health | **1400 HP** |
-| Phases | 3 phases |
+| Phases | 3 HP-based phases |
 | Player Scaling | 50% per additional player |
-| Attacks | Ice breath, tail sweep, frost nova |
-| Drops | **Dragon Heart** + **Mithril Bars** (4-5) + bonus materials |
+| Detection Range | 25 blocks |
+| Drops | **Dragon Heart** + **Mithril Bars** (4–5) + bonus materials |
 
-Instance-locked encounter. The boss arena is sealed once combat begins.
+**Phase structure (v5.0.0 rework):**
+
+| Phase | Name | HP | Behavior |
+| :--- | :--- | :---: | :--- |
+| 1 | Sky Sentinel | > 70% | Flying, **melee-immune** — use bows, staves, spears |
+| 2 | Ground Fury | 70–40% | Grounded, **projectile-immune** — use melee |
+| 3 | Hybrid Frenzy | < 40% | Rapid fly/ground cycling (8–10s each), alternating immunity |
+
+Attacks include **Frost Bolt**, **Icy Wind** (new radial gust), **Swing/Bite/Stomp** (Stagger on Stomp), and **Frost Breath** (new cone). A one-time chat hint fires when you hit the dragon with an immune damage type.
+
+Boss combat music plays within 50 blocks. Instance-locked encounter.
 
 [View full boss guide](endgame-qol/bosses-elites)
 

@@ -9,14 +9,12 @@
     "ItemPlayerAnimationsId": "Endgame_Toad_Frost_Default",
     "ItemAnimationId": "Tongue"
   },
-  "$Comment": "Prepare Delay",
   "RunTime": 0.333,
   "Next": {
     "Type": "Selector",
     "Effects": {
       "WorldSoundEventId": "SFX_Toad_Rhino_Magma_Tongue_Whoosh"
     },
-    "$Comment": "Length of Combat",
     "RunTime": 0.152,
     "Selector": {
       "Id": "Stab",
@@ -35,7 +33,6 @@
     },
     "Next": {
       "Type": "Simple",
-      "$Comment": "Pad the interaction length",
       "RunTime": 0.53
     }
   }

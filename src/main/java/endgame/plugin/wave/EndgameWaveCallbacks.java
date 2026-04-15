@@ -13,7 +13,6 @@ import endgame.plugin.ui.WaveAnnouncementHud;
 import endgame.plugin.utils.PlayerRefCache;
 import endgame.wavearena.WaveArenaCallbacks;
 import endgame.wavearena.WaveArenaConfig;
-import endgame.wavearena.WaveArenaEngine;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -22,16 +21,31 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
  * EndgameQoL's implementation of WaveArenaCallbacks.
- * Handles XP rewards, bounty hooks, chat messages, sounds, item drops.
+ *
+ * <p>Responsibilities:
+ * <ul>
+ *   <li>HUD lifecycle: countdown, wave-active (live mob counter), between-wave interval
+ *       (live seconds countdown), complete, failed.</li>
+ *   <li>Scheduled refresh tasks for dynamic countdowns (swap the HUD each second).</li>
+ *   <li>Per-player wave state: current wave index, total waves, mobs alive / spawned
+ *       — drives the HUD mob counter.</li>
+ *   <li>XP rewards, bounty hooks, chat messages, item drops.</li>
+ *   <li>Public {@link #clearWaveHud} for external callers (world transfer, disconnect).</li>
+ * </ul>
  */
 public class EndgameWaveCallbacks implements WaveArenaCallbacks {
 
     private final EndgameQoL plugin;
     private final Map<UUID, WaveAnnouncementHud> activeHuds = new ConcurrentHashMap<>();
+    private final Map<UUID, WaveState> activeState = new ConcurrentHashMap<>();
+    /** Per-player scheduled refresh (countdown or interval). Cancelled on wave start / cleanup. */
+    private final Map<UUID, ScheduledFuture<?>> scheduledRefresh = new ConcurrentHashMap<>();
+
     private static final ScheduledExecutorService HUD_SCHEDULER =
             Executors.newSingleThreadScheduledExecutor(r -> {
                 Thread t = new Thread(r, "EndgameQoL-WaveHUD");
@@ -43,25 +57,53 @@ public class EndgameWaveCallbacks implements WaveArenaCallbacks {
         this.plugin = plugin;
     }
 
-    /**
-     * Attaches a pre-built HUD to the player. The HUD's state is baked in at
-     * construction time (see WaveAnnouncementHud factory methods), so the
-     * build() call sent to the client is atomic — no race with follow-up updates.
-     */
+    /** Mutable per-player state driving the live HUD. */
+    private static final class WaveState {
+        final String arenaId;
+        final String arenaName;
+        volatile int currentWave;
+        volatile int totalWaves;
+        volatile int totalMobsInWave;
+        volatile int killedMobs;
+
+        WaveState(String arenaId, String arenaName, int totalWaves) {
+            this.arenaId = arenaId;
+            this.arenaName = arenaName;
+            this.totalWaves = totalWaves;
+        }
+    }
+
+    // ─── HUD attach / detach ──────────────────────────────────────────────
+
     private void attachHud(UUID playerUuid, PlayerRef pr, WaveAnnouncementHud hud) {
         try {
             Ref<EntityStore> ref = pr.getReference();
             if (ref == null || !ref.isValid()) return;
-            Player player = ref.getStore().getComponent(ref, Player.getComponentType());
-            if (player == null) return;
-            player.getHudManager().setCustomHud(pr, hud);
-            activeHuds.put(playerUuid, hud);
+            var store = ref.getStore();
+            World world = store.getExternalData().getWorld();
+            // Always route HudManager calls through the world thread — calls from the
+            // scheduler daemon thread can silently race with engine packet dispatch.
+            Runnable dispatch = () -> {
+                try {
+                    if (!ref.isValid()) return;
+                    Player player = ref.getStore().getComponent(ref, Player.getComponentType());
+                    if (player == null) return;
+                    player.getHudManager().setCustomHud(pr, hud);
+                    activeHuds.put(playerUuid, hud);
+                } catch (Exception inner) {
+                    plugin.getLogger().atWarning().log("[WaveHUD] dispatch error: %s", inner.getMessage());
+                }
+            };
+            if (world != null && world.isAlive()) {
+                world.execute(dispatch);
+            } else {
+                dispatch.run();
+            }
         } catch (Exception e) {
             plugin.getLogger().atWarning().log("[WaveHUD] Failed to attach HUD: %s", e.getMessage());
         }
     }
 
-    /** Detaches the HUD for a player. */
     private void removeHud(UUID playerUuid) {
         WaveAnnouncementHud hud = activeHuds.remove(playerUuid);
         if (hud == null) return;
@@ -70,10 +112,41 @@ public class EndgameWaveCallbacks implements WaveArenaCallbacks {
             if (pr == null) return;
             Ref<EntityStore> ref = pr.getReference();
             if (ref == null || !ref.isValid()) return;
-            Player player = ref.getStore().getComponent(ref, Player.getComponentType());
-            if (player != null) player.getHudManager().setCustomHud(pr, null);
+            var store = ref.getStore();
+            World world = store.getExternalData().getWorld();
+            Runnable dispatch = () -> {
+                try {
+                    if (!ref.isValid()) return;
+                    Player player = ref.getStore().getComponent(ref, Player.getComponentType());
+                    if (player != null) player.getHudManager().setCustomHud(pr, null);
+                } catch (Exception ignored) {}
+            };
+            if (world != null && world.isAlive()) {
+                world.execute(dispatch);
+            } else {
+                dispatch.run();
+            }
         } catch (Exception ignored) {}
     }
+
+    private void cancelRefresh(UUID playerUuid) {
+        ScheduledFuture<?> f = scheduledRefresh.remove(playerUuid);
+        if (f != null) f.cancel(false);
+    }
+
+    /**
+     * Publicly callable — used by {@code EventRegistry.onPlayerLeaveWorld} and any other
+     * external path that needs to proactively wipe a player's wave HUD + scheduled task
+     * (e.g. world transfer mid-arena). Safe to call even if no HUD is active.
+     */
+    public void clearWaveHud(UUID playerUuid) {
+        if (playerUuid == null) return;
+        cancelRefresh(playerUuid);
+        activeState.remove(playerUuid);
+        removeHud(playerUuid);
+    }
+
+    // ─── Callbacks ─────────────────────────────────────────────────────────
 
     @Override
     public void onCountdown(@Nonnull UUID playerUuid, @Nonnull String arenaId, int secondsRemaining) {
@@ -81,20 +154,63 @@ public class EndgameWaveCallbacks implements WaveArenaCallbacks {
         if (pr == null) return;
         WaveArenaConfig config = plugin.getWaveArenaEngine().getConfig(arenaId);
         String name = config != null ? config.getDisplayName() : arenaId;
+        int totalWaves = config != null ? config.getWaveCount() : 1;
+
+        // Seed state (next waveStart will increment currentWave to 0 → displayed as "1")
+        WaveState state = new WaveState(arenaId, name, totalWaves);
+        state.currentWave = -1; // pre-first-wave
+        activeState.put(playerUuid, state);
+
         attachHud(playerUuid, pr, WaveAnnouncementHud.countdown(pr, name, secondsRemaining));
+        scheduleCountdownTick(playerUuid, secondsRemaining);
+    }
+
+    private void scheduleCountdownTick(UUID playerUuid, int initialSeconds) {
+        cancelRefresh(playerUuid);
+        ScheduledFuture<?> f = HUD_SCHEDULER.scheduleAtFixedRate(new Runnable() {
+            int remaining = initialSeconds - 1;
+            @Override public void run() {
+                try {
+                    if (remaining <= 0) {
+                        cancelRefresh(playerUuid);
+                        return;
+                    }
+                    WaveState state = activeState.get(playerUuid);
+                    if (state == null) { cancelRefresh(playerUuid); return; }
+                    PlayerRef pr = PlayerRefCache.getByUuid(playerUuid);
+                    if (pr == null) { cancelRefresh(playerUuid); return; }
+                    attachHud(playerUuid, pr, WaveAnnouncementHud.countdown(pr, state.arenaName, remaining));
+                    remaining--;
+                } catch (Exception ignored) {}
+            }
+        }, 1, 1, TimeUnit.SECONDS);
+        scheduledRefresh.put(playerUuid, f);
     }
 
     @Override
     public void onWaveStart(@Nonnull UUID playerUuid, @Nonnull String arenaId, int waveIndex, int totalWaves) {
+        cancelRefresh(playerUuid); // stop any countdown / interval ticker
+
         PlayerRef pr = PlayerRefCache.getByUuid(playerUuid);
         if (pr == null) return;
         WaveArenaConfig config = plugin.getWaveArenaEngine().getConfig(arenaId);
         String name = config != null ? config.getDisplayName() : arenaId;
+
+        WaveState state = activeState.computeIfAbsent(playerUuid,
+                k -> new WaveState(arenaId, name, totalWaves));
+        state.currentWave = waveIndex;
+        state.totalWaves = totalWaves;
+        state.totalMobsInWave = 0;  // will be populated by onMobSpawned
+        state.killedMobs = 0;
+
+        // Brief "FIGHT!" banner — will be replaced by waveActive as mobs spawn
         attachHud(playerUuid, pr, WaveAnnouncementHud.waveStart(pr, name, waveIndex, totalWaves));
     }
 
     @Override
     public void onWaveClear(@Nonnull UUID playerUuid, @Nonnull String arenaId, int waveIndex, int totalWaves) {
+        cancelRefresh(playerUuid);
+
         PlayerRef pr = PlayerRefCache.getByUuid(playerUuid);
         if (pr == null) return;
         WaveArenaConfig config = plugin.getWaveArenaEngine().getConfig(arenaId);
@@ -103,8 +219,8 @@ public class EndgameWaveCallbacks implements WaveArenaCallbacks {
 
         if (waveIndex + 1 < totalWaves) {
             attachHud(playerUuid, pr, WaveAnnouncementHud.waveClear(pr, name, waveIndex, totalWaves, interval));
+            scheduleIntervalTick(playerUuid, waveIndex, totalWaves, interval);
         } else if ("Void_Realm_Trial".equals(arenaId)) {
-            // Last wave cleared → boss incoming bridge for Void Gauntlet
             attachHud(playerUuid, pr, WaveAnnouncementHud.bossIncoming(pr, name));
         }
 
@@ -114,37 +230,55 @@ public class EndgameWaveCallbacks implements WaveArenaCallbacks {
         }
     }
 
+    private void scheduleIntervalTick(UUID playerUuid, int waveIndex, int totalWaves, int initialSeconds) {
+        ScheduledFuture<?> f = HUD_SCHEDULER.scheduleAtFixedRate(new Runnable() {
+            int remaining = initialSeconds - 1;
+            @Override public void run() {
+                try {
+                    if (remaining <= 0) {
+                        cancelRefresh(playerUuid);
+                        return;
+                    }
+                    WaveState state = activeState.get(playerUuid);
+                    if (state == null) { cancelRefresh(playerUuid); return; }
+                    PlayerRef pr = PlayerRefCache.getByUuid(playerUuid);
+                    if (pr == null) { cancelRefresh(playerUuid); return; }
+                    attachHud(playerUuid, pr, WaveAnnouncementHud.waveClear(pr, state.arenaName,
+                            waveIndex, totalWaves, remaining));
+                    remaining--;
+                } catch (Exception ignored) {}
+            }
+        }, 1, 1, TimeUnit.SECONDS);
+        scheduledRefresh.put(playerUuid, f);
+    }
+
     @Override
     public void onArenaCompleted(@Nonnull UUID playerUuid, @Nonnull String arenaId, int wavesCleared) {
+        cancelRefresh(playerUuid);
         WaveArenaConfig config = plugin.getWaveArenaEngine().getConfig(arenaId);
         PlayerRef pr = PlayerRefCache.getByUuid(playerUuid);
 
-        // HUD complete banner — onCleanup (called right after by the engine) handles removal
         if (pr != null) {
             String name = config != null ? config.getDisplayName() : arenaId;
             attachHud(playerUuid, pr, WaveAnnouncementHud.complete(pr, name));
         }
 
-        // Void Realm Trial — spawn the Void Golem after the final wave is cleared
         if ("Void_Realm_Trial".equals(arenaId)) {
             spawnVoidGolem(playerUuid);
         }
 
         if (config == null) return;
 
-        // XP (completion-based, not per-wave)
         if (!config.isXpPerWave() && config.getXpReward() > 0) {
             int tier = config.getBountyTier();
             int xp = tier > 0 ? tier * config.getXpReward() : config.getXpReward();
             awardXp(playerUuid, xp, config.getXpSource());
         }
 
-        // Drop table rewards
         if (config.getRewardDropTable() != null && pr != null) {
             giveDropTableRewards(pr, config.getRewardDropTable());
         }
 
-        // Bounty hook
         if (config.getBountyHook() != null && config.getBountyTier() > 0) {
             try {
                 var bounty = plugin.getBountyManager();
@@ -158,59 +292,86 @@ public class EndgameWaveCallbacks implements WaveArenaCallbacks {
     @Override
     public void onArenaFailed(@Nonnull UUID playerUuid, @Nonnull String arenaId,
                                int wavesCleared, @Nonnull FailReason reason) {
-        // DISCONNECT / MANUAL = player is leaving (/leave, world transfer, disconnect).
-        // Showing a fail HUD that immediately gets cleaned up causes a visual "stuck HUD"
-        // on the client because the new-HUD packet and the clear-HUD packet race through
-        // the world transfer. Skip the HUD entirely for those cases.
+        cancelRefresh(playerUuid);
+
+        // DISCONNECT / MANUAL = player is leaving. Skip the fail banner to avoid a
+        // stuck HUD on the new world (clear-HUD packet races the world transfer).
         if (reason == FailReason.DISCONNECT || reason == FailReason.MANUAL) {
+            activeState.remove(playerUuid);
             removeHud(playerUuid);
             return;
         }
 
         PlayerRef pr = PlayerRefCache.getByUuid(playerUuid);
-        if (pr == null) { removeHud(playerUuid); return; }
+        if (pr == null) { activeState.remove(playerUuid); removeHud(playerUuid); return; }
         WaveArenaConfig config = plugin.getWaveArenaEngine().getConfig(arenaId);
         String name = config != null ? config.getDisplayName() : arenaId;
         String msg = switch (reason) {
             case PLAYER_DEATH -> "You died";
             case TIMEOUT -> "Time's up";
+            case LEFT_ZONE -> "You left the arena";
             default -> "Challenge failed";
         };
         attachHud(playerUuid, pr, WaveAnnouncementHud.failed(pr, name, msg, wavesCleared + 1));
-        // onCleanup (called right after) removes the HUD synchronously
+
+        // Chat message — chat echo of the fail reason, colored red
+        String chatMsg = switch (reason) {
+            case PLAYER_DEATH -> name + " failed — you were defeated on wave " + (wavesCleared + 1) + ".";
+            case TIMEOUT -> name + " failed — time ran out on wave " + (wavesCleared + 1) + ".";
+            case LEFT_ZONE -> name + " failed — you left the arena on wave " + (wavesCleared + 1) + ". Stay inside the ring!";
+            default -> name + " failed on wave " + (wavesCleared + 1) + ".";
+        };
+        try {
+            pr.sendMessage(Message.raw(chatMsg).color("#ff4466"));
+        } catch (Exception ignored) {}
     }
 
     @Override
     public void onCleanup(@Nonnull UUID playerUuid) {
-        // Synchronous HUD teardown — prevents a stuck HUD when the player leaves
-        // the world mid-arena. Also fires right after onArenaCompleted / onArenaFailed,
-        // so the final banner is only briefly visible (chat hint compensates).
+        // Synchronous teardown — fires after onArenaCompleted / onArenaFailed.
+        cancelRefresh(playerUuid);
+        activeState.remove(playerUuid);
         removeHud(playerUuid);
     }
 
     @Override
     public void onMobSpawned(@Nonnull Ref<EntityStore> npcRef, @Nonnull String npcType,
                               @Nonnull UUID ownerUuid, @Nonnull String arenaId) {
-        // Set RPG Leveling mob level if active
         WaveArenaConfig config = plugin.getWaveArenaEngine().getConfig(arenaId);
         if (config != null && config.getMobLevel() > 0 && plugin.isRPGLevelingActive()) {
             try {
-                Ref<EntityStore> ref = npcRef;
-                if (ref.isValid()) {
+                if (npcRef.isValid()) {
                     plugin.getRpgLevelingBridge().setMobLevel(
-                            ref.getStore(), ref, config.getMobLevel());
+                            npcRef.getStore(), npcRef, config.getMobLevel());
                 }
             } catch (Exception ignored) {}
         }
+
+        WaveState state = activeState.get(ownerUuid);
+        if (state == null) return;
+        state.totalMobsInWave++;
+        refreshActiveWaveHud(ownerUuid, state);
     }
 
     @Override
     public void onMobKilled(@Nonnull Ref<EntityStore> npcRef, @Nonnull UUID killerUuid,
                              @Nonnull String arenaId) {
-        // No per-kill logic needed currently — death tracking is engine-side
+        WaveState state = activeState.get(killerUuid);
+        if (state == null) return;
+        state.killedMobs++;
+        refreshActiveWaveHud(killerUuid, state);
     }
 
-    /** Spawns the Void Golem on the main island after the Void Realm Trial is beaten. */
+    private void refreshActiveWaveHud(UUID playerUuid, WaveState state) {
+        PlayerRef pr = PlayerRefCache.getByUuid(playerUuid);
+        if (pr == null) return;
+        attachHud(playerUuid, pr, WaveAnnouncementHud.waveActive(pr, state.arenaName,
+                state.currentWave, state.totalWaves,
+                state.killedMobs, state.totalMobsInWave));
+    }
+
+    // ─── Side-effects ──────────────────────────────────────────────────────
+
     private void spawnVoidGolem(UUID playerUuid) {
         try {
             PlayerRef pr = PlayerRefCache.getByUuid(playerUuid);
@@ -223,7 +384,6 @@ public class EndgameWaveCallbacks implements WaveArenaCallbacks {
 
             world.execute(() -> {
                 try {
-                    // Spawn at island center
                     com.hypixel.hytale.math.vector.Vector3d spawnPos =
                             new com.hypixel.hytale.math.vector.Vector3d(1.0, 102.0, -55.0);
                     com.hypixel.hytale.server.npc.NPCPlugin.get().spawnNPC(
@@ -231,9 +391,7 @@ public class EndgameWaveCallbacks implements WaveArenaCallbacks {
                             com.hypixel.hytale.math.vector.Vector3f.ZERO);
                     plugin.getLogger().atInfo().log("[VoidRealm] Spawned Endgame_Golem_Void after trial completion");
 
-                    if (pr != null) {
-                        pr.sendMessage(Message.raw("The Void Golem rises from the ruins!").color("#aa44ee"));
-                    }
+                    pr.sendMessage(Message.raw("The Void Golem rises from the ruins!").color("#aa44ee"));
                 } catch (Exception e) {
                     plugin.getLogger().atWarning().log("[VoidRealm] Golem spawn failed: %s", e.getMessage());
                 }

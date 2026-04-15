@@ -82,9 +82,7 @@ public class TemporalPortalManager {
         });
     }
 
-    // =========================================================================
     // Lifecycle
-    // =========================================================================
 
     public void start() {
         lastSpawnTimeMs = System.currentTimeMillis();
@@ -121,9 +119,7 @@ public class TemporalPortalManager {
         entryCooldowns.clear();
     }
 
-    // =========================================================================
     // Safe wrappers
-    // =========================================================================
 
     private void safeSpawnTick() {
         try { trySpawnPortal(); } catch (Exception e) {
@@ -146,9 +142,7 @@ public class TemporalPortalManager {
         }
     }
 
-    // =========================================================================
     // [1-4] Spawn Logic — probabilistic, far from player, min distance
-    // =========================================================================
 
     private void trySpawnPortal() {
         TemporalPortalConfig config = plugin.getConfig().get().getTemporalPortalConfig();
@@ -246,9 +240,7 @@ public class TemporalPortalManager {
         return null;
     }
 
-    // =========================================================================
     // [5] Particle-only portal — no block placement or removal
-    // =========================================================================
 
     /**
      * Refresh ambient particles on all active portals to keep them visible.
@@ -279,9 +271,7 @@ public class TemporalPortalManager {
         }
     }
 
-    // =========================================================================
     // Proximity Detection
-    // =========================================================================
 
     private void proximityTick() {
         long now = System.currentTimeMillis();
@@ -364,9 +354,7 @@ public class TemporalPortalManager {
         }
     }
 
-    // =========================================================================
     // Instance Creation
-    // =========================================================================
 
     private void startInstanceGeneration(World originWorld, TemporalPortalSession session, @Nullable PlayerRef initiatingPlayer) {
         String portalTypeId = session.getDungeonDef().getPortalTypeId();
@@ -412,9 +400,7 @@ public class TemporalPortalManager {
                 });
     }
 
-    // =========================================================================
     // Return Portal
-    // =========================================================================
 
     private void placeReturnPortal(World instanceWorld, PortalType portalType) {
         PortalSpawnConfig spawnConfig = portalType.getSpawn();
@@ -456,9 +442,7 @@ public class TemporalPortalManager {
         }, 3, TimeUnit.SECONDS);
     }
 
-    // =========================================================================
     // Teleportation
-    // =========================================================================
 
     private void teleportToInstance(PlayerRef playerRef, World fromWorld, World targetWorld) {
         fromWorld.execute(() -> {
@@ -474,9 +458,7 @@ public class TemporalPortalManager {
         });
     }
 
-    // =========================================================================
     // [6][7] Maintenance — expiry with grace period, lifetime status
-    // =========================================================================
 
     private void maintenanceTick() {
         TemporalPortalConfig config = plugin.getConfig().get().getTemporalPortalConfig();
@@ -519,9 +501,7 @@ public class TemporalPortalManager {
         }
     }
 
-    // =========================================================================
     // Admin: force spawn (keeps block for admin testing)
-    // =========================================================================
 
     public void forceSpawnNear(@Nonnull PlayerRef targetPlayer, @Nonnull DungeonDefinition dungeonType) {
         Ref<EntityStore> playerRef = targetPlayer.getReference();
@@ -553,9 +533,7 @@ public class TemporalPortalManager {
                 dungeonType.getDisplayName(), spawnPos.x, spawnPos.y, spawnPos.z, sessionId);
     }
 
-    // =========================================================================
     // Protection check
-    // =========================================================================
 
     private boolean isPositionProtected(String worldName, int x, int y, int z) {
         var ogBridge = plugin.getOrbisGuardBridge();
@@ -566,9 +544,7 @@ public class TemporalPortalManager {
         return claimBridge.isPositionClaimed(worldName, x, z);
     }
 
-    // =========================================================================
     // Helpers
-    // =========================================================================
 
     private boolean isPortalNearby(Vector3d position, double minDistance) {
         double minDistSq = minDistance * minDistance;
@@ -707,9 +683,7 @@ public class TemporalPortalManager {
         }
     }
 
-    // =========================================================================
     // Accessors
-    // =========================================================================
 
     public int getActiveSessionCount() { return activeSessions.size(); }
     public ConcurrentHashMap<String, TemporalPortalSession> getActiveSessions() { return activeSessions; }

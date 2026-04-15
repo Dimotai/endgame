@@ -46,7 +46,10 @@ Taking fatal damage also resets the combo to zero, regardless of the remaining d
 
 ## Configuration
 
-All values are in the `Combo` section of `EndgameConfig.json`, or adjust via `/eg config` Combat tab.
+All values are in the `Combo` section of `EndgameConfig.json`, or adjust via `/eg config` (Misc tab).
+
+> [!NOTE]
+> **v5.0.0** — The Combo Meter HUD was migrated from HyUI to native `CustomUIHud`. Visual behaviour is unchanged.
 
 | Key | Default | Description |
 |:----|:--------|:------------|

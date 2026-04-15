@@ -237,6 +237,10 @@ public class WaveArenaEngine {
                     failArena(session.playerUuid, WaveArenaCallbacks.FailReason.PLAYER_DEATH);
                     return;
                 }
+                if (config.getLeashDistance() > 0 && isPlayerOutOfLeash(session)) {
+                    failArena(session.playerUuid, WaveArenaCallbacks.FailReason.LEFT_ZONE);
+                    return;
+                }
                 if (config.getTimeLimitSeconds() > 0
                         && elapsed >= config.getTimeLimitSeconds() * 1000L
                         && !session.aliveNpcs.isEmpty()) {
@@ -460,6 +464,31 @@ public class WaveArenaEngine {
         despawnAllNpcs(session);
         session.phase = Phase.WAVE_CLEAR;
         session.phaseStartTime = System.currentTimeMillis();
+    }
+
+    /**
+     * Returns true if the player's horizontal distance from the arena spawn position
+     * exceeds the configured leash distance. Only fires when
+     * {@link WaveArenaConfig#getLeashDistance()} is positive.
+     */
+    private boolean isPlayerOutOfLeash(ArenaSession session) {
+        try {
+            float leash = session.config.getLeashDistance();
+            if (leash <= 0) return false;
+            Ref<EntityStore> ref = session.playerRef.getReference();
+            if (ref == null || !ref.isValid()) return false;
+            var tc = ref.getStore().getComponent(ref,
+                    com.hypixel.hytale.server.core.modules.entity.component.TransformComponent.getComponentType());
+            if (tc == null) return false;
+            var pos = tc.getPosition();
+            if (pos == null) return false;
+            double dx = pos.x - session.spawnPosition.x;
+            double dz = pos.z - session.spawnPosition.z;
+            double distSq = dx * dx + dz * dz;
+            return distSq > leash * leash;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private void updatePlayerAlive(ArenaSession session) {

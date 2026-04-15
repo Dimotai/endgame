@@ -109,32 +109,26 @@ public class MiscConfig {
     private int frostDragonSpiritMaxCount = 4;
     private int frostDragonNovaBoltCount = 10;
 
-    // === PVP ===
 
     public boolean isPvpEnabled() { return pvpEnabled; }
     public void setPvpEnabled(boolean e) { this.pvpEnabled = e; }
 
-    // === DUNGEON ===
 
     public boolean isEnableDungeonBlockProtection() { return enableDungeonBlockProtection; }
     public void setEnableDungeonBlockProtection(boolean e) { this.enableDungeonBlockProtection = e; }
 
-    // === WARDEN TRIAL ===
 
     public boolean isWardenTrialEnabled() { return enableWardenTrial; }
     public void setWardenTrialEnabled(boolean e) { this.enableWardenTrial = e; }
 
-    // === MINION ===
 
     public float getMinionSpawnRadius() { return minionSpawnRadius; }
     public void setMinionSpawnRadius(float r) { this.minionSpawnRadius = Math.max(1.0f, Math.min(50.0f, r)); }
 
-    // === EYE VOID ===
 
     public float getEyeVoidHealthMultiplier() { return eyeVoidHealthMultiplier; }
     public void setEyeVoidHealthMultiplier(float m) { this.eyeVoidHealthMultiplier = Math.max(0.1f, Math.min(10.0f, m)); }
 
-    // === RPG LEVELING ===
 
     public boolean isRPGLevelingEnabled() { return rpgLevelingEnabled; }
     public void setRPGLevelingEnabled(boolean e) { this.rpgLevelingEnabled = e; }
@@ -144,7 +138,6 @@ public class MiscConfig {
 
     public boolean isRPGLevelingAutoDetectPending() { return !"done".equals(rpgLevelingAutoDetected); }
 
-    // === ENDLESS LEVELING ===
 
     public boolean isEndlessLevelingEnabled() { return endlessLevelingEnabled; }
     public void setEndlessLevelingEnabled(boolean e) { this.endlessLevelingEnabled = e; }
@@ -163,7 +156,6 @@ public class MiscConfig {
     public int getElAchievementXp() { return elAchievementXp; }
     public void setElAchievementXp(int v) { this.elAchievementXp = Math.max(0, Math.min(500, v)); }
 
-    // === ORBISGUARD ===
 
     public boolean isOrbisGuardEnabled() { return orbisGuardEnabled; }
     public void setOrbisGuardEnabled(boolean e) { this.orbisGuardEnabled = e; }
@@ -182,12 +174,10 @@ public class MiscConfig {
     public String getOgBlockedCommands() { return ogBlockedCommands; }
     public void setOgBlockedCommands(String s) { this.ogBlockedCommands = s != null ? s : ""; }
 
-    // === ACCESSORIES ===
 
     public boolean isAccessoriesEnabled() { return accessoriesEnabled; }
     public void setAccessoriesEnabled(boolean e) { this.accessoriesEnabled = e; }
 
-    // === BOSS TARGET SWITCH ===
 
     public boolean isBossTargetSwitchEnabled() { return bossTargetSwitchEnabled; }
     public void setBossTargetSwitchEnabled(boolean e) { this.bossTargetSwitchEnabled = e; }
@@ -195,22 +185,18 @@ public class MiscConfig {
     public int getBossTargetSwitchIntervalMs() { return bossTargetSwitchIntervalMs; }
     public void setBossTargetSwitchIntervalMs(int ms) { this.bossTargetSwitchIntervalMs = Math.max(2000, Math.min(30000, ms)); }
 
-    // === PRISMA ARMOR VULNERABILITY ===
 
     public boolean isPrismaArmorVulnerabilityEnabled() { return prismaArmorVulnerabilityEnabled; }
     public void setPrismaArmorVulnerabilityEnabled(boolean e) { this.prismaArmorVulnerabilityEnabled = e; }
 
-    // === PRISMA WEAPON BOSS BLOCK ===
 
     public boolean isPrismaWeaponBossBlockEnabled() { return prismaWeaponBossBlockEnabled; }
     public void setPrismaWeaponBossBlockEnabled(boolean e) { this.prismaWeaponBossBlockEnabled = e; }
 
-    // === VORTHAK ===
 
     public boolean isVorthakEnabled() { return vorthakEnabled; }
     public void setVorthakEnabled(boolean e) { this.vorthakEnabled = e; }
 
-    // === SHARED BOSS KILL CREDIT ===
 
     public boolean isSharedBossKillCredit() { return sharedBossKillCredit; }
     public void setSharedBossKillCredit(boolean e) { this.sharedBossKillCredit = e; }
@@ -227,7 +213,6 @@ public class MiscConfig {
         }
     }
 
-    // === FROST DRAGON ===
 
     public long getFrostDragonBoltCooldownMs() { return frostDragonBoltCooldownMs; }
     public long getFrostDragonNovaCooldownMs() { return frostDragonNovaCooldownMs; }

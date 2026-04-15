@@ -7,7 +7,7 @@ import com.hypixel.hytale.server.core.universe.PlayerRef;
 import javax.annotation.Nonnull;
 
 /**
- * Compact top-center HUD for wave-based encounters (Void Gauntlet → Boss).
+ * Compact top-center HUD for wave-based encounters (Void Gauntlet, Warden Trials).
  *
  * <p>State is baked into the HUD instance at construction time, so {@link #build(UICommandBuilder)}
  * constructs the DOM + applies the initial text/colors in a single atomic packet.
@@ -15,9 +15,9 @@ import javax.annotation.Nonnull;
  * that the client has not finished building, which was causing "Selected element not found"
  * crashes + HUD teardowns between waves.
  *
- * <p>Callers get the HUD visible by calling
- * {@code player.getHudManager().setCustomHud(pr, new WaveAnnouncementHud(...))}.
- * Subsequent state changes = new instance replaces the old one via setCustomHud.
+ * <p>Dynamic fields (mob counter, countdown seconds) are refreshed by creating a NEW
+ * HUD instance and replacing the current one via {@code HudManager.setCustomHud()} — each
+ * refresh is an atomic DOM+state packet, not a partial update.
  */
 public class WaveAnnouncementHud extends CustomUIHud {
 
@@ -63,6 +63,7 @@ public class WaveAnnouncementHud extends CustomUIHud {
 
     // ─── Factory methods (one per state) ──────────────────────────────────
 
+    /** Pre-wave countdown — refreshed each second by the callbacks. */
     public static WaveAnnouncementHud countdown(@Nonnull PlayerRef pr, @Nonnull String arenaName, int secondsRemaining) {
         return new WaveAnnouncementHud(pr,
                 arenaName.toUpperCase(),
@@ -71,7 +72,10 @@ public class WaveAnnouncementHud extends CustomUIHud {
                 COLOR_MUTE, COLOR_VOID, COLOR_WHITE);
     }
 
-    public static WaveAnnouncementHud waveStart(@Nonnull PlayerRef pr, @Nonnull String arenaName, int waveIndex, int totalWaves) {
+    /** Brief "FIGHT!" banner — shown just as a wave starts. Quickly replaced by
+     *  {@link #waveActive} once mob counts are known. */
+    public static WaveAnnouncementHud waveStart(@Nonnull PlayerRef pr, @Nonnull String arenaName,
+                                                int waveIndex, int totalWaves) {
         return new WaveAnnouncementHud(pr,
                 arenaName.toUpperCase(),
                 "WAVE " + (waveIndex + 1) + " / " + totalWaves,
@@ -79,7 +83,21 @@ public class WaveAnnouncementHud extends CustomUIHud {
                 COLOR_MUTE, COLOR_FIGHT, COLOR_WHITE);
     }
 
-    public static WaveAnnouncementHud waveClear(@Nonnull PlayerRef pr, @Nonnull String arenaName, int waveIndex, int totalWaves, int nextWaveSeconds) {
+    /** Live-counter wave HUD — refreshed by the callbacks on each mob spawn / kill.
+     *  Counter is incremental: {@code killedMobs / totalMobs enemies} (kills accumulate up). */
+    public static WaveAnnouncementHud waveActive(@Nonnull PlayerRef pr, @Nonnull String arenaName,
+                                                 int waveIndex, int totalWaves,
+                                                 int killedMobs, int totalMobs) {
+        return new WaveAnnouncementHud(pr,
+                arenaName.toUpperCase(),
+                "WAVE " + (waveIndex + 1) + " / " + totalWaves,
+                killedMobs + " / " + totalMobs + " enemies",
+                COLOR_MUTE, COLOR_FIGHT, COLOR_WHITE);
+    }
+
+    /** Between-wave countdown — refreshed each second by the callbacks. */
+    public static WaveAnnouncementHud waveClear(@Nonnull PlayerRef pr, @Nonnull String arenaName,
+                                                int waveIndex, int totalWaves, int nextWaveSeconds) {
         return new WaveAnnouncementHud(pr,
                 arenaName.toUpperCase(),
                 "WAVE " + (waveIndex + 1) + " CLEARED",
@@ -103,7 +121,8 @@ public class WaveAnnouncementHud extends CustomUIHud {
                 COLOR_GOLD, COLOR_GOLD, COLOR_GOLD);
     }
 
-    public static WaveAnnouncementHud failed(@Nonnull PlayerRef pr, @Nonnull String arenaName, @Nonnull String reason, int waveReached) {
+    public static WaveAnnouncementHud failed(@Nonnull PlayerRef pr, @Nonnull String arenaName,
+                                             @Nonnull String reason, int waveReached) {
         return new WaveAnnouncementHud(pr,
                 arenaName.toUpperCase(),
                 reason.toUpperCase(),

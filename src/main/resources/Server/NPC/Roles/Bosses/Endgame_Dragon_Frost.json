@@ -122,11 +122,6 @@
               "Actions": [ { "Type": "State", "State": "GroundCombat" } ]
             },
             {
-              "$Comment": "Re-target on damage",
-              "Continue": true,
-              "Sensor": { "Type": "Damage", "Combat": true, "TargetSlot": "LockedTarget" }
-            },
-            {
               "$Comment": "PHASE TIMER: After 15-20s flying → force land via SetMotionController",
               "Sensor": {
                 "Type": "And",
@@ -236,11 +231,6 @@
               "$Comment": "Phase sync: still on Fly → force Walk",
               "Sensor": { "Type": "MotionController", "MotionController": "Fly" },
               "Actions": [ { "Type": "SetMotionController", "MotionController": "Walk" } ]
-            },
-            {
-              "$Comment": "Re-target on damage",
-              "Continue": true,
-              "Sensor": { "Type": "Damage", "Combat": true, "TargetSlot": "LockedTarget" }
             },
             {
               "$Comment": "PHASE TIMER: After 10-15s on ground → take off",

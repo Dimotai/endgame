@@ -1,8 +1,8 @@
 {
-  "$Comment": "Themed variant — swapped in when the player right-clicks with a Frozen Dungeon Key. Reverts to Endgame_Dungeon_Portal after portal closes.",
+  "$Comment": "Themed variant — swapped in when the player right-clicks with a Frozen Dungeon Key. Reverts to Endgame_Gateway after portal closes.",
   "TranslationProperties": {
-    "Name": "server.items.Endgame_Dungeon_Portal.name",
-    "Description": "server.items.Endgame_Dungeon_Portal.description"
+    "Name": "server.items.Endgame_Gateway_Variant.name",
+    "Description": "server.items.Endgame_Gateway_Variant.description"
   },
   "Icon": "Icons/ItemsGenerated/Portal_Device.png",
   "Categories": [
@@ -15,7 +15,7 @@
     "CustomModel": "Blocks/Miscellaneous/Platform_MagicInactive.blockymodel",
     "CustomModelTexture": [
       {
-        "Texture": "Blocks/Miscellaneous/Platform_Magic_Blue2.png",
+        "Texture": "Blocks/Miscellaneous/Endgame_Gateway.png",
         "Weight": 1
       }
     ],
@@ -25,7 +25,7 @@
           "Config": {
             "OnState": "Active",
             "SpawningState": "Spawning",
-            "ReturnBlockType": "Endgame_Dungeon_Portal"
+            "ReturnBlockType": "Endgame_Gateway"
           }
         }
       }
@@ -39,14 +39,14 @@
     },
     "Gathering": {
       "Breaking": {
-        "GatherType": "Benches"
+        "GatherType": "Benches",
+        "DropList": "Drop_Endgame_Gateway_Revert"
       }
     },
     "State": {
       "Definitions": {
         "Spawning": {
           "InteractionSoundEventId": "SFX_Portal_Neutral_Open",
-          "Gathering": { "Breaking": { "GatherType": "Unbreakable" } },
           "Light": { "Radius": 0, "Color": "#7cf" },
           "Particles": [
             { "SystemId": "Portal_Going_Through_Blue", "PositionOffset": { "Y": 1 } }
@@ -55,7 +55,6 @@
         },
         "Active": {
           "AmbientSoundEventId": "SFX_Portal_Neutral",
-          "Gathering": { "Breaking": { "GatherType": "Unbreakable" } },
           "Light": { "Radius": 0, "Color": "#7cf" },
           "Particles": [
             {
@@ -93,7 +92,7 @@
               "Config": {
                 "OnState": "Active",
                 "SpawningState": "Spawning",
-                "ReturnBlockType": "Endgame_Dungeon_Portal"
+                "ReturnBlockType": "Endgame_Gateway"
               }
             }
           }

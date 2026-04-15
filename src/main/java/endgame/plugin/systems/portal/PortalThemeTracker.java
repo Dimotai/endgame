@@ -28,9 +28,9 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
- * When a player right-clicks a base {@code Endgame_Dungeon_Portal} block while holding one of
+ * When a player right-clicks a base {@code Endgame_Gateway} block while holding one of
  * the 3 Endgame PortalKey items, we immediately replace the block with the matching themed
- * variant ({@code Endgame_Dungeon_Portal_Void / _Frozen / _Swamp}). The variant has its own
+ * variant ({@code Endgame_Gateway_Void / _Frozen / _Swamp}). The variant has its own
  * Active state particles baked in, so the engine handles rotation automatically.
  *
  * <p><b>Timing:</b> The theme swap must happen at right-click, BEFORE the engine's internal
@@ -50,13 +50,13 @@ import java.util.concurrent.TimeUnit;
 public class PortalThemeTracker extends EntityEventSystem<EntityStore, UseBlockEvent.Pre> {
 
     private static final Map<String, String> KEY_TO_VARIANT = Map.of(
-            "Endgame_Portal_Void_Realm",      "Endgame_Dungeon_Portal_Void",
-            "Endgame_Portal_Frozen_Dungeon",  "Endgame_Dungeon_Portal_Frozen",
-            "Endgame_Portal_Swamp_Dungeon",   "Endgame_Dungeon_Portal_Swamp"
+            "Endgame_Portal_Void_Realm",      "Endgame_Gateway_Void",
+            "Endgame_Portal_Frozen_Dungeon",  "Endgame_Gateway_Frozen",
+            "Endgame_Portal_Swamp_Dungeon",   "Endgame_Gateway_Swamp"
     );
 
     private static final Set<String> VARIANT_IDS = Set.copyOf(KEY_TO_VARIANT.values());
-    private static final String BASE_BLOCK_ID = "Endgame_Dungeon_Portal";
+    private static final String BASE_BLOCK_ID = "Endgame_Gateway";
 
     /** How long the themed state persists if the user doesn't click "Summon Portal". */
     private static final long REVERT_TIMEOUT_MS = 15_000L; // 15 sec
@@ -107,6 +107,11 @@ public class PortalThemeTracker extends EntityEventSystem<EntityStore, UseBlockE
 
         World world = store.getExternalData().getWorld();
         if (world == null) return;
+
+        // Skip themed replacement inside dungeon instance worlds — those host the return
+        // portal; swapping them with a single-key variant bricks the only way home.
+        String worldName = world.getName();
+        if (worldName != null && worldName.startsWith("instance-")) return;
 
         PlayerRef pr = chunk.getComponent(index, PlayerRef.getComponentType());
         UUID trackedUuid = (pr != null) ? pr.getUuid() : null;
@@ -186,11 +191,11 @@ public class PortalThemeTracker extends EntityEventSystem<EntityStore, UseBlockE
 
         String expectedVariantId;
         if (lname.contains("endgame_frozen_dungeon")) {
-            expectedVariantId = "Endgame_Dungeon_Portal_Frozen";
+            expectedVariantId = "Endgame_Gateway_Frozen";
         } else if (lname.contains("endgame_swamp_dungeon")) {
-            expectedVariantId = "Endgame_Dungeon_Portal_Swamp";
+            expectedVariantId = "Endgame_Gateway_Swamp";
         } else if (lname.contains("endgame_void_realm") || lname.contains("endgame_golem_void")) {
-            expectedVariantId = "Endgame_Dungeon_Portal_Void";
+            expectedVariantId = "Endgame_Gateway_Void";
         } else {
             return;
         }

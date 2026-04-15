@@ -101,7 +101,6 @@
                         },
                         "Next": {
                             "Type": "Simple",
-                            "$Comment": "Pad the interaction length",
                             "RunTime": 0.13
                         }
                     }

@@ -3,7 +3,6 @@
   "Costs": {
     "Mana": 15
   },
-  "$Comment": "Heavy Attack - Higher cost, more damage",
   "RunTime": 0.25,
   "Next": {
     "Type": "Parallel",

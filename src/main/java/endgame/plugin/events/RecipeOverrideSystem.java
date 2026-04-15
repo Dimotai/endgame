@@ -72,9 +72,7 @@ public class RecipeOverrideSystem extends EntityEventSystem<EntityStore, CraftRe
         this.plugin = plugin;
     }
 
-    // =========================================================================
     // Startup: apply overrides from RecipeOverrides.json
-    // =========================================================================
 
     /**
      * Apply recipe overrides. Called from EndgameQoL.start().
@@ -155,9 +153,7 @@ public class RecipeOverrideSystem extends EntityEventSystem<EntityStore, CraftRe
         }
     }
 
-    // =========================================================================
     // Runtime: block disabled recipes via CraftRecipeEvent.Pre
-    // =========================================================================
 
     @Override
     public void handle(int index,
@@ -186,9 +182,7 @@ public class RecipeOverrideSystem extends EntityEventSystem<EntityStore, CraftRe
         return Archetype.empty();
     }
 
-    // =========================================================================
     // Auto-populate defaults
-    // =========================================================================
 
     /**
      * Remove overrides for recipes that no longer exist in the asset map
@@ -371,9 +365,7 @@ public class RecipeOverrideSystem extends EntityEventSystem<EntityStore, CraftRe
         return DISABLED_BY_DEFAULT.contains(stripped);
     }
 
-    // =========================================================================
     // Modification logic (reflection-based)
-    // =========================================================================
 
     private static boolean hasChanges(@Nonnull CraftingRecipe existing, @Nonnull RecipeEntry override) {
         if (Math.abs(existing.getTimeSeconds() - override.getCraftTime()) > 0.001f) {

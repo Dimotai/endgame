@@ -4,14 +4,12 @@
     "ItemPlayerAnimationsId": "Rat_Default",
     "ItemAnimationId": "Bite"
   },
-  "$Comment": "Prepare Delay",
   "RunTime": 0.117,
   "Next": {
     "Type": "Selector",
     "Effects": {
       "WorldSoundEventId": "SFX_Unarmed_Swing"
     },
-    "$Comment": "Length of Combat",
     "RunTime": 0.133,
     "Selector": {
       "Id": "Horizontal",
@@ -32,7 +30,6 @@
     },
     "Next": {
       "Type": "Simple",
-      "$Comment": "Pad the interaction length",
       "RunTime": 0.167
     }
   }

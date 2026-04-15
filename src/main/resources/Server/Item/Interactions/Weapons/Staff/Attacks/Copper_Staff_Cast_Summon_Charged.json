@@ -3,7 +3,6 @@
   "Costs": {
     "Mana": 12
   },
-  "$Comment": "Prepare Delay",
   "RunTime": 0.162,
   "Next": {
     "Type": "Parallel",

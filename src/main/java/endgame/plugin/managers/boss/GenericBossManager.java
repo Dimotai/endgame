@@ -22,6 +22,7 @@ import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.math.vector.Vector3f;
 import com.hypixel.hytale.server.npc.NPCPlugin;
 import endgame.plugin.EndgameQoL;
+import endgame.plugin.bossmanager.GolemVoidExtras;
 import endgame.plugin.utils.BossType;
 
 import java.util.Collections;
@@ -62,9 +63,8 @@ public class GenericBossManager {
     private final EndgameQoL plugin;
     private volatile long lastRemovedKeysCleanup = 0;
 
-    // =========================================================================
+
     // Configuration types
-    // =========================================================================
 
     @FunctionalInterface
     public interface PhaseCallback {
@@ -113,6 +113,7 @@ public class GenericBossManager {
             this.phaseCallback = null;
             this.elite = true;
         }
+
     }
 
     public static class GenericBossState {
@@ -126,6 +127,9 @@ public class GenericBossManager {
         public volatile int lastHealthCurrent = 0;
         public volatile int lastHealthMax = 0;
         public final long spawnTimestamp = System.currentTimeMillis();
+        /** Captured at registerBoss() for Golem Void only — used as void-safe fallback
+         *  for the Jump Slam teleport. Null for other bosses. */
+        public volatile Vector3d spawnPosition;
 
         public GenericBossState(Ref<EntityStore> bossRef, BossEncounterConfig config, String npcTypeId) {
             this.bossRef = bossRef;
@@ -134,17 +138,24 @@ public class GenericBossManager {
         }
     }
 
-    // =========================================================================
     // Boss configurations
-    // =========================================================================
 
     private final BossEncounterConfig frostDragonConfig;
     private final BossEncounterConfig hederaConfig;
+    private final BossEncounterConfig golemVoidConfig;
     private final BossEncounterConfig alphaRexConfig;
     private final BossEncounterConfig swampCrocodileConfig;
     private final BossEncounterConfig brambleEliteConfig;
     private final BossEncounterConfig dragonFireConfig;
     private final BossEncounterConfig zombieAberrantConfig;
+
+    /** Optional enrage tracker — wired up by SystemRegistry. Used by the boss bar rendering
+     *  to surface the "ENRAGED" badge. Null until {@link #setEnrageTracker} is called. */
+    private volatile endgame.plugin.managers.boss.EnrageTracker enrageTracker;
+
+    public void setEnrageTracker(endgame.plugin.managers.boss.EnrageTracker tracker) {
+        this.enrageTracker = tracker;
+    }
 
     public GenericBossManager(EndgameQoL plugin) {
         this.plugin = plugin;
@@ -171,6 +182,18 @@ public class GenericBossManager {
                 new String[] { "#33cc33", "#cc8800", "#cc0000" },
                 this::onHederaPhaseChange);
 
+        endgame.plugin.config.BossConfig golemCfg = plugin.getConfig().get().getBossConfig(BossType.GOLEM_VOID);
+        this.golemVoidConfig = new BossEncounterConfig(
+                BossType.GOLEM_VOID,
+                "VOID GOLEM",
+                "#a855f7",
+                new float[] { golemCfg.getPhase2Threshold(), golemCfg.getPhase3Threshold() },
+                new String[] { "Awakening", "Wrath of the Void", "Final Fury" },
+                new String[] { "#c084fc", "#a855f7", "#7e22ce" },
+                golemCfg.getPhaseInvulnerabilityMs(),
+                new String[] { "#a855f7", "#7e22ce", "#581c87" },
+                this::onGolemVoidPhaseChange);
+
         this.alphaRexConfig = new BossEncounterConfig(
                 BossType.ALPHA_REX, "ALPHA REX", "#ff8800", "#ff8800");
 
@@ -186,12 +209,10 @@ public class GenericBossManager {
         this.zombieAberrantConfig = new BossEncounterConfig(
                 BossType.ZOMBIE_ABERRANT, "ZOMBIE ABERRANT", "#8844aa", "#8844aa");
 
-        plugin.getLogger().atFine().log("[GenericBoss] Manager initialized (Frost Dragon + Hedera + 5 elites)");
+        plugin.getLogger().atFine().log("[GenericBoss] Manager initialized (Frost Dragon + Hedera + Void Golem + 5 elites)");
     }
 
-    // =========================================================================
     // Registration
-    // =========================================================================
 
     public void registerBoss(Ref<EntityStore> bossRef, String npcTypeId, Store<EntityStore> store) {
         if (bossRef == null || !bossRef.isValid())
@@ -206,6 +227,11 @@ public class GenericBossManager {
             return;
 
         GenericBossState state = new GenericBossState(bossRef, config, npcTypeId);
+
+        // Golem Void: capture spawn position for Jump Slam void-safe fallback.
+        if (bossType == BossType.GOLEM_VOID) {
+            state.spawnPosition = GolemVoidExtras.captureSpawnPosition(bossRef, store);
+        }
 
         // Calculate correct initial phase from current HP
         ComponentType<EntityStore, EntityStatMap> statType = EntityStatMap.getComponentType();
@@ -243,9 +269,7 @@ public class GenericBossManager {
         }
     }
 
-    // =========================================================================
     // Damage / Phase transitions
-    // =========================================================================
 
     public void onBossDamaged(Ref<EntityStore> bossRef, EntityStatMap statMap, Store<EntityStore> store) {
         GenericBossState state = activeBosses.get(bossRef);
@@ -287,8 +311,6 @@ public class GenericBossManager {
         }
     }
 
-    // =========================================================================
-    // =========================================================================
 
     private void onFrostDragonPhaseChange(GenericBossState state, int newPhase, Store<EntityStore> store) {
         int spiritCount = newPhase == 2 ? 2 : 3;
@@ -302,6 +324,12 @@ public class GenericBossManager {
         // tick
         stripBossEffects(state.bossRef);
         plugin.getLogger().atFine().log("[GenericBoss] Hedera phase %d — effect cleanse triggered", newPhase);
+    }
+
+    private void onGolemVoidPhaseChange(GenericBossState state, int newPhase, Store<EntityStore> store) {
+        // Golem Void: spawn Eye_Void minions (count + HP scaling from BossConfig).
+        GolemVoidExtras.spawnMinionsForPhase(plugin, state.bossRef, store, newPhase);
+        plugin.getLogger().atFine().log("[GenericBoss] Void Golem phase %d — Eye_Void dispatch", newPhase);
     }
 
     private void spawnMinionsAroundBoss(GenericBossState state, Store<EntityStore> store,
@@ -338,9 +366,7 @@ public class GenericBossManager {
         }
     }
 
-    // =========================================================================
     // Invulnerability
-    // =========================================================================
 
     private void applyInvulnerability(GenericBossState state) {
         if (state.isInvulnerable)
@@ -394,9 +420,7 @@ public class GenericBossManager {
         state.lastHealthMax = Math.max(0, Math.round(maxHealth));
     }
 
-    // =========================================================================
     // Tick
-    // =========================================================================
 
     public void tick(Store<EntityStore> store) {
         long now = System.currentTimeMillis();
@@ -461,6 +485,7 @@ public class GenericBossManager {
             // Strip effects from bosses (trap immunity)
             stripBossEffects(bossRef);
         }
+
     }
 
     private void stripBossEffects(Ref<EntityStore> bossRef) {
@@ -491,8 +516,6 @@ public class GenericBossManager {
         }
     }
 
-    // =========================================================================
-    // =========================================================================
 
     private int calculatePhase(BossEncounterConfig config, float healthPercent) {
         // Thresholds are in descending order: {0.70, 0.40} means phase 2 at 70%, phase
@@ -510,9 +533,7 @@ public class GenericBossManager {
         return state != null ? state.currentPhase : 0;
     }
 
-    // =========================================================================
     // Boss Bar HUD
-    // =========================================================================
 
     public void showBossBarToPlayer(PlayerRef playerRef, Ref<EntityStore> bossRef, Store<EntityStore> store) {
         if (playerRef == null || bossRef == null)
@@ -651,13 +672,14 @@ public class GenericBossManager {
      *  Theme is looked up by {@code npcTypeId} — register themes in
      *  {@code EndgameBossBarThemes.registerAll()} at startup. */
     private String buildBarHtml(GenericBossState state) {
+        boolean enraged = enrageTracker != null && enrageTracker.isEnraged(state.bossRef);
         endgame.bossbar.BossBarState barState = new endgame.bossbar.BossBarState(
                 state.currentPhase,
                 state.lastHealthPercent,
                 state.lastHealthCurrent,
                 state.lastHealthMax,
                 state.isInvulnerable,
-                false);  // enraged tracking not wired into GenericBossManager yet
+                enraged);
         return endgame.bossbar.BossBarRegistry.render(state.npcTypeId, barState)
                 .orElseGet(() -> {
                     plugin.getLogger().atWarning().log(
@@ -666,9 +688,7 @@ public class GenericBossManager {
                 });
     }
 
-    // =========================================================================
     // Boss bar hide/clear methods
-    // =========================================================================
 
     public void hideBossBarForPlayer(PlayerRef playerRef) {
         if (playerRef == null)
@@ -751,14 +771,13 @@ public class GenericBossManager {
         plugin.getLogger().atFine().log("[GenericBoss] Force cleared all boss bars and state");
     }
 
-    // =========================================================================
     // Config lookup
-    // =========================================================================
 
     public BossEncounterConfig getConfigForBossType(BossType bossType) {
         return switch (bossType) {
             case DRAGON_FROST -> frostDragonConfig;
             case HEDERA -> hederaConfig;
+            case GOLEM_VOID -> golemVoidConfig;
             case ALPHA_REX -> alphaRexConfig;
             case SWAMP_CROCODILE -> swampCrocodileConfig;
             case BRAMBLE_ELITE -> brambleEliteConfig;
@@ -768,9 +787,7 @@ public class GenericBossManager {
         };
     }
 
-    // =========================================================================
     // Public API
-    // =========================================================================
 
     public GenericBossState getBossState(Ref<EntityStore> bossRef) {
         return activeBosses.get(bossRef);

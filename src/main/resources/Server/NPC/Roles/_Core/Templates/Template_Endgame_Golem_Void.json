@@ -145,6 +145,10 @@
       "Value": 40,
       "Description": "Range within which an NPC is willing to investigate reports of an attack or other event."
     },
+    "KnockbackScale": {
+      "Value": 0.5,
+      "Description": "Multiplier applied to incoming knockback. 0.0 = immune to knockback."
+    },
     "UseCombatActionEvaluator": {
       "Value": false,
       "Description": "Whether to use the Combat Action Evaluator via an accompanying CombatConfig. This completely replaces all other combat behavior but still uses movement properties such as strafe durations and move speeds."
@@ -335,7 +339,7 @@
   "SeparationNearRadiusTarget": 2,
   "SeparationFarRadiusTarget": 7,
   "BusyStates": [ "Combat", "ReturnHome", "Alerted", "Search" ],
-  "KnockbackScale": 0.5,
+  "KnockbackScale": { "Compute": "KnockbackScale" },
   "DeathParticles": { "Compute": "DeathParticles" },
   "DropDeathItemsInstantly": { "Compute": "DropDeathItemsInstantly" },
   "DeathAnimationTime": { "Compute": "DeathAnimationTime" },
@@ -1853,12 +1857,8 @@
               }
             },
             {
+              "$Comment": "REMOVED: SetStat Health 1000000 — was the vanilla leash-return full-heal. We want the Golem to keep its damaged HP so players can whittle it down across multiple leash cycles.",
               "Actions": [
-                {
-                  "Type": "SetStat",
-                  "Stat": "Health",
-                  "Value": 1000000
-                },
                 {
                   "Type": "State",
                   "State": "Idle"

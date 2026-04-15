@@ -42,7 +42,6 @@ public class ArmorConfig {
     private float hpRegenOnyxiumPerPiece = 0.5f;
     private float hpRegenPrismaPerPiece = 0.75f;
 
-    // === MANA REGEN ===
 
     public boolean isManaRegenEnabled() { return manaRegenEnabled; }
     public void setManaRegenEnabled(boolean e) { this.manaRegenEnabled = e; }
@@ -56,7 +55,6 @@ public class ArmorConfig {
     public float getManaRegenPrismaPerPiece() { return manaRegenPrismaPerPiece; }
     public void setManaRegenPrismaPerPiece(float v) { this.manaRegenPrismaPerPiece = Math.max(0f, Math.min(5.0f, v)); }
 
-    // === HP REGEN ===
 
     public boolean isHPRegenEnabled() { return hpRegenEnabled; }
     public void setHPRegenEnabled(boolean e) { this.hpRegenEnabled = e; }

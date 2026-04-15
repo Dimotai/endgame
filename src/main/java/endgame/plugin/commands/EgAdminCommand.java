@@ -16,7 +16,7 @@ import com.hypixel.hytale.logger.HytaleLogger;
 import endgame.plugin.EndgameQoL;
 import endgame.plugin.managers.BountyManager;
 import endgame.plugin.managers.boss.GenericBossManager;
-import endgame.plugin.managers.boss.GolemVoidBossManager;
+import endgame.plugin.managers.boss.GenericBossManager;
 import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.UUID;
@@ -54,9 +54,7 @@ public class EgAdminCommand extends AbstractCommandCollection {
 
     }
 
-    // =========================================================================
     // /egadmin debug boss <type>
-    // =========================================================================
     private static class DebugBossCommand extends AbstractPlayerCommand {
         private final EndgameQoL plugin;
         private final RequiredArg<String> bossTypeArg;
@@ -73,18 +71,21 @@ public class EgAdminCommand extends AbstractCommandCollection {
             String bossType = bossTypeArg.get(context).toLowerCase();
 
             if ("golem".equals(bossType)) {
-                GolemVoidBossManager golemMgr = plugin.getGolemVoidBossManager();
-                if (golemMgr == null) {
+                GenericBossManager bossMgr = plugin.getGenericBossManager();
+                if (bossMgr == null) {
                     sendNoBoss(playerRef, "Golem Void");
                     return;
                 }
-                Map<Ref<EntityStore>, GolemVoidBossManager.GolemVoidState> activeBosses = golemMgr.getActiveBosses();
+                java.util.List<GenericBossManager.GenericBossState> activeBosses =
+                        bossMgr.getActiveBosses().values().stream()
+                                .filter(s -> s.config.bossType == endgame.plugin.utils.BossType.GOLEM_VOID)
+                                .toList();
                 if (activeBosses.isEmpty()) {
                     sendNoBoss(playerRef, "Golem Void");
                     return;
                 }
 
-                for (GolemVoidBossManager.GolemVoidState state : activeBosses.values()) {
+                for (GenericBossManager.GenericBossState state : activeBosses) {
                     int hpPct = Math.round(state.lastHealthPercent * 100);
                     playerRef.sendMessage(Message.join(
                             Message.raw("[EgAdmin] ").color("#bb44ff"),
@@ -182,9 +183,7 @@ public class EgAdminCommand extends AbstractCommandCollection {
         }
     }
 
-    // =========================================================================
     // /egadmin portal <dungeonId>
-    // =========================================================================
     private static class SpawnPortalCommand extends AbstractPlayerCommand {
         private final EndgameQoL plugin;
         private final RequiredArg<String> typeArg;
@@ -229,9 +228,7 @@ public class EgAdminCommand extends AbstractCommandCollection {
         }
     }
 
-    // =========================================================================
     // /egadmin reset bounties <player|all>
-    // =========================================================================
     private static class ResetBountiesCommand extends AbstractPlayerCommand {
         private final EndgameQoL plugin;
         private final RequiredArg<String> targetArg;
@@ -305,9 +302,7 @@ public class EgAdminCommand extends AbstractCommandCollection {
         }
     }
 
-    // =========================================================================
     // /egadmin reload
-    // =========================================================================
     private static class ReloadConfigCommand extends AbstractPlayerCommand {
         private final EndgameQoL plugin;
 

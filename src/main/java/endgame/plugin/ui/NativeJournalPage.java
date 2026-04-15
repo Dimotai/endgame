@@ -112,7 +112,6 @@ public class NativeJournalPage extends InteractiveCustomUIPage<NativeJournalPage
                       @Nonnull UIEventBuilder events, @Nonnull Store<EntityStore> store) {
         cmd.append(PAGE_FILE);
 
-        // Bind all tab buttons
         for (int i = 0; i < TAB_IDS.length; i++) {
             events.addEventBinding(CustomUIEventBindingType.Activating, TAB_BTN_IDS[i],
                     EventData.of("Action", "tab:" + TAB_IDS[i]), false);
@@ -121,7 +120,6 @@ public class NativeJournalPage extends InteractiveCustomUIPage<NativeJournalPage
         populateAllTabs(cmd, events);
     }
 
-    // ==================== TAB MANAGEMENT ====================
 
     private void populateAllTabs(UICommandBuilder cmd, UIEventBuilder events) {
         // Tab visibility + button styles
@@ -138,7 +136,6 @@ public class NativeJournalPage extends InteractiveCustomUIPage<NativeJournalPage
         populateAchievements(cmd, events);
     }
 
-    // ==================== BOUNTY TAB ====================
 
     private void populateBounty(UICommandBuilder cmd, UIEventBuilder events) {
         BountyManager manager = plugin.getBountyManager();
@@ -343,7 +340,6 @@ public class NativeJournalPage extends InteractiveCustomUIPage<NativeJournalPage
         }
     }
 
-    // ==================== BESTIARY TAB ====================
 
     private void populateBestiary(UICommandBuilder cmd, UIEventBuilder events) {
         AchievementManager manager = plugin.getAchievementManager();
@@ -591,7 +587,6 @@ public class NativeJournalPage extends InteractiveCustomUIPage<NativeJournalPage
         cmd.set("#BestiaryEmpty.Visible", !anyVisible);
     }
 
-    // ==================== ACHIEVEMENTS TAB ====================
 
     private void populateAchievements(UICommandBuilder cmd, UIEventBuilder events) {
         AchievementManager manager = plugin.getAchievementManager();
@@ -673,7 +668,6 @@ public class NativeJournalPage extends InteractiveCustomUIPage<NativeJournalPage
         }
     }
 
-    // ==================== EVENT HANDLING ====================
 
     @Override
     public void handleDataEvent(@Nonnull Ref<EntityStore> ref, @Nonnull Store<EntityStore> store,
@@ -807,7 +801,6 @@ public class NativeJournalPage extends InteractiveCustomUIPage<NativeJournalPage
         }
     }
 
-    // ==================== HELPERS ====================
 
     /**
      * Use sendUpdate instead of rebuild for claim operations to preserve scroll position.
@@ -844,7 +837,6 @@ public class NativeJournalPage extends InteractiveCustomUIPage<NativeJournalPage
         }
     }
 
-    // ==================== STATIC OPEN ====================
 
     public static void open(EndgameQoL plugin, PlayerRef playerRef, Store<EntityStore> store,
                             UUID playerUuid, String tab) {
@@ -860,7 +852,6 @@ public class NativeJournalPage extends InteractiveCustomUIPage<NativeJournalPage
         }
     }
 
-    // ==================== EVENT DATA ====================
 
     public static class JournalEventData {
         public static final BuilderCodec<JournalEventData> CODEC = BuilderCodec

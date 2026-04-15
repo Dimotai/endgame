@@ -2,7 +2,7 @@
 name: Warden's Trial
 description: Wave-survival challenge with 4 difficulty tiers
 author: Lewai
-sort-index: 1
+sort-index: 5
 ---
 
 # <gradient data="#ff5555:#ff6600:#d16eff">Warden's Trial</gradient>
@@ -23,6 +23,19 @@ The Warden's Trial is a wave-survival challenge where you fight through 5 waves 
 **HUD** — A beautiful overlay shows wave progress, enemy count, difficulty label, and a color-coded progress bar (green > yellow > orange > red > purple).
 
 **Death** — If you die, remaining trial NPCs are cleaned up automatically.
+
+---
+
+## <#d16eff>WaveArena Framework (v5.0.0)</#d16eff>
+
+Warden Trials now run on a generic, data-driven wave engine (<#aaaaaa>WaveArena</#aaaaaa>) — extractable as a standalone framework. Configurable wave compositions, mob pools, scaling, rewards, zone particles, and an **instance blacklist**. Third-party mods can reuse the system via the public <#aaaaaa>WaveArenaAPI</#aaaaaa>.
+
+**Fail states:**
+- **Time out** — running out of the per-tier timer
+- **Death** — player dies during a wave
+- **<#ff5555>Leash break</#ff5555>** — moving more than 50 blocks from the trial origin aborts the challenge
+
+!! **Warden Challenges are blocked inside dungeon instances** (Temporal Portals, Void Realm, Frozen/Swamp Dungeon, etc.) — attempting to use one displays a chat warning and cancels the item.
 
 ---
 

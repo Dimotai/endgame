@@ -15,7 +15,6 @@ import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.entities.NPCEntity;
 import endgame.plugin.EndgameQoL;
-import endgame.plugin.managers.boss.GolemVoidBossManager;
 import endgame.plugin.utils.BossType;
 
 import javax.annotation.Nonnull;
@@ -43,18 +42,9 @@ public class MobManager {
     private static final long CLEANUP_INTERVAL_MS = 60000;
 
     private final EndgameQoL plugin;
-    private GolemVoidBossManager golemVoidBossManager;
 
     public MobManager(EndgameQoL plugin) {
         this.plugin = plugin;
-    }
-
-    public void setGolemVoidBossManager(GolemVoidBossManager system) {
-        this.golemVoidBossManager = system;
-    }
-
-    public GolemVoidBossManager getGolemVoidBossManager() {
-        return golemVoidBossManager;
     }
 
     /**
@@ -113,10 +103,8 @@ public class MobManager {
         loggedEntities.clear();
     }
 
-    // =========================================================================
     // EntitySetupSystem - Catches entity spawns via HolderSystem
     // Applies boss health IMMEDIATELY at spawn via BossHealthManager
-    // =========================================================================
 
     public static class EntitySetupSystem extends HolderSystem<EntityStore> {
         private final EndgameQoL plugin;
@@ -224,10 +212,8 @@ public class MobManager {
         }
     }
 
-    // =========================================================================
     // StatRefreshSystem - Catches EntityStatMap changes via RefChangeSystem
     // Applies health if not already applied (backup for edge cases)
-    // =========================================================================
 
     public static class StatRefreshSystem extends RefChangeSystem<EntityStore, EntityStatMap> {
         private final EndgameQoL plugin;

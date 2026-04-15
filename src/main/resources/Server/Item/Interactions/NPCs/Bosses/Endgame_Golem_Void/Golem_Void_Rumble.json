@@ -28,7 +28,9 @@
             "RunTime": 1.8,
             "Selector": {
               "Id": "AOECircle",
-              "Range": 6
+              "Range": 8,
+              "ExtendTop": 2,
+              "ExtendBottom": 10
             },
             "HitEntity": {
               "Interactions": [

@@ -24,7 +24,6 @@ import endgame.plugin.managers.BossHealthManager;
 import endgame.plugin.managers.BountyManager;
 import endgame.plugin.managers.ComboMeterManager;
 import endgame.plugin.managers.boss.GenericBossManager;
-import endgame.plugin.managers.boss.GolemVoidBossManager;
 import endgame.plugin.migration.LegacyDataMigration;
 import endgame.plugin.systems.boss.DangerZoneTickSystem;
 import endgame.plugin.utils.I18n;
@@ -617,10 +616,6 @@ public class EndgameQoL extends JavaPlugin {
     }
 
     // --- Delegating getters to SystemRegistry ---
-
-    public GolemVoidBossManager getGolemVoidBossManager() {
-        return systemRegistry != null ? systemRegistry.getGolemVoidBossManager() : null;
-    }
 
     public GenericBossManager getGenericBossManager() {
         return systemRegistry != null ? systemRegistry.getGenericBossManager() : null;

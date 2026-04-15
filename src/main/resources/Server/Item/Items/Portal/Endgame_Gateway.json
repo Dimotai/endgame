@@ -1,8 +1,7 @@
 {
-  "$Comment": "Themed variant of Endgame_Dungeon_Portal — the PortalThemeTracker swaps the base block to this one when the player right-clicks with a Shard of the Void. Not craftable directly. ReturnBlockType reverts to the base Endgame_Dungeon_Portal after portal closes so the player can re-activate with any key.",
   "TranslationProperties": {
-    "Name": "server.items.Endgame_Dungeon_Portal.name",
-    "Description": "server.items.Endgame_Dungeon_Portal.description"
+    "Name": "server.items.Endgame_Gateway.name",
+    "Description": "server.items.Endgame_Gateway.description"
   },
   "Icon": "Icons/ItemsGenerated/Portal_Device.png",
   "Categories": [
@@ -15,7 +14,7 @@
     "CustomModel": "Blocks/Miscellaneous/Platform_MagicInactive.blockymodel",
     "CustomModelTexture": [
       {
-        "Texture": "Blocks/Miscellaneous/Platform_Magic_Blue2.png",
+        "Texture": "Blocks/Miscellaneous/Endgame_Gateway.png",
         "Weight": 1
       }
     ],
@@ -25,7 +24,7 @@
           "Config": {
             "OnState": "Active",
             "SpawningState": "Spawning",
-            "ReturnBlockType": "Endgame_Dungeon_Portal"
+            "ReturnBlockType": "Portal_Return"
           }
         }
       }
@@ -46,25 +45,37 @@
       "Definitions": {
         "Spawning": {
           "InteractionSoundEventId": "SFX_Portal_Neutral_Open",
-          "Gathering": { "Breaking": { "GatherType": "Unbreakable" } },
-          "Light": { "Radius": 0, "Color": "#a3f" },
+          "Gathering": {
+            "Breaking": {
+              "GatherType": "Unbreakable"
+            }
+          },
+          "Light": {
+            "Radius": 0,
+            "Color": "#7cc"
+          },
           "Particles": [
-            { "SystemId": "Portal_Going_Through_Blue", "PositionOffset": { "Y": 1 } }
+            {
+              "SystemId": "Portal_Going_Through_Blue",
+              "PositionOffset": {
+                "Y": 1
+              }
+            }
           ],
           "CustomModelAnimation": "Blocks/Miscellaneous/Platform_Magic_Activate.blockyanim"
         },
         "Active": {
           "AmbientSoundEventId": "SFX_Portal_Neutral",
-          "Gathering": { "Breaking": { "GatherType": "Unbreakable" } },
-          "Light": { "Radius": 0, "Color": "#a3f" },
-          "Particles": [
-            {
-              "SystemId": "Portal_Endgame_Void",
-              "PositionOffset": { "Y": -0.3, "Z": -0.3, "X": 0.0 },
-              "RotationOffset": { "Yaw": 0.0 },
-              "Scale": 0.7
+          "Gathering": {
+            "Breaking": {
+              "GatherType": "Unbreakable"
             }
-          ],
+          },
+          "Light": {
+            "Radius": 0,
+            "Color": "#7cc"
+          },
+          "$Comment": "No Particles[] here — the base block is neutral. PortalThemeTracker swaps it to a themed variant (Endgame_Gateway_Void/Frozen/Swamp) via UseBlockEvent.Pre when the player right-clicks with a key. The variants bake their themed particles into their own Active state (rotation-aware via engine pipeline).",
           "Interactions": {
             "CollisionEnter": {
               "Interactions": [
@@ -72,7 +83,9 @@
                   "Type": "Portal",
                   "Next": {
                     "Type": "Simple",
-                    "Effects": { "LocalSoundEventId": "SFX_Portal_Neutral_Teleport_Local" }
+                    "Effects": {
+                      "LocalSoundEventId": "SFX_Portal_Neutral_Teleport_Local"
+                    }
                   }
                 }
               ]
@@ -93,7 +106,7 @@
               "Config": {
                 "OnState": "Active",
                 "SpawningState": "Spawning",
-                "ReturnBlockType": "Endgame_Dungeon_Portal"
+                "ReturnBlockType": "Portal_Return"
               }
             }
           }
@@ -104,6 +117,34 @@
       "Color": "#a3f",
       "Radius": 2
     }
+  },
+  "Recipe": {
+    "TimeSeconds": 1,
+    "KnowledgeRequired": false,
+    "Input": [
+      {
+        "ItemId": "Ingredient_Bar_Adamantite",
+        "Quantity": 30
+      },
+      {
+        "ItemId": "Ingredient_Bar_Cobalt",
+        "Quantity": 10
+      },
+      {
+        "ItemId": "Ingredient_Fire_Essence",
+        "Quantity": 30
+      }
+    ],
+    "BenchRequirement": [
+      {
+        "Id": "Endgame_Bench",
+        "Type": "Crafting",
+        "Categories": [
+          "Endgame_Misc"
+        ],
+        "RequiredTierLevel": 1
+      }
+    ]
   },
   "PlayerAnimationsId": "Block",
   "Tags": {

@@ -620,7 +620,6 @@
           },
           "Instructions": [
             {
-              "$Comment": "Animations",
               "Continue": true,
               "Sensor": {
                 "Type": "Any",

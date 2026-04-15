@@ -90,7 +90,20 @@ A massive thorned beast with a 3-attack combo chain. Displays an elite boss bar 
 
 **<#55ff55>Grooble</#55ff55>** — 250 HP burrowing beast with stone-covered hide.
 
-**<#55aaff>Spirit Root</#55aaff>** — 200 HP nature spirit that entangles prey with spectral roots.
+**<#55aaff>Spirit Root</#55aaff>** — 200 HP nature spirit that entangles prey with spectral roots. Summoned by Hedera on phase transitions.
+
+---
+
+## <#55ff55>Hedera Rework (v5.0.0)</#55ff55>
+
+Hedera gained four new health-gated attacks and a lingering poison cloud system, making Phases 2 and 3 significantly harder:
+
+- **<#55ff55>Vine Grab</#55ff55>** (Phase 2+) — ranged pull that yanks the target into melee range
+- **<#55ff55>Ground Slam</#55ff55>** (Phase 2+) — 7-block AOE + camera shake + 1s Stagger stun
+- **<#55ff55>Poison Clouds</#55ff55>** (Phase 2+) — lingering toxic clouds spawned every 18-25 seconds
+- **<#55ff55>Charge</#55ff55>** (Phase 3) — running lunge attack (plays the Hedera Run animation)
+
+All gated via CAE conditions. See the Bosses page for full phase breakdown.
 
 ---
 

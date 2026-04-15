@@ -44,7 +44,6 @@ public class AchievementTemplate {
 
 
     private static final List<AchievementTemplate> ALL_ACHIEVEMENTS = List.of(
-        // --- COMBAT ---
         new AchievementTemplate("combat_first_blood", "First Blood",
                 "Kill your first endgame NPC", Category.COMBAT, 1, 25, null),
         new AchievementTemplate("combat_slayer_50", "Slayer",
@@ -56,7 +55,6 @@ public class AchievementTemplate {
         new AchievementTemplate("combat_thousand", "Thousand Kills",
                 "Kill 1000 endgame NPCs", Category.COMBAT, 1000, 1000, "Endgame_Drop_Bounty_Weekly"),
 
-        // --- BOSS ---
         new AchievementTemplate("boss_frost_dragon", "Dragon Slayer",
                 "Defeat the Frost Dragon", Category.BOSS, 1, 200, "Endgame_Drop_Reward_10"),
         new AchievementTemplate("boss_hedera", "Hedera's Bane",
@@ -72,7 +70,6 @@ public class AchievementTemplate {
         new AchievementTemplate("boss_slayer_25", "Boss Executioner",
                 "Defeat 25 bosses total", Category.BOSS, 25, 800, "Endgame_Drop_Bounty_Weekly"),
 
-        // --- BOUNTY ---
         new AchievementTemplate("bounty_first", "Bounty Hunter",
                 "Complete your first bounty", Category.BOUNTY, 1, 50, null),
         new AchievementTemplate("bounty_10", "Professional Hunter",
@@ -82,7 +79,6 @@ public class AchievementTemplate {
         new AchievementTemplate("bounty_streak_3", "Streak Starter",
                 "Claim 3 daily streak bonuses", Category.BOUNTY, 3, 100, "Endgame_Drop_Reward_5"),
 
-        // --- DISCOVERY ---
         new AchievementTemplate("discovery_5", "Curious Explorer",
                 "Discover 5 NPC types", Category.DISCOVERY, 5, 50, null),
         new AchievementTemplate("discovery_10", "Explorer",
@@ -92,7 +88,6 @@ public class AchievementTemplate {
         new AchievementTemplate("discovery_all", "Naturalist",
                 "Discover all endgame NPC types", Category.DISCOVERY, 30, 500, "Endgame_Drop_Bounty_Weekly"),
 
-        // --- CRAFTING ---
         new AchievementTemplate("craft_first_weapon", "Apprentice Smith",
                 "Craft your first endgame weapon", Category.CRAFTING, 1, 50, null),
         new AchievementTemplate("craft_5_weapons", "Blacksmith",
@@ -102,7 +97,6 @@ public class AchievementTemplate {
         new AchievementTemplate("craft_all_types", "Arsenal Builder",
                 "Craft one of each endgame weapon type", Category.CRAFTING, 8, 500, "Endgame_Drop_Reward_20"),
 
-        // --- EXPLORATION ---
         new AchievementTemplate("explore_dungeon_first", "Dungeon Diver",
                 "Enter your first dungeon", Category.EXPLORATION, 1, 50, null),
         new AchievementTemplate("explore_dungeon_5", "Dungeon Crawler",
@@ -116,7 +110,6 @@ public class AchievementTemplate {
         new AchievementTemplate("explore_both", "World Traveler",
                 "Enter both dungeon types", Category.EXPLORATION, 2, 250, "Endgame_Drop_Reward_15"),
 
-        // --- SPEEDRUN ---
         new AchievementTemplate("speed_frost_180", "Blizzard Blitz",
                 "Defeat Frost Dragon in under 3 minutes", Category.SPEEDRUN, 1, 300, "Endgame_Drop_Reward_15"),
         new AchievementTemplate("speed_hedera_240", "Root Ripper",
@@ -130,7 +123,6 @@ public class AchievementTemplate {
         new AchievementTemplate("speed_all", "Perfectionist",
                 "Speed kill all 4 boss types", Category.SPEEDRUN, 4, 800, "Endgame_Drop_Bounty_Weekly"),
 
-        // --- MINING ---
         new AchievementTemplate("mine_first", "Prospector",
                 "Mine your first Mithril or Adamantite Ore", Category.MINING, 1, 25, null),
         new AchievementTemplate("mine_50", "Ore Hoarder",

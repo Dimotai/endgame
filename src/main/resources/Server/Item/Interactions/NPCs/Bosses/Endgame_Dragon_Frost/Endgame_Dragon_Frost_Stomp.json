@@ -1,10 +1,8 @@
 {
     "Type": "Simple",
-    "$Comment": "Prepare Delay",
     "RunTime": 0.01,
     "Next": {
         "Type": "Selector",
-        "$Comment": "Length of Combat",
         "RunTime": 0.1,
         "Selector": {
             "Id": "AOECircle",

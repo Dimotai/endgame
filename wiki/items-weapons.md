@@ -9,6 +9,9 @@ published: true
 
 40+ weapons, 8 tools, consumables, boss materials, and crafting benches.
 
+> [!NOTE]
+> **v5.0.0 weapon reworks** — Prisma Sword, Prisma Daggers, and Frostbite Blade have brand-new signature and ability3 kits. Blazefist/Frostbite now apply **vanilla** `Burn` / `Freeze` (full polish: screen FX, sounds, icons), replacing the old custom status effects.
+
 > [!TIP]
 > **Creative Library:** All items are available in Creative Mode under the **Endgame** category (7 subcategories: Weapons, Armor, Tools, Materials, Consumables, Portals, Misc).
 
@@ -81,13 +84,21 @@ Nature-themed daggers. Every hit applies **Poison** (5 dmg per tick, 4 ticks = 2
 
 ### Frostbite Blade
 
-*Epic*
+*Epic* — First zone-control weapon in the roster (v5.0.0 rework).
 
-Ice weapon obtained from the Frozen Dungeon. Purchase from **Korvyn** for 45 Flocons. Every hit applies **Frost Chill** (50% slow, 5s). Signature finisher applies **Frost Frozen** (full freeze, 3s).
+Ice weapon obtained from the Frozen Dungeon. Purchase from **Korvyn** for 45 Flocons. Basic hits apply vanilla **Freeze**.
 
-- **On-Hit Effect — Frost Chill:** 50% slow for 5s
-- **Signature — Frost Frozen:** Full freeze for 3s
-- **Source — Korvyn Trader:** 45 Flocons (Frozen Dungeon)
+| Attack slot     | Ability                                                      | Cost    |
+|-----------------|--------------------------------------------------------------|---------|
+| Primary         | Sword swings (applies Freeze on hit)                         | Stamina |
+| Ability1 (SIG)  | **Blizzard Stance** — 3 mobile AOE pulses, 240 Ice total     | 100 SE  |
+| Ability3        | **Ice Field** — 3 AOE slow pulses (pure CC)                  | 50 Mana |
+
+**Blizzard Stance (Signature — 100 SE):** 3 mobile AOE pulses dealing 80 Ice damage each (240 total). The final pulse applies vanilla **Freeze** to all hit targets.
+
+**Ice Field (Ability3 — 50 Mana):** 3 AOE slow pulses. Pure crowd control — no damage, applies slow to everything in each pulse. First zone-denial tool in the weapon roster.
+
+**Source — Korvyn Trader:** 45 Flocons (Frozen Dungeon)
 
 ## Standard Weapons
 

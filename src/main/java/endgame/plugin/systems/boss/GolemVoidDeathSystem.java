@@ -2,7 +2,7 @@ package endgame.plugin.systems.boss;
 
 import endgame.plugin.events.domain.BossKillHelper;
 import endgame.plugin.managers.boss.EnrageTracker;
-import endgame.plugin.managers.boss.GolemVoidBossManager;
+import endgame.plugin.managers.boss.GenericBossManager;
 
 import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.Ref;
@@ -23,10 +23,10 @@ import javax.annotation.Nonnull;
 public class GolemVoidDeathSystem extends DeathSystems.OnDeathSystem {
 
     private final EndgameQoL plugin;
-    private final GolemVoidBossManager bossManager;
+    private final GenericBossManager bossManager;
     private final EnrageTracker enrageTracker;
 
-    public GolemVoidDeathSystem(EndgameQoL plugin, GolemVoidBossManager bossManager, EnrageTracker enrageTracker) {
+    public GolemVoidDeathSystem(EndgameQoL plugin, GenericBossManager bossManager, EnrageTracker enrageTracker) {
         this.plugin = plugin;
         this.bossManager = bossManager;
         this.enrageTracker = enrageTracker;
@@ -42,8 +42,9 @@ public class GolemVoidDeathSystem extends DeathSystems.OnDeathSystem {
     public void onComponentAdded(@Nonnull Ref<EntityStore> ref, @Nonnull DeathComponent component,
                                   @Nonnull Store<EntityStore> store, @Nonnull CommandBuffer<EntityStore> commandBuffer) {
         try {
-            GolemVoidBossManager.GolemVoidState state = bossManager.getBossState(ref);
+            GenericBossManager.GenericBossState state = bossManager.getBossState(ref);
             if (state == null) return;
+            if (state.config.bossType != endgame.plugin.utils.BossType.GOLEM_VOID) return;
 
             plugin.getLogger().atFine().log("[GolemVoidBoss] Boss death detected: %s", state.npcTypeId);
 

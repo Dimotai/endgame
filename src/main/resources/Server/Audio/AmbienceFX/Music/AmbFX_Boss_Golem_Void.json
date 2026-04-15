@@ -1,0 +1,16 @@
+{
+  "$Comment": "Void Golem combat theme. Auto-activates via EnvironmentIds condition on Env_Endgame_Void_Realm — plays throughout the Void Realm instance, stops on dimension leave. To swap the track: drop a custom .ogg at Common/Music/Endgame/Endgame_Golem_Void_Fight.ogg and change the Tracks entry to 'Music/Endgame/Endgame_Golem_Void_Fight.ogg'.",
+  "Music": {
+    "Tracks": [
+      "Music/Endgame/Endgame_Golem_Void_Fight.ogg"
+    ],
+    "Volume": -6
+  },
+  "AudioCategory": "AudioCat_Music",
+  "Priority": 70,
+  "Conditions": {
+    "EnvironmentIds": [
+      "Env_Endgame_Void_Realm"
+    ]
+  }
+}

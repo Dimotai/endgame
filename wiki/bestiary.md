@@ -9,7 +9,10 @@ published: true
 
 32 NPC entries across 6 categories with kill milestones and discovery rewards.
 
-Access via `/eg journal` — Permission: `endgameqol.journal`
+**Access:** `/eg journal` (Bestiary tab) — Permission: `endgameqol.journal` (default: allow)
+
+> [!NOTE]
+> **v5.0.0 — Native Journal Page.** Bounty Board, Bestiary, and Achievements now share a single native `.ui` page with 3 tabs. The Bestiary tab shows paginated mob cards, kill milestones, and discovery badges.
 
 ## Categories Overview
 

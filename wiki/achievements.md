@@ -11,9 +11,12 @@ published: true
 
 ## Accessing Achievements
 
-**Commands:** `/eg journal` (Achievements tab)
+**Command:** `/eg journal` (Achievements tab)
 
-**Permission:** `endgameqol.journal`
+**Permission:** `endgameqol.journal` (default: allow)
+
+> [!NOTE]
+> **v5.0.0 — Native Journal Page.** Achievements are the third tab of the unified native `.ui` Journal page (Bounties / Bestiary / Achievements).
 
 ## Combat — 5 achievements
 

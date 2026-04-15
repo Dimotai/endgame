@@ -9,7 +9,7 @@ sort-index: 2
 
 Endgame & QoL includes 24 achievements across 5 categories. Track your progress, earn XP rewards, and claim item rewards for completed achievements.
 
-**Access** — Use <#55ffff>/eg journal</#55ffff> to view your progress.
+**Access** — Use <#55ffff>/eg journal</#55ffff> to view your progress. Achievements are the third tab of the unified **Native Journal** page (Bounty Board, Bestiary, Achievements).
 
 ---
 

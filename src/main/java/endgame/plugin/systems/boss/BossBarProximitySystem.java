@@ -13,7 +13,6 @@ import com.hypixel.hytale.server.core.modules.entity.component.TransformComponen
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import endgame.plugin.managers.boss.GenericBossManager;
-import endgame.plugin.managers.boss.GolemVoidBossManager;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -23,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Shows / hides boss bars to players based on proximity to active bosses.
- * Works for ALL bosses and elites (Golem Void + generic managers).
+ * Works for ALL bosses and elites (unified via {@link GenericBossManager}).
  *
  * <p>Lifecycle (no damage needed):
  * <ul>
@@ -46,21 +45,15 @@ public class BossBarProximitySystem extends EntityTickingSystem<EntityStore> {
             TransformComponent.getComponentType(),
             Player.getComponentType());
 
-    private final GolemVoidBossManager golemVoidBossManager;
     private final GenericBossManager genericBossManager;
 
     /** Per-player tick rate-limit (prevents spam since query fires per-player per-tick). */
     private final Map<UUID, Long> lastTickByPlayer = new ConcurrentHashMap<>();
 
-    /** Per-player Golem Void HUD visibility (1 HUD per player on that manager). */
-    private final Map<UUID, Boolean> golemVoidVisible = new ConcurrentHashMap<>();
+    /** Per-player per-boss HUD visibility. */
+    private final Map<UUID, Map<Ref<EntityStore>, Boolean>> visibleByPlayer = new ConcurrentHashMap<>();
 
-    /** Per-player per-boss HUD visibility for generic bosses. */
-    private final Map<UUID, Map<Ref<EntityStore>, Boolean>> genericVisible = new ConcurrentHashMap<>();
-
-    public BossBarProximitySystem(GolemVoidBossManager golemVoidBossManager,
-                                  GenericBossManager genericBossManager) {
-        this.golemVoidBossManager = golemVoidBossManager;
+    public BossBarProximitySystem(GenericBossManager genericBossManager) {
         this.genericBossManager = genericBossManager;
     }
 
@@ -91,15 +84,14 @@ public class BossBarProximitySystem extends EntityTickingSystem<EntityStore> {
         Long last = lastTickByPlayer.get(playerUuid);
         if (last != null && now - last < TICK_INTERVAL_MS) return;
 
-        // Fast path: if NO bosses are active anywhere, skip the work entirely.
-        // This is the common case on large servers outside boss encounters.
-        boolean anyActive =
-                (golemVoidBossManager != null && !golemVoidBossManager.getActiveBosses().isEmpty())
-             || (genericBossManager != null && !genericBossManager.getActiveBosses().isEmpty());
-        if (!anyActive) {
-            // Clear any stale per-player state when bosses despawn
-            if (!golemVoidVisible.isEmpty()) golemVoidVisible.remove(playerUuid);
-            if (!genericVisible.isEmpty()) genericVisible.remove(playerUuid);
+        if (genericBossManager == null) {
+            lastTickByPlayer.put(playerUuid, now);
+            return;
+        }
+
+        var activeBosses = genericBossManager.getActiveBosses();
+        if (activeBosses.isEmpty()) {
+            visibleByPlayer.remove(playerUuid);
             lastTickByPlayer.put(playerUuid, now);
             return;
         }
@@ -113,77 +105,32 @@ public class BossBarProximitySystem extends EntityTickingSystem<EntityStore> {
         PlayerRef matchingPlayerRef = store.getComponent(playerRef, PlayerRef.getComponentType());
         if (matchingPlayerRef == null) return;
 
-        // ── Golem Void (1 HUD per player) ──
-        if (golemVoidBossManager != null) {
-            var activeGolems = golemVoidBossManager.getActiveBosses();
-            if (activeGolems.isEmpty()) {
-                golemVoidVisible.remove(playerUuid);
-            } else {
-                boolean anyInRange = false;
-                Ref<EntityStore> nearestGolem = null;
-                double nearestSq = Double.MAX_VALUE;
-                for (var entry : activeGolems.entrySet()) {
-                    Ref<EntityStore> bossRef = entry.getKey();
-                    if (!bossRef.isValid()) continue;
-                    if (bossRef.getStore() != store) continue;
+        Map<Ref<EntityStore>, Boolean> perBoss = visibleByPlayer.computeIfAbsent(playerUuid,
+                k -> new ConcurrentHashMap<>());
 
-                    Vector3d bossPos = readBossPos(store, bossRef);
-                    if (bossPos == null) continue;
+        for (var entry : activeBosses.entrySet()) {
+            Ref<EntityStore> bossRef = entry.getKey();
+            if (!bossRef.isValid()) continue;
+            if (bossRef.getStore() != store) continue;
 
-                    double dsq = horizontalDistSq(playerPos, bossPos);
-                    if (dsq < nearestSq) {
-                        nearestSq = dsq;
-                        nearestGolem = bossRef;
-                    }
-                    if (dsq <= SHOW_DISTANCE_SQ) anyInRange = true;
-                }
-                Boolean cur = golemVoidVisible.get(playerUuid);
-                boolean showing = cur != null && cur;
-                if (!showing && anyInRange && nearestGolem != null) {
-                    golemVoidBossManager.showBossBarToPlayer(matchingPlayerRef, store);
-                    endgame.bossbar.BossBarFocus.acquire(playerUuid, nearestGolem);
-                    golemVoidVisible.put(playerUuid, true);
-                } else if (showing && nearestSq > HIDE_DISTANCE_SQ) {
-                    golemVoidBossManager.hideBossBarForPlayer(matchingPlayerRef);
-                    golemVoidVisible.put(playerUuid, false);
-                }
+            Vector3d bossPos = readBossPos(store, bossRef);
+            if (bossPos == null) continue;
+
+            double dsq = horizontalDistSq(playerPos, bossPos);
+            Boolean cur = perBoss.get(bossRef);
+            boolean showing = cur != null && cur;
+
+            if (!showing && dsq <= SHOW_DISTANCE_SQ) {
+                genericBossManager.showBossBarToPlayer(matchingPlayerRef, bossRef, store);
+                endgame.bossbar.BossBarFocus.acquire(playerUuid, bossRef);
+                perBoss.put(bossRef, true);
+            } else if (showing && dsq > HIDE_DISTANCE_SQ) {
+                genericBossManager.hideBossBarForPlayer(matchingPlayerRef);
+                perBoss.put(bossRef, false);
             }
         }
-
-        // ── Generic bosses (N HUDs per player — per boss) ──
-        if (genericBossManager != null) {
-            var activeGeneric = genericBossManager.getActiveBosses();
-            Map<Ref<EntityStore>, Boolean> perBoss = genericVisible.computeIfAbsent(playerUuid,
-                    k -> new ConcurrentHashMap<>());
-
-            if (activeGeneric.isEmpty()) {
-                perBoss.clear();
-            } else {
-                for (var entry : activeGeneric.entrySet()) {
-                    Ref<EntityStore> bossRef = entry.getKey();
-                    if (!bossRef.isValid()) continue;
-                    if (bossRef.getStore() != store) continue;
-
-                    Vector3d bossPos = readBossPos(store, bossRef);
-                    if (bossPos == null) continue;
-
-                    double dsq = horizontalDistSq(playerPos, bossPos);
-                    Boolean cur = perBoss.get(bossRef);
-                    boolean showing = cur != null && cur;
-
-                    if (!showing && dsq <= SHOW_DISTANCE_SQ) {
-                        genericBossManager.showBossBarToPlayer(matchingPlayerRef, bossRef, store);
-                        endgame.bossbar.BossBarFocus.acquire(playerUuid, bossRef);
-                        perBoss.put(bossRef, true);
-                    } else if (showing && dsq > HIDE_DISTANCE_SQ) {
-                        genericBossManager.hideBossBarForPlayer(matchingPlayerRef);
-                        perBoss.put(bossRef, false);
-                    }
-                }
-                // Prune stale entries
-                perBoss.keySet().removeIf(ref -> !ref.isValid() || !activeGeneric.containsKey(ref));
-            }
-        }
+        // Prune stale entries
+        perBoss.keySet().removeIf(ref -> !ref.isValid() || !activeBosses.containsKey(ref));
     }
 
     private Vector3d readBossPos(Store<EntityStore> store, Ref<EntityStore> bossRef) {
@@ -203,14 +150,12 @@ public class BossBarProximitySystem extends EntityTickingSystem<EntityStore> {
 
     public void clearPlayerState(UUID playerUuid) {
         if (playerUuid == null) return;
-        golemVoidVisible.remove(playerUuid);
-        genericVisible.remove(playerUuid);
+        visibleByPlayer.remove(playerUuid);
         lastTickByPlayer.remove(playerUuid);
     }
 
     public void forceClear() {
-        golemVoidVisible.clear();
-        genericVisible.clear();
+        visibleByPlayer.clear();
         lastTickByPlayer.clear();
     }
 }

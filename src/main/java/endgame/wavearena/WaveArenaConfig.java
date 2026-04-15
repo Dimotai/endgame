@@ -40,6 +40,9 @@ public class WaveArenaConfig {
     private final long zoneParticleIntervalMs;
     @Nonnull private final List<ZoneParticleLayer> extraZoneParticles;
     @Nullable private final com.hypixel.hytale.math.vector.Vector3d fixedCenter;
+    /** Horizontal distance from the arena center beyond which the player is considered
+     *  out-of-bounds and the arena fails. 0 = disabled. */
+    private final float leashDistance;
 
     private WaveArenaConfig(Builder b) {
         this.id = b.id;
@@ -70,6 +73,7 @@ public class WaveArenaConfig {
         this.zoneParticleIntervalMs = b.zoneParticleIntervalMs;
         this.extraZoneParticles = b.extraZoneParticles != null ? b.extraZoneParticles : List.of();
         this.fixedCenter = b.fixedCenter;
+        this.leashDistance = b.leashDistance;
     }
 
     public static Builder builder(String id) { return new Builder(id); }
@@ -100,6 +104,7 @@ public class WaveArenaConfig {
     public long getZoneParticleIntervalMs() { return zoneParticleIntervalMs; }
     @Nonnull public List<ZoneParticleLayer> getExtraZoneParticles() { return extraZoneParticles; }
     @Nullable public com.hypixel.hytale.math.vector.Vector3d getFixedCenter() { return fixedCenter; }
+    public float getLeashDistance() { return leashDistance; }
 
     @Nonnull
     public WaveDef getWaveForIndex(int waveIndex) {
@@ -191,6 +196,7 @@ public class WaveArenaConfig {
         private long zoneParticleIntervalMs = 1500;
         private List<ZoneParticleLayer> extraZoneParticles;
         private com.hypixel.hytale.math.vector.Vector3d fixedCenter;
+        private float leashDistance = 0f;
 
         Builder(String id) { this.id = id; }
 
@@ -221,6 +227,9 @@ public class WaveArenaConfig {
         public Builder zoneParticleIntervalMs(long v) { this.zoneParticleIntervalMs = v; return this; }
         public Builder extraZoneParticles(List<ZoneParticleLayer> v) { this.extraZoneParticles = v; return this; }
         public Builder fixedCenter(com.hypixel.hytale.math.vector.Vector3d v) { this.fixedCenter = v; return this; }
+        /** Horizontal distance from arena center beyond which the arena fails with LEFT_ZONE.
+         *  0 disables the check. Typically set slightly larger than the visible zone particle ring. */
+        public Builder leashDistance(float v) { this.leashDistance = v; return this; }
 
         public WaveArenaConfig build() { return new WaveArenaConfig(this); }
     }

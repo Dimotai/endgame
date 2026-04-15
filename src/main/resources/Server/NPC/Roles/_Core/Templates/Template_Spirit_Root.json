@@ -173,7 +173,6 @@
                     },
                     "Instructions": [
                         {
-                            "$Comment": "Animations",
                             "Continue": true,
                             "Sensor": {
                                 "Type": "Any",
@@ -360,7 +359,6 @@
                     },
                     "Instructions": [
                         {
-                            "$Comment": "Animations",
                             "Continue": true,
                             "Sensor": {
                                 "Type": "Any",
@@ -591,7 +589,6 @@
                     },
                     "Instructions": [
                         {
-                            "$Comment": "Animations",
                             "Continue": true,
                             "Sensor": {
                                 "Type": "Any",

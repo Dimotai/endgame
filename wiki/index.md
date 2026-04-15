@@ -16,8 +16,10 @@ Bosses, weapons, dungeons, NPCs, crafting, and quality-of-life systems for Hytal
 | **Bosses & Elites** | 9 |
 | **Weapons** | 40+ |
 | **Armor Sets** | 5 |
-| **Dungeons** | 2 |
+| **Dungeons** | 3 (Frozen / Swamp / Void Realm) |
+| **Temporal Instances** | 3 (Eldergrove / Oakwood / Canopy) |
 | **NPCs** | 30+ |
+| **Pets** | 4 boss-tier companions |
 | **Languages** | 5 |
 
 ## Quick Start — Material Progression
@@ -40,11 +42,14 @@ Bosses, weapons, dungeons, NPCs, crafting, and quality-of-life systems for Hytal
 
 - [**Items & Weapons**](endgame-qol/items-weapons) — 40+ weapons, tools, consumables & materials
 - [**Armor & Accessories**](endgame-qol/armor-accessories) — 5 armor sets, Trinket Pouch & 6 accessories
+- [**Portals & Gateways**](endgame-qol/portals-gateways) — Endgame Gateway block, themed variants & dungeon keys
 
 ### Dungeons & Bosses
 
 - [**Frozen Dungeon**](endgame-qol/frozen-dungeon) — Ice cavern — Dragon Frost boss
 - [**Swamp Dungeon**](endgame-qol/swamp-dungeon) — Poison swamp — Hedera boss
+- [**Void Realm**](endgame-qol/void-realm) — Floating island — Golem Void boss
+- [**Temporal Portals**](endgame-qol/temporal-portals) — Random spawning portals, 3 temporal instances
 - [**Bosses & Elites**](endgame-qol/bosses-elites) — 3 bosses, 6 elites, scaling & enrage
 
 ### Systems
@@ -53,8 +58,10 @@ Bosses, weapons, dungeons, NPCs, crafting, and quality-of-life systems for Hytal
 - [**Bounty Board**](endgame-qol/bounty-board) — Daily & weekly quests, reputation ranks
 - [**Achievements**](endgame-qol/achievements) — 24 achievements across 5 categories
 - [**Bestiary**](endgame-qol/bestiary) — 32 NPC entries, kill milestones & discovery
-- [**Warden Trials**](endgame-qol/warden-trials) — 4-tier wave survival with configurable timers
+- [**Warden Trials**](endgame-qol/warden-trials) — 4-tier wave survival (WaveArena framework)
+- [**Pets**](endgame-qol/pets) — 4 boss pets, D→SS tier progression, mount & perks
 
 ### For Developers
 
-- [**Developer API**](endgame-qol/api) — Public APIs for third-party mod integration (BossBar + WaveArena frameworks)
+- [**Developer API**](endgame-qol/api) — Public APIs for third-party mod integration (BossBar + WaveArena frameworks, BossBarFocus)
+- [**Changelog 5.0.0**](endgame-qol/changelog-5-0-0) — Full v5.0.0 release notes

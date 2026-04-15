@@ -12,7 +12,6 @@ import endgame.plugin.managers.ComboMeterManager;
 import endgame.plugin.managers.MobManager;
 import endgame.plugin.managers.boss.EnrageTracker;
 import endgame.plugin.managers.boss.GenericBossManager;
-import endgame.plugin.managers.boss.GolemVoidBossManager;
 import endgame.plugin.systems.boss.DangerZoneTickSystem;
 import endgame.plugin.systems.boss.FrostDragonSkyBoltSystem;
 import endgame.plugin.systems.boss.BossTargetSwitchSystem;
@@ -50,7 +49,6 @@ public class SystemRegistry {
     private final EndgameQoL plugin;
 
     // Managers
-    private GolemVoidBossManager golemVoidBossManager;
     private GenericBossManager genericBossManager;
     private EnrageTracker enrageTracker;
     private BossHealthManager bossHealthManager;
@@ -64,6 +62,9 @@ public class SystemRegistry {
     private endgame.plugin.managers.PetManager petManager;
     private endgame.plugin.systems.pet.PetMountListener petMountListener;
     private AccessoryDefenseSystem accessoryDefenseSystem;
+
+    // Wave callbacks (stored so external callers can clear the HUD on world leave)
+    private endgame.plugin.wave.EndgameWaveCallbacks waveCallbacks;
 
     // Systems
     private GenericBossDamageSystem genericBossDamageSystem;
@@ -115,12 +116,10 @@ public class SystemRegistry {
         plugin.getEntityStoreRegistry()
                 .registerSystem(new MobManager.StatRefreshSystem(plugin, this.mobManager));
 
-        this.golemVoidBossManager = new GolemVoidBossManager(plugin);
         this.genericBossManager = new GenericBossManager(plugin);
         this.enrageTracker = new EnrageTracker(plugin);
-        this.mobManager.setGolemVoidBossManager(this.golemVoidBossManager);
-        // Wire enrage tracker into Golem Void manager for the enhanced boss bar
-        this.golemVoidBossManager.setEnrageTracker(this.enrageTracker);
+        // Wire enrage tracker into the unified boss manager for the enhanced bar
+        this.genericBossManager.setEnrageTracker(this.enrageTracker);
     }
 
     private void registerBossSystems() {
@@ -131,25 +130,24 @@ public class SystemRegistry {
             return;
         }
 
-        // Golem Void boss pipeline
-        plugin.getEntityStoreRegistry().registerSystem(new GolemVoidDamageSystem(this.golemVoidBossManager, this.enrageTracker));
+        // Golem Void boss pipeline (uses unified GenericBossManager)
+        plugin.getEntityStoreRegistry().registerSystem(new GolemVoidDamageSystem(this.genericBossManager, this.enrageTracker));
         plugin.getEntityStoreRegistry().registerSystem(new PlayerDeathBossBarSystem(plugin));
         plugin.getEntityStoreRegistry().registerSystem(new endgame.plugin.systems.portal.InstanceRespawnSystem(plugin));
-        this.dangerZoneTickSystem = new DangerZoneTickSystem(plugin, this.golemVoidBossManager, this.genericBossManager, this.enrageTracker);
+        this.dangerZoneTickSystem = new DangerZoneTickSystem(plugin, this.genericBossManager, this.enrageTracker);
         plugin.getEntityStoreRegistry().registerSystem(this.dangerZoneTickSystem);
 
-        // Proximity-based boss bar show/hide (covers all bosses + elites — replaces prior
-        // proximity logic that lived inside DangerZoneTickSystem for Golem Void only)
+        // Proximity-based boss bar show/hide (covers all bosses + elites)
         this.bossBarProximitySystem = new endgame.plugin.systems.boss.BossBarProximitySystem(
-                this.golemVoidBossManager, this.genericBossManager);
+                this.genericBossManager);
         plugin.getEntityStoreRegistry().registerSystem(this.bossBarProximitySystem);
 
-        // Auto-register bosses with their manager at spawn (not on first damage) so
-        // proximity-based features (boss bar show on approach) work without attacking
+        // Auto-register bosses at spawn (not on first damage) so proximity-based features
+        // (boss bar show on approach) work without attacking
         plugin.getEntityStoreRegistry().registerSystem(new endgame.plugin.systems.boss.BossAutoRegisterSystem(
-                plugin, this.golemVoidBossManager, this.genericBossManager));
+                plugin, this.genericBossManager));
 
-        plugin.getEntityStoreRegistry().registerSystem(new GolemVoidDeathSystem(plugin, this.golemVoidBossManager, this.enrageTracker));
+        plugin.getEntityStoreRegistry().registerSystem(new GolemVoidDeathSystem(plugin, this.genericBossManager, this.enrageTracker));
         plugin.getEntityStoreRegistry().registerSystem(new endgame.plugin.systems.boss.BossDamageFilterSystem(plugin, this.enrageTracker));
         plugin.getEntityStoreRegistry().registerSystem(new endgame.plugin.systems.boss.BossFriendlyFireFilterSystem());
         plugin.getEntityStoreRegistry().registerSystem(new endgame.plugin.systems.boss.PrismaWeaponBossFilterSystem(plugin));
@@ -225,8 +223,9 @@ public class SystemRegistry {
         this.waveArenaEngine = new WaveArenaEngine();
         WaveArenaAPI.init(this.waveArenaEngine);
 
-        // Register EndgameQoL callbacks (XP, bounty, rewards, chat)
-        this.waveArenaEngine.addCallbacks(new endgame.plugin.wave.EndgameWaveCallbacks(plugin));
+        // Register EndgameQoL callbacks (XP, bounty, rewards, chat + HUD lifecycle)
+        this.waveCallbacks = new endgame.plugin.wave.EndgameWaveCallbacks(plugin);
+        this.waveArenaEngine.addCallbacks(this.waveCallbacks);
 
         // Load arena configs from JSON assets
         loadWaveArenaConfigs();
@@ -245,7 +244,7 @@ public class SystemRegistry {
                 .waveCount(5).timeLimitSeconds(270).spawnRadius(6f).intervalSeconds(8).countdownSeconds(3).mobLevel(60)
                 .rewardDropTable("Endgame_Drop_Warden_Challenge_I").xpReward(150).xpSource("WARDEN_TRIAL")
                 .bountyHook("COMPLETE_TRIAL").bountyTier(1)
-                .instanceBlacklist(java.util.List.of("instance-")).blockedMessage("You cannot start a Warden Trial inside a dungeon instance.").zoneParticleId("Warden_Trial_Zone").zoneParticleScale(16f).zoneParticleYOffset(-0.3)
+                .instanceBlacklist(java.util.List.of("instance-")).blockedMessage("You cannot start a Warden Trial inside a dungeon instance.").zoneParticleId("Warden_Trial_Zone").zoneParticleScale(16f).zoneParticleYOffset(-0.3).leashDistance(50f)
                 .waves(java.util.List.of(
                         new endgame.wavearena.WaveDef(java.util.List.of(M.apply("Goblin_Scrapper",3), M.apply("Skeleton_Archer",2))),
                         new endgame.wavearena.WaveDef(java.util.List.of(M.apply("Skeleton_Soldier",2), M.apply("Skeleton_Mage",2), M.apply("Spider",1))),
@@ -259,7 +258,7 @@ public class SystemRegistry {
                 .waveCount(5).timeLimitSeconds(360).spawnRadius(6f).intervalSeconds(8).countdownSeconds(3).mobLevel(70)
                 .rewardDropTable("Endgame_Drop_Warden_Challenge_II").xpReward(150).xpSource("WARDEN_TRIAL")
                 .bountyHook("COMPLETE_TRIAL").bountyTier(2)
-                .instanceBlacklist(java.util.List.of("instance-")).blockedMessage("You cannot start a Warden Trial inside a dungeon instance.").zoneParticleId("Warden_Trial_Zone").zoneParticleScale(16f).zoneParticleYOffset(-0.3)
+                .instanceBlacklist(java.util.List.of("instance-")).blockedMessage("You cannot start a Warden Trial inside a dungeon instance.").zoneParticleId("Warden_Trial_Zone").zoneParticleScale(16f).zoneParticleYOffset(-0.3).leashDistance(50f)
                 .waves(java.util.List.of(
                         new endgame.wavearena.WaveDef(java.util.List.of(M.apply("Trork_Brawler",2), M.apply("Skeleton_Ranger",2), M.apply("Trork_Hunter",1))),
                         new endgame.wavearena.WaveDef(java.util.List.of(M.apply("Outlander_Marauder",2), M.apply("Outlander_Stalker",2), M.apply("Skeleton_Archmage",1))),
@@ -273,7 +272,7 @@ public class SystemRegistry {
                 .waveCount(5).timeLimitSeconds(450).spawnRadius(6f).intervalSeconds(8).countdownSeconds(3).mobLevel(80)
                 .rewardDropTable("Endgame_Drop_Warden_Challenge_III").xpReward(150).xpSource("WARDEN_TRIAL")
                 .bountyHook("COMPLETE_TRIAL").bountyTier(3)
-                .instanceBlacklist(java.util.List.of("instance-")).blockedMessage("You cannot start a Warden Trial inside a dungeon instance.").zoneParticleId("Warden_Trial_Zone").zoneParticleScale(16f).zoneParticleYOffset(-0.3)
+                .instanceBlacklist(java.util.List.of("instance-")).blockedMessage("You cannot start a Warden Trial inside a dungeon instance.").zoneParticleId("Warden_Trial_Zone").zoneParticleScale(16f).zoneParticleYOffset(-0.3).leashDistance(50f)
                 .waves(java.util.List.of(
                         new endgame.wavearena.WaveDef(java.util.List.of(M.apply("Endgame_Saurian_Rogue",2), M.apply("Skeleton_Sand_Mage",2), M.apply("Endgame_Ghoul",1))),
                         new endgame.wavearena.WaveDef(java.util.List.of(M.apply("Endgame_Werewolf",2), M.apply("Skeleton_Burnt_Gunner",2), M.apply("Skeleton_Burnt_Wizard",1))),
@@ -287,7 +286,7 @@ public class SystemRegistry {
                 .waveCount(5).timeLimitSeconds(540).spawnRadius(6f).intervalSeconds(8).countdownSeconds(3).mobLevel(90)
                 .rewardDropTable("Endgame_Drop_Warden_Challenge_IV").xpReward(150).xpSource("WARDEN_TRIAL")
                 .bountyHook("COMPLETE_TRIAL").bountyTier(4)
-                .instanceBlacklist(java.util.List.of("instance-")).blockedMessage("You cannot start a Warden Trial inside a dungeon instance.").zoneParticleId("Warden_Trial_Zone").zoneParticleScale(16f).zoneParticleYOffset(-0.3)
+                .instanceBlacklist(java.util.List.of("instance-")).blockedMessage("You cannot start a Warden Trial inside a dungeon instance.").zoneParticleId("Warden_Trial_Zone").zoneParticleScale(16f).zoneParticleYOffset(-0.3).leashDistance(50f)
                 .waves(java.util.List.of(
                         new endgame.wavearena.WaveDef(java.util.List.of(M.apply("Endgame_Goblin_Duke",1), M.apply("Endgame_Necromancer_Void",1), M.apply("Skeleton_Burnt_Gunner",2), M.apply("Skeleton_Burnt_Wizard",1))),
                         new endgame.wavearena.WaveDef(java.util.List.of(M.apply("Alpha_Rex",1), M.apply("Endgame_Werewolf",1), M.apply("Skeleton_Burnt_Wizard",2), M.apply("Golem_Eye_Void",1))),
@@ -453,11 +452,6 @@ public class SystemRegistry {
      * Called from EndgameQoL.shutdown().
      */
     public void shutdownAll() {
-        if (this.golemVoidBossManager != null) {
-            this.golemVoidBossManager.forceClearAllBossBars();
-            plugin.getLogger().atInfo().log("[EndgameQoL] Cleared GolemVoidBossManager state");
-        }
-
         if (this.genericBossManager != null) {
             this.genericBossManager.forceClearAllBossBars();
             plugin.getLogger().atInfo().log("[EndgameQoL] Cleared GenericBossManager state");
@@ -544,12 +538,12 @@ public class SystemRegistry {
 
     // --- Getters ---
 
-    public GolemVoidBossManager getGolemVoidBossManager() {
-        return golemVoidBossManager;
-    }
-
     public GenericBossManager getGenericBossManager() {
         return genericBossManager;
+    }
+
+    public endgame.plugin.wave.EndgameWaveCallbacks getWaveCallbacks() {
+        return waveCallbacks;
     }
 
     public EnrageTracker getEnrageTracker() {

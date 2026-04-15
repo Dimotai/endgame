@@ -1,0 +1,9 @@
+{
+  "$Comment": "Drop list used by themed Endgame Gateway variants (Frozen/Swamp/Void). When the block is broken, it reverts to the base Endgame_Gateway item instead of dropping the themed variant (which is a dev-internal block).",
+  "Container": {
+    "Type": "Single",
+    "Item": {
+      "ItemId": "Endgame_Gateway"
+    }
+  }
+}

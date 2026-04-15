@@ -44,7 +44,6 @@ public class DifficultyConfig {
     private float customDamageMultiplier = 1.0f;
     private float bossDamagePlayerScaling = 0.15f;
 
-    // === DIFFICULTY ===
 
     public Difficulty getDifficulty() { return difficulty; }
 
@@ -58,7 +57,6 @@ public class DifficultyConfig {
         this.difficulty = Difficulty.fromString(s);
     }
 
-    // === CUSTOM MULTIPLIERS ===
 
     public float getCustomHealthMultiplier() { return customHealthMultiplier; }
 
@@ -72,7 +70,6 @@ public class DifficultyConfig {
         this.customDamageMultiplier = Math.max(0.1f, Math.min(10.0f, multiplier));
     }
 
-    // === EFFECTIVE MULTIPLIERS ===
 
     public float getEffectiveHealthMultiplier() {
         return difficulty == Difficulty.CUSTOM ? customHealthMultiplier : difficulty.getHealthMultiplier();
@@ -82,7 +79,6 @@ public class DifficultyConfig {
         return difficulty == Difficulty.CUSTOM ? customDamageMultiplier : difficulty.getDamageMultiplier();
     }
 
-    // === SCOPE ===
 
     public float getBossDamagePlayerScaling() { return bossDamagePlayerScaling; }
 
@@ -92,7 +88,6 @@ public class DifficultyConfig {
     public boolean isAffectsMobs() { return affectsMobs; }
     public void setAffectsMobs(boolean affects) { this.affectsMobs = affects; }
 
-    // === GROUP DAMAGE MULTIPLIERS ===
 
     public float getBossDamageMultiplier() {
         return affectsBosses ? getEffectiveDamageMultiplier() : 1.0f;

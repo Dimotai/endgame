@@ -15,25 +15,29 @@ import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import endgame.plugin.EndgameQoL;
-import endgame.plugin.managers.boss.GolemVoidBossManager;
+import endgame.plugin.managers.boss.GenericBossManager;
 
 import javax.annotation.Nonnull;
 
 /**
- * Custom interaction "GolemVoidJumpSlam" — teleports the Golem Void to the
- * nearest player's position mid-attack, with void-safety fallback to spawn
- * position. Called from a JSON interaction chain.
+ * Custom interaction "GolemVoidJumpSlam" — teleports the Golem Void HIGH ABOVE
+ * the nearest player's position so gravity (+ a downward ApplyForce in the
+ * JSON chain) can slam it down onto them. This produces a real vertical jump
+ * instead of the previous horizontal dash.
  *
  * <p>JSON: {@code { "Type": "GolemVoidJumpSlam", "RunTime": 0.05 }}
  *
  * <p>Behavior:
  * <ul>
  *   <li>Resolve attacker (Golem Void boss ref) from context</li>
- *   <li>Find nearest player in same world, within {@link #MAX_TELEPORT_DISTANCE} blocks</li>
+ *   <li>Find nearest player in same world</li>
  *   <li>Ray-cast down from player's feet up to 5 blocks to find solid ground</li>
- *   <li>If ground found → teleport boss to {@code (playerX, groundY+1, playerZ)}</li>
+ *   <li>If ground found → teleport boss to {@code (playerX, groundY + AIRBORNE_HEIGHT, playerZ)}
+ *       — boss appears directly above the target at altitude</li>
+ *   <li>Downstream JSON applies a downward {@code ApplyForce} + {@code WaitForGround}
+ *       to crash the boss back down exactly where the player is</li>
  *   <li>If no ground within 5 blocks (player over void) → teleport boss to
- *       {@link GolemVoidBossManager.GolemVoidState#spawnPosition} (anti-grief)</li>
+ *       {@link GenericBossManager.GenericBossState#spawnPosition} (anti-grief)</li>
  * </ul>
  */
 public class GolemVoidJumpSlamInteraction extends SimpleInstantInteraction {
@@ -50,6 +54,10 @@ public class GolemVoidJumpSlamInteraction extends SimpleInstantInteraction {
     /** Max Y blocks below player's feet to look for ground before declaring "void". */
     private static final int MAX_GROUND_SEARCH_DEPTH = 5;
 
+    /** Height above the player's ground position where the boss materializes at the
+     *  jump apex. Gravity + downward ApplyForce (in the JSON) slams it back down. */
+    private static final int AIRBORNE_HEIGHT = 15;
+
     @Override
     protected void firstRun(@Nonnull InteractionType type, @Nonnull InteractionContext context,
                             @Nonnull CooldownHandler cooldownHandler) {
@@ -60,10 +68,10 @@ public class GolemVoidJumpSlamInteraction extends SimpleInstantInteraction {
             Ref<EntityStore> attackerRef = context.getEntity();
             if (attackerRef == null || !attackerRef.isValid()) return;
 
-            GolemVoidBossManager mgr = plugin.getSystemRegistry().getGolemVoidBossManager();
+            GenericBossManager mgr = plugin.getSystemRegistry().getGenericBossManager();
             if (mgr == null) return;
 
-            GolemVoidBossManager.GolemVoidState state = mgr.getBossState(attackerRef);
+            GenericBossManager.GenericBossState state = mgr.getBossState(attackerRef);
             if (state == null) return;
 
             Store<EntityStore> attackerStore = attackerRef.getStore();
@@ -130,8 +138,11 @@ public class GolemVoidJumpSlamInteraction extends SimpleInstantInteraction {
 
     /**
      * Scan downward from the player's feet looking for solid ground. If found within
-     * {@link #MAX_GROUND_SEARCH_DEPTH} blocks, return that block's top. Otherwise
-     * return the spawn fallback.
+     * {@link #MAX_GROUND_SEARCH_DEPTH} blocks, return a point {@link #AIRBORNE_HEIGHT}
+     * blocks ABOVE that ground (boss materializes in mid-air above the target). A
+     * downward ApplyForce + WaitForGround in the JSON chain then slams it back down.
+     * If no ground is found within the search depth, fall back to the spawn position
+     * (anti-grief — player is hovering over the void).
      */
     private static Vector3d computeSafeLanding(World world, Vector3d playerPos, Vector3d spawnFallback) {
         int px = (int) Math.floor(playerPos.x);
@@ -143,12 +154,13 @@ public class GolemVoidJumpSlamInteraction extends SimpleInstantInteraction {
             try {
                 BlockType bt = world.getBlockType(px, y, pz);
                 if (bt != null && !"Empty".equals(bt.getId())) {
-                    return new Vector3d(playerPos.x, y + 1.0, playerPos.z);
+                    // Materialize AIRBORNE_HEIGHT blocks above the ground (not the player's feet)
+                    return new Vector3d(playerPos.x, y + 1.0 + AIRBORNE_HEIGHT, playerPos.z);
                 }
             } catch (Exception ignored) {}
         }
 
-        // Void detected — fallback to spawn
+        // Void detected — fallback to spawn (no airborne lift needed there)
         return spawnFallback != null ? spawnFallback.clone() : null;
     }
 }

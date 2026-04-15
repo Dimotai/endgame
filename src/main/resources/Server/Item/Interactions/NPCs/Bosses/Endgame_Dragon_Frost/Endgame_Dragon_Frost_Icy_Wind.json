@@ -29,7 +29,7 @@
       "$Comment": "Branch 2 — particles + selector",
       "Interactions": [
         {
-          "$Comment": "Wind-up: charging particles on wings and head",
+          "$Comment": "Wind-up: charging particles on head + big ice ring telegraph on the ground below the dragon",
           "Type": "Simple",
           "RunTime": 1.2,
           "Effects": {
@@ -37,22 +37,48 @@
               {
                 "SystemId": "Ice_Staff_Charging",
                 "TargetNodeName": "Head",
-                "PositionOffset": { "Z": 3.0 }
+                "PositionOffset": { "Z": 3.0 },
+                "Scale": 2
               },
               {
                 "SystemId": "Weapon_Frost_Mist",
-                "Scale": 2
+                "Scale": 4
+              },
+              {
+                "SystemId": "Rings_Rings_Ice",
+                "DetachedFromModel": true,
+                "TargetEntityPart": "Entity",
+                "PositionOffset": { "Y": -2.0 },
+                "Scale": 5
               }
             ]
           },
           "Next": {
-            "$Comment": "Gust release — AOECircle radial, detached from model so particles stay in place",
+            "$Comment": "Gust release — AOECircle radial with big Ice explosion + rings burst",
             "Type": "Selector",
             "RunTime": 0.3,
             "Selector": {
               "Id": "AOECircle",
               "Range": 10,
               "Offset": { "Y": -2, "Z": 0 }
+            },
+            "Effects": {
+              "Particles": [
+                {
+                  "SystemId": "IceBall_Explosion",
+                  "DetachedFromModel": true,
+                  "TargetEntityPart": "Entity",
+                  "PositionOffset": { "Y": -2.0 },
+                  "Scale": 6
+                },
+                {
+                  "SystemId": "Ice_Blast",
+                  "DetachedFromModel": true,
+                  "TargetEntityPart": "Entity",
+                  "PositionOffset": { "Y": -2.0 },
+                  "Scale": 5
+                }
+              ]
             },
             "HitEntity": {
               "Interactions": [
@@ -71,12 +97,11 @@
               "Effects": {
                 "Particles": [
                   {
-                    "SystemId": "Ice_Blast",
-                    "Scale": 3
-                  },
-                  {
                     "SystemId": "Weapon_Frost_Mist",
-                    "Scale": 3
+                    "DetachedFromModel": true,
+                    "TargetEntityPart": "Entity",
+                    "PositionOffset": { "Y": -2.0 },
+                    "Scale": 5
                   }
                 ]
               }

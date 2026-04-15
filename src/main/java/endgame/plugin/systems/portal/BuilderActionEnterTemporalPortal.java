@@ -56,9 +56,7 @@ public class BuilderActionEnterTemporalPortal extends BuilderActionBase {
         return this;
     }
 
-    // =========================================================================
     // Inner Action class
-    // =========================================================================
 
     private static class ActionEnterTemporalPortal extends ActionBase {
 

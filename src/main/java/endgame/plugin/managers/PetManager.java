@@ -98,9 +98,7 @@ public class PetManager {
         this.buffManager = new PetBuffManager(plugin);
     }
 
-    // =========================================================================
     // Spawn / Despawn
-    // =========================================================================
 
     /**
      * Spawn a pet NPC near the player with tier-based scaling.
@@ -355,9 +353,7 @@ public class PetManager {
         buffManager.onPetDespawned(ownerUuid);
     }
 
-    // =========================================================================
     // Mount System (Tier C+)
-    // =========================================================================
 
     /**
      * Mount the player on their active pet. Adds NPCMountComponent to the pet NPC.
@@ -442,9 +438,7 @@ public class PetManager {
         }
     }
 
-    // =========================================================================
     // Cooldown System
-    // =========================================================================
 
     /**
      * Set a respawn cooldown for a player (called when pet dies).
@@ -472,9 +466,7 @@ public class PetManager {
         return Math.max(0, end - System.currentTimeMillis());
     }
 
-    // =========================================================================
     // Ref Cache
-    // =========================================================================
 
     public void registerPet(@Nonnull UUID ownerUuid, @Nonnull Ref<EntityStore> petRef) {
         petsByOwner.put(ownerUuid, petRef);
@@ -494,9 +486,7 @@ public class PetManager {
         return ref;
     }
 
-    // =========================================================================
     // Player Lifecycle
-    // =========================================================================
 
     public void onPlayerConnect(@Nonnull UUID uuid, @Nonnull PlayerEndgameComponent comp) {
         if (!plugin.getConfig().get().pets().isEnabled()) return;
@@ -514,9 +504,7 @@ public class PetManager {
         despawnPet(uuid);
     }
 
-    // =========================================================================
     // Boss Kill → Pet Unlock
-    // =========================================================================
 
     public void handleBossKill(@Nonnull GameEvent.BossKillEvent event) {
         PetConfig config = plugin.getConfig().get().pets();
@@ -560,9 +548,7 @@ public class PetManager {
         }
     }
 
-    // =========================================================================
     // Helpers
-    // =========================================================================
 
     @Nullable
     private static String mapBossToPetId(String bossTypeId) {

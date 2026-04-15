@@ -25,7 +25,6 @@
       "Max": 100
     }
   },
-  "$Comment": "Endgame Void Portal - zone preview",
   "Particle": {
     "Texture": "Particles/Textures/Endgame/Portals/Zone_Void.png",
     "FrameSize": {
@@ -40,7 +39,7 @@
           "Min": 0,
           "Max": 0
         },
-        "Opacity": 0,
+        "Opacity": 1,
         "Color": "#c088ff",
         "Scale": {
           "X": {
@@ -86,7 +85,7 @@
             "Max": 0
           }
         },
-        "Opacity": 0,
+        "Opacity": 1,
         "Color": "#3a0066"
       }
     },

@@ -34,6 +34,14 @@ Opens the Journal — a unified page with 3 tabs:
 
 ---
 
+## <#55ffff>/eg pet</#55ffff>
+
+Opens the Pet Companion UI — shows your owned pets, current tier badge (D → SS), ability list, mount toggle (Tier C+), aura status (SS), and a feed button for tier progression.
+
+**Permission** — <#aaaaaa>endgameqol.pet</#aaaaaa> (default-allow)
+
+---
+
 ## <#55ffff>/eg status</#55ffff>
 
 Live diagnostics dashboard showing difficulty, database health, active encounters, feature toggles, player count, recipe/locale stats.
@@ -56,6 +64,8 @@ Admin subcommands for server operators.
 
 **<#55ffff>/eg admin reset bounties</#55ffff>** — Reset all player bounty progress
 
+**<#55ffff>/eg admin reset leaderboard</#55ffff>** — Reset the combo/kill leaderboard
+
 **<#55ffff>/eg admin reload</#55ffff>** — Hot-reload config without restart
 
 **Permission** — <#aaaaaa>endgameqol.admin</#aaaaaa>
@@ -74,6 +84,7 @@ Opens the Voile documentation browser (requires the Voile mod). Browse this wiki
 |:--------|:-----------|
 | /eg config | endgameqol.config |
 | /eg journal | endgameqol.journal (default-allow) |
+| /eg pet | endgameqol.pet (default-allow) |
 | /eg status, /eg admin | endgameqol.admin |
 | /eg lang, /voile | None (all players) |
 

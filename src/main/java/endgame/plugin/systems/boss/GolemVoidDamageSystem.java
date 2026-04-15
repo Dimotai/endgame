@@ -1,7 +1,7 @@
 package endgame.plugin.systems.boss;
 
 import endgame.plugin.managers.boss.EnrageTracker;
-import endgame.plugin.managers.boss.GolemVoidBossManager;
+import endgame.plugin.managers.boss.GenericBossManager;
 
 import com.hypixel.hytale.component.ArchetypeChunk;
 import com.hypixel.hytale.component.CommandBuffer;
@@ -26,11 +26,11 @@ import javax.annotation.Nonnull;
  */
 public class GolemVoidDamageSystem extends AbstractBossDamageSystem {
 
-    private final GolemVoidBossManager bossManager;
+    private final GenericBossManager bossManager;
     private final EndgameQoL plugin;
     private final EnrageTracker enrageTracker;
 
-    public GolemVoidDamageSystem(GolemVoidBossManager bossManager, EnrageTracker enrageTracker) {
+    public GolemVoidDamageSystem(GenericBossManager bossManager, EnrageTracker enrageTracker) {
         this.bossManager = bossManager;
         this.plugin = bossManager.getPlugin();
         this.enrageTracker = enrageTracker;
@@ -130,7 +130,7 @@ public class GolemVoidDamageSystem extends AbstractBossDamageSystem {
         if (attackerRef != null) {
             PlayerRef playerRef = findPlayerRef(attackerRef);
             if (playerRef != null) {
-                bossManager.showBossBarToPlayer(playerRef, store);
+                bossManager.showBossBarToPlayer(playerRef, targetRef, store);
             }
         }
 

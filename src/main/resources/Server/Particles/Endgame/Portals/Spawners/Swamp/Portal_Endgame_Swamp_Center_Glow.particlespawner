@@ -11,7 +11,6 @@
   "SpawnRate": { "Min": 1.2, "Max": 2.4 },
   "InitialVelocity": { "Yaw": { "Min": -15, "Max": 15 }, "Pitch": { "Min": 80, "Max": 100 } },
   "Attractors": [],
-  "$Comment": "Endgame Swamp Portal - center glow",
   "Particle": {
     "Texture": "Particles/Textures/Circles/Portal_Inside_Bright.png",
     "FrameSize": { "Width": 128, "Height": 128 },

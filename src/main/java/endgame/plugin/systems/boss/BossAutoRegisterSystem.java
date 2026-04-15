@@ -11,7 +11,6 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.entities.NPCEntity;
 import endgame.plugin.EndgameQoL;
 import endgame.plugin.managers.boss.GenericBossManager;
-import endgame.plugin.managers.boss.GolemVoidBossManager;
 import endgame.plugin.utils.BossType;
 
 import javax.annotation.Nonnull;
@@ -36,17 +35,14 @@ public class BossAutoRegisterSystem extends EntityTickingSystem<EntityStore> {
     private static final Query<EntityStore> QUERY = Query.and(NPCEntity.getComponentType());
 
     private final EndgameQoL plugin;
-    private final GolemVoidBossManager golemVoidBossManager;
     private final GenericBossManager genericBossManager;
 
     /** Per-entity last-check timestamp — rate-limits the registration attempts. */
     private final Map<Ref<EntityStore>, Long> lastCheck = new ConcurrentHashMap<>();
 
     public BossAutoRegisterSystem(EndgameQoL plugin,
-                                  GolemVoidBossManager golemVoidBossManager,
                                   GenericBossManager genericBossManager) {
         this.plugin = plugin;
-        this.golemVoidBossManager = golemVoidBossManager;
         this.genericBossManager = genericBossManager;
     }
 
@@ -86,16 +82,9 @@ public class BossAutoRegisterSystem extends EntityTickingSystem<EntityStore> {
         if (bossType == null) return;   // not a tracked boss/elite
 
         try {
-            if (bossType == BossType.GOLEM_VOID) {
-                if (golemVoidBossManager.getBossState(ref) == null) {
-                    golemVoidBossManager.registerBoss(ref, typeId, store);
-                    plugin.getLogger().atInfo().log("[BossAutoRegister] Registered GolemVoid: %s", typeId);
-                }
-            } else {
-                if (genericBossManager.getBossState(ref) == null) {
-                    genericBossManager.registerBoss(ref, typeId, store);
-                    plugin.getLogger().atInfo().log("[BossAutoRegister] Registered Generic: %s", typeId);
-                }
+            if (genericBossManager.getBossState(ref) == null) {
+                genericBossManager.registerBoss(ref, typeId, store);
+                plugin.getLogger().atInfo().log("[BossAutoRegister] Registered: %s", typeId);
             }
         } catch (Exception e) {
             plugin.getLogger().atWarning().log("[BossAutoRegister] Registration failed for %s: %s",

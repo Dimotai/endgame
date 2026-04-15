@@ -34,14 +34,12 @@ public class NativeConfigPage extends InteractiveCustomUIPage<NativeConfigPage.C
     private static final HytaleLogger LOGGER = HytaleLogger.get("EndgameQoL.NativeConfig");
     private static final String PAGE_FILE = "Pages/EndgameConfigPage.ui";
 
-    private static final String[] TAB_IDS = {"Difficulty", "Scaling", "Weapons", "Armor", "Crafting", "Misc", "Integration"};
-    private static final String[] TAB_BTN_IDS = {"#TabDifficulty", "#TabScaling", "#TabWeapons", "#TabArmor", "#TabCrafting", "#TabMisc", "#TabIntegration"};
+    private static final String[] TAB_IDS = {"Difficulty", "Scaling", "Weapons", "Armor", "Crafting", "Misc", "Integration", "Addons"};
+    private static final String[] TAB_BTN_IDS = {"#TabDifficulty", "#TabScaling", "#TabWeapons", "#TabArmor", "#TabCrafting", "#TabMisc", "#TabIntegration", "#TabAddons"};
 
-    // Preset button IDs
     private static final String[] PRESET_BTN_IDS = {"#PresetEasy", "#PresetMedium", "#PresetHard", "#PresetExtreme", "#PresetCustom"};
     private static final String[] PRESET_NAMES = {"EASY", "MEDIUM", "HARD", "EXTREME", "CUSTOM"};
 
-    // Boss config IDs for scaling tab
     private static final String[] BOSS_IDS = {"DragonFrost", "Hedera", "GolemVoid"};
     private static final BossType[] BOSS_TYPES = {BossType.DRAGON_FROST, BossType.HEDERA, BossType.GOLEM_VOID};
 
@@ -53,19 +51,16 @@ public class NativeConfigPage extends InteractiveCustomUIPage<NativeConfigPage.C
     private final EndgameQoL plugin;
     private String activeTab = "Difficulty";
 
-    // Global search state
     private String globalSearchText = "";
     private boolean globalSearchActive = false;
     private static final int MAX_SEARCH_RESULTS = 15;
 
-    // Recipe override state
     private String craftCategory = "All";
     private int craftPage = 0;
     private String selectedRecipeId = null;
     private String recipeSearchFilter = "";
     private java.util.List<String> filteredRecipeIds = new java.util.ArrayList<>();
 
-    // Searchable settings registry: name, tab, toggle action, value getter, extra keywords
     private record SearchEntry(String name, String tab, String toggleAction,
                                java.util.function.Function<EndgameConfig, String> valueGetter, String keywords) {
         SearchEntry(String name, String tab, String toggleAction, java.util.function.Function<EndgameConfig, String> valueGetter) {
@@ -119,7 +114,6 @@ public class NativeConfigPage extends InteractiveCustomUIPage<NativeConfigPage.C
                       @Nonnull UIEventBuilder events, @Nonnull Store<EntityStore> store) {
         cmd.append(PAGE_FILE);
 
-        // Bind all tab buttons
         for (int i = 0; i < TAB_IDS.length; i++) {
             events.addEventBinding(CustomUIEventBindingType.Activating, TAB_BTN_IDS[i],
                     EventData.of("Action", "tab:" + TAB_IDS[i]), false);
@@ -135,7 +129,6 @@ public class NativeConfigPage extends InteractiveCustomUIPage<NativeConfigPage.C
     private void refreshPage() {
         UICommandBuilder cmd = new UICommandBuilder();
         UIEventBuilder events = new UIEventBuilder();
-        // Re-bind tab buttons (events are cleared on sendUpdate)
         for (int i = 0; i < TAB_IDS.length; i++) {
             events.addEventBinding(CustomUIEventBindingType.Activating, TAB_BTN_IDS[i],
                     EventData.of("Action", "tab:" + TAB_IDS[i]), false);
@@ -178,23 +171,16 @@ public class NativeConfigPage extends InteractiveCustomUIPage<NativeConfigPage.C
             cmd.set(TAB_BTN_IDS[i] + ".Style.Default.LabelStyle.RenderBold", active);
         }
 
-        // === DIFFICULTY ===
         populateDifficulty(cmd, events, config);
-        // === SCALING ===
         populateScaling(cmd, events, config);
-        // === WEAPONS ===
         populateWeapons(cmd, events, config);
-        // === ARMOR ===
         populateArmor(cmd, events, config);
-        // === CRAFTING ===
         populateCrafting(cmd, events, config);
-        // === MISC ===
         populateMisc(cmd, events, config);
-        // === INTEGRATION ===
         populateIntegration(cmd, events, config);
+        populateAddons(cmd, events, config);
     }
 
-    // ==================== GLOBAL SEARCH RESULTS ====================
 
     private void populateSearchResults(UICommandBuilder cmd, UIEventBuilder events, EndgameConfig config) {
         String[] searchWords = globalSearchText.toLowerCase().split("\\s+");
@@ -234,7 +220,6 @@ public class NativeConfigPage extends InteractiveCustomUIPage<NativeConfigPage.C
         }
     }
 
-    // ==================== DIFFICULTY ====================
 
     private void populateDifficulty(UICommandBuilder cmd, UIEventBuilder events, EndgameConfig config) {
         Difficulty diff = config.getDifficulty();
@@ -268,7 +253,6 @@ public class NativeConfigPage extends InteractiveCustomUIPage<NativeConfigPage.C
         bindAdjust(events, "#DamageUp", "adjust:damageUp");
     }
 
-    // ==================== SCALING ====================
 
     private void populateScaling(UICommandBuilder cmd, UIEventBuilder events, EndgameConfig config) {
         // Prisma toggles — target toggle buttons directly
@@ -299,7 +283,6 @@ public class NativeConfigPage extends InteractiveCustomUIPage<NativeConfigPage.C
         events.addEventBinding(CustomUIEventBindingType.Activating, "#ApplyScaling", EventData.of("Action", "apply:scaling"), false);
     }
 
-    // ==================== WEAPONS ====================
 
     private void populateWeapons(UICommandBuilder cmd, UIEventBuilder events, EndgameConfig config) {
         // Hedera — toggle buttons show ON/OFF directly
@@ -335,7 +318,6 @@ public class NativeConfigPage extends InteractiveCustomUIPage<NativeConfigPage.C
 
     }
 
-    // ==================== ARMOR ====================
 
     private void populateArmor(UICommandBuilder cmd, UIEventBuilder events, EndgameConfig config) {
         // Mana Regen
@@ -371,7 +353,6 @@ public class NativeConfigPage extends InteractiveCustomUIPage<NativeConfigPage.C
         bindAdjust(events, "#HPRegenPrismaUp", "adjust:hpRegenPrismaUp");
     }
 
-    // ==================== CRAFTING ====================
 
     private void populateCrafting(UICommandBuilder cmd, UIEventBuilder events, EndgameConfig config) {
         // Simple category toggles
@@ -552,7 +533,6 @@ public class NativeConfigPage extends InteractiveCustomUIPage<NativeConfigPage.C
         return s != null ? s.replace('_', ' ') : "";
     }
 
-    // ==================== MISC ====================
 
     private void populateMisc(UICommandBuilder cmd, UIEventBuilder events, EndgameConfig config) {
         setToggleValue(cmd, "#TogglePvp", config.isPvpEnabled());
@@ -598,7 +578,6 @@ public class NativeConfigPage extends InteractiveCustomUIPage<NativeConfigPage.C
         bindAdjust(events, "#MaxPortalsUp", "adjust:maxPortalsUp");
     }
 
-    // ==================== INTEGRATION ====================
 
     private void populateIntegration(UICommandBuilder cmd, UIEventBuilder events, EndgameConfig config) {
         EndgameQoL p = plugin;
@@ -627,8 +606,13 @@ public class NativeConfigPage extends InteractiveCustomUIPage<NativeConfigPage.C
         events.addEventBinding(CustomUIEventBindingType.Activating, "#ToggleRPGLeveling", EventData.of("Action", "toggle:rpgLeveling"), false);
         events.addEventBinding(CustomUIEventBindingType.Activating, "#ToggleEndlessLeveling", EventData.of("Action", "toggle:endlessLeveling"), false);
         events.addEventBinding(CustomUIEventBindingType.Activating, "#ToggleOrbisGuard", EventData.of("Action", "toggle:orbisGuard"), false);
+    }
 
-        // Addons section — Pets Reforged
+
+    private void populateAddons(UICommandBuilder cmd, UIEventBuilder events, EndgameConfig config) {
+        EndgameQoL p = plugin;
+
+        // Pets Reforged
         boolean prPresent = p.isPetsReforgedModPresent();
         cmd.set("#AddonPR.Visible", prPresent);
         cmd.set("#AddonEmpty.Visible", !prPresent);
@@ -638,7 +622,6 @@ public class NativeConfigPage extends InteractiveCustomUIPage<NativeConfigPage.C
         }
     }
 
-    // ==================== EVENT HANDLING ====================
 
     @Override
     public void handleDataEvent(@Nonnull Ref<EntityStore> ref, @Nonnull Store<EntityStore> store,
@@ -1045,7 +1028,6 @@ public class NativeConfigPage extends InteractiveCustomUIPage<NativeConfigPage.C
         }
     }
 
-    // ==================== HELPERS ====================
 
     private void setToggleValue(UICommandBuilder cmd, String selector, boolean value) {
         setToggleValue(cmd, selector, value, false);

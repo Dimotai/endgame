@@ -80,9 +80,7 @@ public class EndgameConfig {
     public CraftingConfig crafting() { return crafting; }
     public MiscConfig misc() { return misc; }
 
-    // ========================================================================
     // BOSS CONFIG (data-driven map — not in a sub-config, stays at top level)
-    // ========================================================================
 
     private void initDefaultBossConfigs() {
         for (BossType bt : BossType.values()) {
@@ -132,10 +130,8 @@ public class EndgameConfig {
         return getBossConfig(bossType).getEffectiveDamageMultiplier(groupMult);
     }
 
-    // ========================================================================
     // DELEGATION GETTERS — backward compat for all 35 consumer files
     // Zero consumer changes needed.
-    // ========================================================================
 
     // --- Difficulty ---
     public Difficulty getDifficulty() { return difficulty.getDifficulty(); }
@@ -300,8 +296,6 @@ public class EndgameConfig {
     public int getFrostDragonSpiritMaxCount() { return misc.getFrostDragonSpiritMaxCount(); }
     public int getFrostDragonNovaBoltCount() { return misc.getFrostDragonNovaBoltCount(); }
 
-    // ========================================================================
     // LEGACY CODEC — reads old flat format for migration
-    // ========================================================================
 
 }

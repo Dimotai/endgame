@@ -51,9 +51,7 @@ public final class PetAPI {
         return comp != null ? comp.getTotalKills() : 0;
     }
 
-    // =========================================================================
     // Player-level queries (by owner UUID)
-    // =========================================================================
 
     /**
      * Get the tier of a player's pet. Returns null if pet not unlocked or player not found.

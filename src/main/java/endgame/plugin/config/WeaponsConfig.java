@@ -50,7 +50,6 @@ public class WeaponsConfig {
     private float blazefistBurnDamage = 50.0f;
     private int blazefistBurnTicks = 3;
 
-    // === HEDERA DAGGERS ===
 
     public boolean isHederaPoisonEnabled() { return hederaPoisonEnabled; }
     public void setHederaPoisonEnabled(boolean e) { this.hederaPoisonEnabled = e; }
@@ -67,12 +66,10 @@ public class WeaponsConfig {
     public float getHederaLifestealPercent() { return hederaLifestealPercent; }
     public void setHederaLifestealPercent(float p) { this.hederaLifestealPercent = Math.max(0.01f, Math.min(0.50f, p)); }
 
-    // === HEDERA BOSS POISON ===
 
     public float getHederaBossPoisonDamage() { return hederaBossPoisonDamage; }
     public int getHederaBossPoisonTicks() { return hederaBossPoisonTicks; }
 
-    // === BLAZEFIST BURN ===
 
     public boolean isBlazefistBurnEnabled() { return blazefistBurnEnabled; }
     public void setBlazefistBurnEnabled(boolean e) { this.blazefistBurnEnabled = e; }

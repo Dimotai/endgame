@@ -36,7 +36,6 @@ public class EndlessLevelingBridge {
         api = null;
     }
 
-    // === XP ===
 
     /**
      * Award XP to a player and nearby party members for killing a boss.

@@ -86,7 +86,6 @@ public final class BestiaryRegistry {
     private static final LinkedHashMap<String, MobInfo> ALL = new LinkedHashMap<>();
 
     static {
-        // === BOSSES ===
         reg("Endgame_Dragon_Frost", "Dragon Frost", Category.BOSS, 1400,
             "27 Physical + 10 Ice",
             "An ancient frost wyrm guarding the frozen depths. Its breath can freeze a warrior solid.",
@@ -105,7 +104,6 @@ public final class BestiaryRegistry {
             new String[]{"Onyxium Bar", "Prisma Bar", "Emerald", "Portal Luminia", "Void Amulet (rare)"},
             "Void Instance", "Golem_Void.png");
 
-        // === ELITES ===
         reg("Endgame_Dragon_Fire", "Dragon Fire", Category.ELITE, 1000,
             "27 Physical + 10 Fire",
             "A wild fire dragon that roams the overworld. Fiercely territorial and relentless in pursuit.",
@@ -123,7 +121,6 @@ public final class BestiaryRegistry {
             new String[]{"Swamp Crocodile Scale", "Bone Fragment", "Void Essence", "Swamp Currency", "Onyxium Bar (rare)"},
             "Swamp Dungeon", "Swamp_Crocodile.png");
 
-        // === ELEMENTALS ===
         reg("Endgame_Golem_Crystal_Frost", "Golem Crystal Frost", Category.ELEMENTAL, 300,
             "Physical",
             "A crystalline construct infused with frost energy. Shards of ice orbit its body.",
@@ -148,7 +145,6 @@ public final class BestiaryRegistry {
             new String[]{},
             "Void Instance", "Golem_Eye_Void.png");
 
-        // === CREATURES ===
         reg("Endgame_Yeti", "Yeti", Category.CREATURE, 400,
             "Physical",
             "A towering snow beast of the frozen wastes. Territorial and surprisingly swift for its size.",
@@ -179,7 +175,6 @@ public final class BestiaryRegistry {
             new String[]{"Hedera's Bramble", "Void Essence", "Swamp Currency", "Venom Sac", "Bone Fragment"},
             "Swamp Dungeon", "Bramble_Elite.png");
 
-        // === ENDGAME ===
         reg("Endgame_Ghoul", "Ghoul", Category.ENDGAME, 193,
             "Physical",
             "A decaying horror that prowls at night. Relentless and drawn to the scent of the living.",
@@ -230,7 +225,6 @@ public final class BestiaryRegistry {
             "Warden Trial", null);
 
 
-        // === SPECIAL ===
         reg("Onyxium_Encounter", "Onyxium Encounter", Category.SPECIAL, 700,
             "Daggers",
             "A mysterious dual-wielding assassin that appears without warning. Onyxium blades gleam in the dark.",

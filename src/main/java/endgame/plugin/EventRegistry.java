@@ -70,9 +70,7 @@ public class EventRegistry {
             UUID playerUuid = event.getPlayerRef().getUuid();
             if (playerUuid == null) return;
 
-            // Boss bars
-            var golemMgr = systemRegistry.getGolemVoidBossManager();
-            if (golemMgr != null) golemMgr.hideBossBarForPlayerUuid(playerUuid);
+            // Boss bars (unified manager — Golem + Dragon + Hedera + elites)
             var genericMgr = systemRegistry.getGenericBossManager();
             if (genericMgr != null) genericMgr.hideBossBarForPlayerUuid(playerUuid);
 
@@ -123,14 +121,17 @@ public class EventRegistry {
 
             if (playerUuid != null) {
                 // All UUID-based methods only touch ConcurrentHashMaps — thread-safe
-                var golemBoss = systemRegistry.getGolemVoidBossManager();
-                if (golemBoss != null) golemBoss.hideBossBarForPlayerUuid(playerUuid);
                 var genericBoss = systemRegistry.getGenericBossManager();
                 if (genericBoss != null) genericBoss.hideBossBarForPlayerUuid(playerUuid);
                 var dangerZone = systemRegistry.getDangerZoneTickSystem();
                 if (dangerZone != null) dangerZone.clearPlayerState(playerUuid);
                 var proximity = systemRegistry.getBossBarProximitySystem();
                 if (proximity != null) proximity.clearPlayerState(playerUuid);
+                // Clear wave HUD + cancel scheduled refresh BEFORE failing the arena so the
+                // clear-HUD packet lands while the player is still in the source world
+                // (prevents a stuck HUD on the new world after /leave).
+                var waveCbs = systemRegistry.getWaveCallbacks();
+                if (waveCbs != null) waveCbs.clearWaveHud(playerUuid);
                 endgame.wavearena.WaveArenaAPI.failArena(playerUuid);
                 var combo = systemRegistry.getComboMeterManager();
                 // Only hide HUD — don't destroy combo state (survives world transfers)
@@ -154,9 +155,6 @@ public class EventRegistry {
             // (e.g., Golem Void → Frost Dragon) and non-boss worlds alike.
             // UUID-based methods only touch ConcurrentHashMaps — thread-safe from event thread.
             if (playerUuid != null) {
-                if (systemRegistry.getGolemVoidBossManager() != null) {
-                    systemRegistry.getGolemVoidBossManager().hideBossBarForPlayerUuid(playerUuid);
-                }
                 if (systemRegistry.getGenericBossManager() != null) {
                     systemRegistry.getGenericBossManager().hideBossBarForPlayerUuid(playerUuid);
                 }
@@ -227,8 +225,12 @@ public class EventRegistry {
             if (endgame.wavearena.WaveArenaAPI.isInArena(playerUuid)) return;
 
             // Don't start if the Void Golem is already alive (player re-entering after beating the trial)
-            var golemMgr = systemRegistry.getGolemVoidBossManager();
-            if (golemMgr != null && !golemMgr.getActiveBosses().isEmpty()) return;
+            var bossMgr = systemRegistry.getGenericBossManager();
+            if (bossMgr != null) {
+                boolean golemAlive = bossMgr.getActiveBosses().values().stream()
+                        .anyMatch(s -> s.config.bossType == endgame.plugin.utils.BossType.GOLEM_VOID);
+                if (golemAlive) return;
+            }
 
             endgame.plugin.utils.PlayerRefCache.getByUuid(playerUuid);
             var playerRef = endgame.plugin.utils.PlayerRefCache.getByUuid(playerUuid);

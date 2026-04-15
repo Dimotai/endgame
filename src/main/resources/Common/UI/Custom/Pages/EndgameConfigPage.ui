@@ -93,6 +93,7 @@ $C.@PageOverlay {
       Group #TabBar {
         LayoutMode: Left;
         Anchor: (Height: 36);
+        Padding: (Horizontal: 8);
 
         $C.@TextButton #TabDifficulty { FlexWeight: 1; Anchor: (Height: 32); Text: "Difficulty"; Style: @TabActiveStyle; }
         Group { Anchor: (Width: 2); }
@@ -107,6 +108,8 @@ $C.@PageOverlay {
         $C.@TextButton #TabMisc { FlexWeight: 1; Anchor: (Height: 32); Text: "Misc"; Style: @TabStyle; }
         Group { Anchor: (Width: 2); }
         $C.@TextButton #TabIntegration { FlexWeight: 1; Anchor: (Height: 32); Text: "Integration"; Style: @TabStyle; }
+        Group { Anchor: (Width: 2); }
+        $C.@TextButton #TabAddons { FlexWeight: 1; Anchor: (Height: 32); Text: "Addons"; Style: @TabStyle; }
       }
       Group { Anchor: (Height: 1); Background: #2b3542; }
 
@@ -875,6 +878,11 @@ $C.@PageOverlay {
             Label { Style: @LabelStyle; FlexWeight: 1; Text: "Dungeon Block Protection"; }
             TextButton #ToggleDungeonProt { Anchor: (Width: 80, Height: 28); Text: "ON"; Style: @ToggleOnStyle; }
           }
+          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
+            Label { Style: @LabelStyle; FlexWeight: 1; Text: "Respawn Inside Instance"; }
+            TextButton #ToggleRespawnInside { Anchor: (Width: 80, Height: 28); Text: "OFF"; Style: @ToggleOffStyle; }
+          }
+          Label { Style: (FontSize: 10, TextColor: #6a7a8e); Anchor: (Height: 14, Bottom: 4); Text: "  Lets players respawn inside the instance on death (applies to all dungeons)"; }
         }
         Group { Anchor: (Height: 8); }
 
@@ -979,11 +987,6 @@ $C.@PageOverlay {
             Group { Anchor: (Width: 4); }
             TextButton #InstanceTimeLimitUp { Anchor: (Width: 40, Height: 28); Text: "+"; Style: @AdjustBtnStyle; }
           }
-          Group { LayoutMode: Left; Anchor: (Height: 32, Bottom: 4);
-            Label { Style: @LabelStyle; FlexWeight: 1; Text: "Respawn Inside Instance"; }
-            TextButton #ToggleRespawnInside { Anchor: (Width: 80, Height: 28); Text: "OFF"; Style: @ToggleOffStyle; }
-          }
-          Label { Style: (FontSize: 10, TextColor: #6a7a8e); Anchor: (Height: 14, Bottom: 4); Text: "  Lets players respawn inside the instance on death (applies to all dungeons)"; }
 
           // ---- Pet System ----
           Group { Anchor: (Height: 8); }
@@ -1005,27 +1008,10 @@ $C.@PageOverlay {
         Padding: (Full: 16);
         Visible: false;
 
-        Label { Style: (FontSize: 16, TextColor: #ffaa4a, RenderBold: true); Anchor: (Height: 24); Text: "Integrations & Addons"; }
+        Label { Style: (FontSize: 16, TextColor: #ffaa4a, RenderBold: true); Anchor: (Height: 24); Text: "Integrations"; }
         Label { Style: (FontSize: 11, TextColor: #5a6a7a); Anchor: (Height: 18); Text: "Detected mods are auto-enabled. Restart required after changes."; }
         Group { Anchor: (Height: 1); Background: #1e2a36; }
         Group { Anchor: (Height: 10); }
-
-        // RPG Leveling
-        Group #IntegRPG { LayoutMode: Left; Anchor: (Bottom: 8); Background: #0b141f(0.88); Padding: (Full: 0);
-          Group #IntegRPGAccent { Anchor: (Width: 3, Height: 70); Background: #55ccff; }
-          Group { LayoutMode: Top; FlexWeight: 1; Padding: (Full: 12);
-            Group { LayoutMode: Left; Anchor: (Height: 22);
-              Label { Style: (FontSize: 14, TextColor: #55ccff, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Text: "RPG Leveling"; }
-              Label #IntegRPGStatus { Style: (FontSize: 10, TextColor: #4aff7f, RenderBold: true, VerticalAlignment: Center); Anchor: (Width: 90); Text: "DETECTED"; }
-            }
-            Label { Style: (FontSize: 10, TextColor: #5a6a7a); Anchor: (Height: 16); Text: "XP rewards, boss kill XP, level scaling"; }
-            Group { Anchor: (Height: 4); }
-            Group { LayoutMode: Left; Anchor: (Height: 26);
-              Label { Style: (FontSize: 11, TextColor: #c0cee5, VerticalAlignment: Center); FlexWeight: 1; Text: "Bridge Active"; }
-              TextButton #ToggleRPGLeveling { Anchor: (Width: 80, Height: 24); Text: "OFF"; Style: @ToggleOffStyle; }
-            }
-          }
-        }
 
         // Endless Leveling
         Group #IntegEL { LayoutMode: Left; Anchor: (Bottom: 8); Background: #0b141f(0.88); Padding: (Full: 0);
@@ -1040,6 +1026,23 @@ $C.@PageOverlay {
             Group { LayoutMode: Left; Anchor: (Height: 26);
               Label { Style: (FontSize: 11, TextColor: #c0cee5, VerticalAlignment: Center); FlexWeight: 1; Text: "Bridge Active"; }
               TextButton #ToggleEndlessLeveling { Anchor: (Width: 80, Height: 24); Text: "OFF"; Style: @ToggleOffStyle; }
+            }
+          }
+        }
+
+        // RPG Leveling
+        Group #IntegRPG { LayoutMode: Left; Anchor: (Bottom: 8); Background: #0b141f(0.88); Padding: (Full: 0);
+          Group #IntegRPGAccent { Anchor: (Width: 3, Height: 70); Background: #55ccff; }
+          Group { LayoutMode: Top; FlexWeight: 1; Padding: (Full: 12);
+            Group { LayoutMode: Left; Anchor: (Height: 22);
+              Label { Style: (FontSize: 14, TextColor: #55ccff, RenderBold: true, VerticalAlignment: Center); FlexWeight: 1; Text: "RPG Leveling"; }
+              Label #IntegRPGStatus { Style: (FontSize: 10, TextColor: #4aff7f, RenderBold: true, VerticalAlignment: Center); Anchor: (Width: 90); Text: "DETECTED"; }
+            }
+            Label { Style: (FontSize: 10, TextColor: #5a6a7a); Anchor: (Height: 16); Text: "XP rewards, boss kill XP, level scaling"; }
+            Group { Anchor: (Height: 4); }
+            Group { LayoutMode: Left; Anchor: (Height: 26);
+              Label { Style: (FontSize: 11, TextColor: #c0cee5, VerticalAlignment: Center); FlexWeight: 1; Text: "Bridge Active"; }
+              TextButton #ToggleRPGLeveling { Anchor: (Width: 80, Height: 24); Text: "OFF"; Style: @ToggleOffStyle; }
             }
           }
         }
@@ -1061,12 +1064,20 @@ $C.@PageOverlay {
           }
         }
 
-        // ---- Addons Section ----
-        Group { Anchor: (Height: 12); }
+      }
+
+      // ==================== ADDONS TAB ====================
+      Group #ContentAddons {
+        FlexWeight: 1;
+        LayoutMode: TopScrolling;
+        ScrollbarStyle: $C.@DefaultScrollbarStyle;
+        Padding: (Full: 16);
+        Visible: false;
+
         Label { Style: (FontSize: 16, TextColor: #ffaa4a, RenderBold: true); Anchor: (Height: 24); Text: "Addons"; }
         Label { Style: (FontSize: 11, TextColor: #5a6a7a); Anchor: (Height: 18); Text: "Endgame&QoL addons will appear here when installed."; }
         Group { Anchor: (Height: 1); Background: #1e2a36; }
-        Group { Anchor: (Height: 8); }
+        Group { Anchor: (Height: 10); }
 
         Label #AddonEmpty { Style: (FontSize: 11, TextColor: #3a4a5a, HorizontalAlignment: Center, VerticalAlignment: Center); Anchor: (Height: 40); Text: "No addons detected."; }
 

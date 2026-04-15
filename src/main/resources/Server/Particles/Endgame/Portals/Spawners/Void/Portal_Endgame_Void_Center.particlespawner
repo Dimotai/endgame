@@ -26,7 +26,6 @@
     }
   },
   "Attractors": [],
-  "$Comment": "Endgame Void Portal - rotating inner ring",
   "Particle": {
     "Texture": "Particles/Textures/Circles/Portal_Inside_Contrast.png",
     "FrameSize": {

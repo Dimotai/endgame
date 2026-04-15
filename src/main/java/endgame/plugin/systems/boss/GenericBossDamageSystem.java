@@ -218,9 +218,7 @@ public class GenericBossDamageSystem extends AbstractBossDamageSystem {
         return item != null && FROST_SWORD_ID.equals(item.getId());
     }
 
-    // =========================================================================
     // Damage tracking for boss target switching
-    // =========================================================================
 
     private void recordDamageForAggro(Ref<EntityStore> bossRef, UUID attackerUuid, float amount) {
         Map<UUID, Double> bossMap = recentDamage.computeIfAbsent(bossRef, k -> new ConcurrentHashMap<>());

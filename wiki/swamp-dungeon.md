@@ -75,12 +75,15 @@ The **Hedera Key** is crafted exclusively at the **Hedera Autel**, a special ben
 | Stat           | Value                                                                                  |
 |----------------|----------------------------------------------------------------------------------------|
 | Health         | **1800 HP**                                                                            |
-| Phases         | 3 phases (Poison / Roots / Scream)                                                     |
+| Phases         | 3 phases (Vine Growth / Toxic Bloom / Corrupted Fury)                                  |
 | Player Scaling | 50% per additional player                                                              |
-| Attacks        | Poison clouds, root entanglement, scream knockback                                     |
-| Drops          | **Hedera Gem** + **Onyxium Bars** (3-7) + **Forest Essence** (10-15) + **Voidheart**  |
+| Drops          | **Hedera Gem** + **Onyxium Bars** (3–7) + **Forest Essence** (10–15) + **Voidheart**  |
 
-Bring antidotes for the poison phases. The root phase locks you in place — dodge the visual telegraph before roots spawn.
+**v5.0.0 rework** — Phase 2+ adds **Vine Grab** (pull attack), **Ground Slam** (7-block AOE + camera shake + Stagger), and lingering **poison clouds** every 18–25s. Phase 3 adds **Charge** (lunge with Run animation). All new attacks are health-gated via CAE conditions.
+
+Bring antidotes for the poison phases. Dodge Ground Slam telegraphs and avoid the lingering poison clouds. The root phase locks you in place — watch for the visual telegraph.
+
+Boss combat music plays within 50 blocks.
 
 [View full boss guide](endgame-qol/bosses-elites)
 

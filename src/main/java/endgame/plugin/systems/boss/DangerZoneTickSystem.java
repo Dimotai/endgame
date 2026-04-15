@@ -2,7 +2,6 @@ package endgame.plugin.systems.boss;
 
 import endgame.plugin.managers.boss.EnrageTracker;
 import endgame.plugin.managers.boss.GenericBossManager;
-import endgame.plugin.managers.boss.GolemVoidBossManager;
 
 import com.hypixel.hytale.component.ArchetypeChunk;
 import com.hypixel.hytale.component.CommandBuffer;
@@ -36,7 +35,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DangerZoneTickSystem extends EntityTickingSystem<EntityStore> {
 
     private final EndgameQoL plugin;
-    private final GolemVoidBossManager bossManager;
     private final GenericBossManager genericBossManager;
     private final EnrageTracker enrageTracker;
 
@@ -66,10 +64,9 @@ public class DangerZoneTickSystem extends EntityTickingSystem<EntityStore> {
             EntityStatMap.getComponentType(),
             Player.getComponentType());
 
-    public DangerZoneTickSystem(EndgameQoL plugin, GolemVoidBossManager bossManager,
+    public DangerZoneTickSystem(EndgameQoL plugin,
                                 GenericBossManager genericBossManager, EnrageTracker enrageTracker) {
         this.plugin = plugin;
-        this.bossManager = bossManager;
         this.genericBossManager = genericBossManager;
         this.enrageTracker = enrageTracker;
         plugin.getLogger().atFine().log("[DangerZoneTickSystem] Initialized (radius: %.1f, damage: %.1f)",
@@ -90,20 +87,17 @@ public class DangerZoneTickSystem extends EntityTickingSystem<EntityStore> {
             cleanup();
         }
 
-        if (bossManager == null)
+        if (genericBossManager == null)
             return;
 
         // Cache config once per tick to avoid repeated indirection
         endgame.plugin.config.EndgameConfig config = plugin.getConfig().get();
 
-        // Call bossManager.tick() with per-store frame-rate guard to prevent per-entity spam
+        // Call manager tick() with per-store frame-rate guard to prevent per-entity spam
         Long lastBossTime = lastBossTickTimes.get(store);
         if (lastBossTime == null || now - lastBossTime >= BOSS_TICK_INTERVAL_MS) {
             lastBossTickTimes.put(store, now);
-            bossManager.tick(store);
-            if (genericBossManager != null) {
-                genericBossManager.tick(store);
-            }
+            genericBossManager.tick(store);
             if (enrageTracker != null) {
                 enrageTracker.tick(now);
             }
@@ -130,11 +124,13 @@ public class DangerZoneTickSystem extends EntityTickingSystem<EntityStore> {
         PlayerRef matchingPlayerRef = store.getComponent(playerRef, PlayerRef.getComponentType());
         if (matchingPlayerRef == null) return;
 
-        // Danger zone damage for Golem Void (proximity boss-bar show/hide moved to BossBarProximitySystem)
-        Map<Ref<EntityStore>, GolemVoidBossManager.GolemVoidState> activeBosses = bossManager.getActiveBosses();
-        for (Map.Entry<Ref<EntityStore>, GolemVoidBossManager.GolemVoidState> entry : activeBosses.entrySet()) {
+        // Danger zone damage for Golem Void (proximity boss-bar show/hide moved to BossBarProximitySystem).
+        // Filter the unified boss map to just Golem Void entries.
+        var activeBosses = genericBossManager.getActiveBosses();
+        for (var entry : activeBosses.entrySet()) {
             Ref<EntityStore> bossRef = entry.getKey();
-            GolemVoidBossManager.GolemVoidState state = entry.getValue();
+            GenericBossManager.GenericBossState state = entry.getValue();
+            if (state.config.bossType != endgame.plugin.utils.BossType.GOLEM_VOID) continue;
 
             if (!bossRef.isValid()) continue;
             if (bossRef.getStore() != store) continue;

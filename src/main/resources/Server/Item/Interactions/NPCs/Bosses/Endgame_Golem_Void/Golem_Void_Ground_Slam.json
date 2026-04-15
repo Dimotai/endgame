@@ -22,16 +22,11 @@
     "Type": "Selector",
     "RunTime": 0.217,
     "Selector": {
-      "Id": "Horizontal",
-      "Direction": "ToLeft",
-      "TestLineOfSight": true,
+      "Id": "AOECircle",
+      "Range": 7,
+      "TestLineOfSight": false,
       "ExtendTop": 2,
-      "ExtendBottom": 10,
-      "StartDistance": 0.5,
-      "EndDistance": 6,
-      "Length": 180,
-      "RollOffset": 90,
-      "YawStartOffset": -90
+      "ExtendBottom": 10
     },
     "HitEntity": {
       "Interactions": [
